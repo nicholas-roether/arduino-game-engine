@@ -121,11 +121,11 @@ namespace AGE {
 	}
 
 	void GroupComponent::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {
-		for (size_t i = 0; i < numChildren; i++) children[i].draw(charBuffer, x + xOffs, y + yOffs);
+		for (size_t i = 0; i < numChildren; i++) children[i].draw(charBuffer, x + i + xOffs, y + yOffs);
 	}
 
 	TextComponent::TextComponent(const String& str, size_t x, size_t y) : GroupComponent(str.length(), x, y) {
 		for (size_t i = 0; i < str.length(); i++)
-			add(LetterComponent(str[i], x + i, y));
+			add(LetterComponent(str[i], x, y));
 	}
 }
