@@ -4,6 +4,8 @@
 #include "AGE.h"
 
 namespace AGE {
+	constexpr size_t CHARACTER_SIZE = sizeof(CharacterType) + sizeof(char);
+
 	Character::Character(CharacterType type, char value)
 		: type(type), value(value) {}
 
@@ -16,7 +18,7 @@ namespace AGE {
 	}
 
 	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
-		: width(width), height(height), buffer((Character*) alloca(width * height * sizeof(Character)))
+		: width(width), height(height), buffer((Character*) calloc(width * height, sizeof(Character)))
 	{}
 
 	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y, bool& valid) const {
@@ -46,8 +48,8 @@ namespace AGE {
 	{}
 	
 	void CharacterRenderer::render() {
-		for (size_t x = 0; x < charBuffer.width; x++) {
-			for (size_t y = 0; y < charBuffer.height; y++) {
+		for (size_t y = 0; y < charBuffer.height; y++) {
+			for (size_t x = 0; x < charBuffer.width; x++) {
 				Character current = charBuffer.get(x, y);
 				Character previous = lastCharBuffer.get(x, y);
 				if (current != previous) {
