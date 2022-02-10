@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <alloca.h>
 
 #include "AGE.h"
 
@@ -20,6 +19,10 @@ namespace AGE {
 	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
 		: width(width), height(height), buffer((Character*) calloc(width * height, sizeof(Character)))
 	{}
+
+	CharacterBuffer::~CharacterBuffer() {
+		free(buffer);
+	}
 
 	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y, bool& valid) const {
 		if (x >= width || y >= height) {
@@ -75,12 +78,12 @@ namespace AGE {
 
 	void Component::update(uint16_t dt) {}
 
-	void Component::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {}
+	void Component::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {}
 
 	LetterComponent::LetterComponent(char letter, size_t x = 0, size_t y = 0)
 		: Component(x, y), letter(letter) {}
 
-	void LetterComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {
+	void LetterComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
 		charBuffer.set(x + xOffs, y + yOffs, Character(LETTER, letter));
 	}
 
@@ -91,7 +94,32 @@ namespace AGE {
 	TextureComponent::TextureComponent(char texture, size_t x = 0, size_t y = 0)
 		: Component(x, y), texture(texture) {}
 
-	void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {
+	void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
 		charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, texture));
+	}
+
+	GroupComponent::GroupComponent(size_t initialCapacity = 5)
+		: capacity(capacity), children((Component*) calloc(capacity, sizeof(Component)))
+	{}
+
+	GroupComponent::~GroupComponent() {
+		free(children);
+	}
+
+	void GroupComponent::increaseCapacity() {
+		capacity *= 2;
+		Component* newChildren = (Component*) calloc(capacity, sizeof(Component));
+		memcpy(newChildren, children, numChildren * sizeof(Component));
+		free(children);
+		children = newChildren;
+	}
+
+	void GroupComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
+		for (size_t i = 0; i < numChildren; i++) children[i].draw(charBuffer, x + xOffs, y + yOffs);
+	}
+
+	TextComponent::TextComponent(const String& str) : GroupComponent(str.length()) {
+		for (size_t i = 0; i < str.length(); i++)
+			add(LetterComponent(str[i], x + i, y));
 	}
 }

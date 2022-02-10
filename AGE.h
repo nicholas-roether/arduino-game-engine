@@ -32,6 +32,8 @@ namespace AGE {
 
 		CharacterBuffer(size_t width, size_t height);
 
+		~CharacterBuffer();
+
 		Character get(size_t x, size_t y) const;
 
 		void set(size_t x, size_t y, Character character);
@@ -56,36 +58,58 @@ namespace AGE {
 		Component(size_t x = 0, size_t y = 0);
 
 	public:
-		void update(uint16_t dt);
+		virtual void update(uint16_t dt);
 
-		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+		virtual void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
 
-		size_t getX();
+		size_t getX() const;
 
-		size_t getY();
+		size_t getY() const;
 	};
 
 	class LetterComponent : public Component {
-	private:
 		char letter;
 
 	public:
 		LetterComponent(char letter, size_t x = 0, size_t y = 0);
 
-		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
 
 		void setLetter(char letter);
 	};
 
 	class TextureComponent : public Component {
-	private:
 		char texture;
 
 	public:
 		TextureComponent(char texture, size_t x = 0, size_t y = 0);
 
-		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
 
 		void setTexture(char texture);
+	};
+
+	class GroupComponent : public Component {
+	private:
+		size_t capacity;
+		size_t numChildren = 0;
+		Component* children;
+
+		void increaseCapacity();
+
+	protected:
+		void add(const Component& child);
+
+	public:
+		GroupComponent(size_t initialCapacity = 5);
+
+		~GroupComponent();
+
+		virtual void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
+	};
+
+	class TextComponent : public GroupComponent {
+	public:
+		TextComponent(const String& str);
 	};
 }
