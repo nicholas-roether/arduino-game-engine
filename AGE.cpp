@@ -106,6 +106,12 @@ namespace AGE {
 		free(children);
 	}
 
+	void GroupComponent::add(const Component& child) {
+		if (numChildren == capacity - 1) increaseCapacity();
+		children[numChildren] = child;
+		numChildren++;
+	}
+
 	void GroupComponent::increaseCapacity() {
 		capacity *= 2;
 		Component* newChildren = (Component*) calloc(capacity, sizeof(Component));
