@@ -1,6 +1,7 @@
 #pragma once
 
-#include "LiquidCrystal.h"
+#include <stddef.h>
+#include <LiquidCrystal.h>
 
 namespace AGE {
 	enum Error {

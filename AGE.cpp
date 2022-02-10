@@ -1,6 +1,7 @@
+#include <Arduino.h>
+#include <alloca.h>
+
 #include "AGE.h"
-#include "Arduino.h"
-#include "alloca.h"
 
 namespace AGE {
 	bool Character::operator==(Character other) {
