@@ -25,7 +25,7 @@ namespace AGE {
 			return 0;
 		}
 		valid = true;
-		return x % width + y * width;
+		return x + y * width;
 	}
 
 	Character CharacterBuffer::get(size_t x, size_t y) const {
