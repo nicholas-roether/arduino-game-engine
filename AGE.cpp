@@ -4,6 +4,9 @@
 #include "AGE.h"
 
 namespace AGE {
+	Character::Character(CharacterType type, char value)
+		: type(type), value(value) {}
+
 	bool Character::operator==(Character other) {
 		return type == other.type && value == other.value;
 	}

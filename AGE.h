@@ -14,6 +14,9 @@ namespace AGE {
 		CharacterType type = EMPTY;
 		char value = 0;
 
+		Character() = default;
+		Character(CharacterType type, char value);
+
 		bool operator==(Character other);
 		bool operator!=(Character other);
 	};
