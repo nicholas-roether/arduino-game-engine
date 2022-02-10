@@ -19,7 +19,7 @@ namespace AGE {
 	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y, bool& valid) const {
 		if (x >= width || y >= height) {
 			valid = false;
-			return;
+			return 0;
 		}
 		valid = true;
 		return x % width + y * width;
