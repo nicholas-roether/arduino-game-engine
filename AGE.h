@@ -101,7 +101,7 @@ namespace AGE {
 		void add(const Component& child);
 
 	public:
-		GroupComponent(size_t initialCapacity = 5);
+		GroupComponent(size_t initialCapacity = 5, size_t x = 0, size_t y = 0);
 
 		~GroupComponent();
 
@@ -110,6 +110,6 @@ namespace AGE {
 
 	class TextComponent : public GroupComponent {
 	public:
-		TextComponent(const String& str);
+		TextComponent(const String& str, size_t x = 0, size_t y = 0);
 	};
 }
