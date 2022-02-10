@@ -16,17 +16,26 @@ namespace AGE {
 		: width(width), height(height), buffer((Character*) alloca(width * height * sizeof(Character)))
 	{}
 
-	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y) const {
-		if (x >= width || y >= height) throw OUT_OF_BOUNDS;
+	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y, bool& valid) const {
+		if (x >= width || y >= height) {
+			valid = false;
+			return;
+		}
+		valid = true;
 		return x % width + y * width;
 	}
 
 	Character CharacterBuffer::get(size_t x, size_t y) const {
-		return buffer[getBufferIndex(x, y)];
+		bool valid;
+		size_t index = getBufferIndex(x, y, valid);
+		if (valid) return buffer[index];
+		return Character();
 	}
 
 	void CharacterBuffer::set(size_t x, size_t y, Character character) {
-		buffer[getBufferIndex(x, y)] = character;
+		bool valid;
+		size_t index = getBufferIndex(x, y, valid);
+		if (valid) buffer[index] = character;
 	}
 
 	CharacterRenderer::CharacterRenderer(LiquidCrystal& lcd, const CharacterBuffer& charBuffer)

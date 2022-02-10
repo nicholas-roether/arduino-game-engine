@@ -4,10 +4,6 @@
 #include <LiquidCrystal.h>
 
 namespace AGE {
-	enum Error {
-		OUT_OF_BOUNDS
-	};
-
 	enum CharacterType {
 		EMPTY,
 		LETTER,
@@ -26,7 +22,7 @@ namespace AGE {
 	private:
 		Character* buffer;
 
-		size_t getBufferIndex(size_t x, size_t y) const;
+		size_t getBufferIndex(size_t x, size_t y, bool& valid) const;
 
 	public:
 		const size_t width;
