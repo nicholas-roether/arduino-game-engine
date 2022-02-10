@@ -1,23 +1,58 @@
 #include "AGE.h"
+#include "Arduino.h"
+#include "alloca.h"
 
 namespace AGE {
-	CharacterBuffer::CharacterBuffer(std::size_t width, std::size_t height)
-		: width(width), height(height) {}
-
-	Character CharacterBuffer::get(std::size_t x, std::size_t y)  {
-		if (x >= width || y >= height) throw OUT_OF_BOUNDS;
-		return buffer[x][y];
+	bool Character::operator==(Character other) {
+		return type == other.type && value == other.value;
 	}
 
-	void CharacterBuffer::set(std::size_t x, std::size_t y, Character character) {
-		if (x >= width || y >= height) throw OUT_OF_BOUNDS;
-		buffer[x][y] = character;
+	bool Character::operator!=(Character other) {
+		return !operator==(other);
 	}
 
-	CharacterRenderer::CharacterRenderer(CharacterBuffer* charBuffer)
-		: charBuffer(charBuffer) {}
+	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
+		: width(width), height(height), buffer((Character*) alloca(width * height * sizeof(Character)))
+	{}
+
+	size_t CharacterBuffer::getBufferIndex(size_t x, size_t y) const {
+		if (x >= width || y >= height) throw OUT_OF_BOUNDS;
+		return x % width + y * width;
+	}
+
+	Character CharacterBuffer::get(size_t x, size_t y) const {
+		return buffer[getBufferIndex(x, y)];
+	}
+
+	void CharacterBuffer::set(size_t x, size_t y, Character character) {
+		buffer[getBufferIndex(x, y)] = character;
+	}
+
+	CharacterRenderer::CharacterRenderer(LiquidCrystal& lcd, const CharacterBuffer& charBuffer)
+		: lcd(lcd), charBuffer(charBuffer), lastCharBuffer(charBuffer.width, charBuffer.height)
+	{}
 	
 	void CharacterRenderer::render() {
-		// TODO implement rendering
+		for (size_t x = 0; x < charBuffer.width; x++) {
+			for (size_t y = 0; y < charBuffer.height; y++) {
+				Character current = charBuffer.get(x, y);
+				Character previous = lastCharBuffer.get(x, y);
+				if (current != previous) {
+					lcd.setCursor(x, y);
+					switch (current.type) {
+					case EMPTY:
+						lcd.print(" ");
+						break;
+					case LETTER:
+						lcd.print(current.value);
+						break;
+					case TEXTURE:
+						lcd.write(current.value);
+					}
+					lastCharBuffer.set(x, y, current);
+				}
+			}
+		}
+		lcd.setCursor(0, 0);
 	}
 }

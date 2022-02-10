@@ -1,4 +1,6 @@
-#include <vector>
+#pragma once
+
+#include "LiquidCrystal.h"
 
 namespace AGE {
 	enum Error {
@@ -14,29 +16,36 @@ namespace AGE {
 	struct Character {
 		CharacterType type = EMPTY;
 		char value = 0;
+
+		bool operator==(Character other);
+		bool operator!=(Character other);
 	};
 
 	class CharacterBuffer {
 	private:
-		std::size_t width;
-		std::size_t height;
-		std::vector<std::vector<Character>> buffer;
+		Character* buffer;
+
+		size_t getBufferIndex(size_t x, size_t y) const;
 
 	public:
-		CharacterBuffer(std::size_t width, std::size_t height);
+		const size_t width;
+		const size_t height;
 
-		Character get(std::size_t x, std::size_t y);
+		CharacterBuffer(size_t width, size_t height);
 
-		void set(std::size_t x, std::size_t y, Character character);
+		Character get(size_t x, size_t y) const;
+
+		void set(size_t x, size_t y, Character character);
 	};
 
 	class CharacterRenderer {
 	private:
-		CharacterBuffer* charBuffer;
+		LiquidCrystal& lcd;
+		const CharacterBuffer& charBuffer;
 		CharacterBuffer lastCharBuffer;
 
 	public:
-		CharacterRenderer(CharacterBuffer* charBuffer);
+		CharacterRenderer(LiquidCrystal& lcd, const CharacterBuffer& charBuffer);
 
 		void render();
 	};

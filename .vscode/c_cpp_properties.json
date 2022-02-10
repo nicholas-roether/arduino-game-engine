@@ -1,18 +1,30 @@
 {
+	"env": {
+		"arduinoPath": "${config:arduino.path}",
+		"arduinoAvrPath": "${env:arduinoPath}/hardware/arduino/avr",
+		"arduinoAvrToolsPath": "${env:arduinoPath}/hardware/tools/avr",
+		"arduinoLibraryPath": "${env:arduinoPath}/libraries",
+		"arduinoAvrCompilerPath": "${env:arduinoAvrToolsPath}/bin/avr-g++.exe"
+	},
     "configurations": [
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+				"${env:arduinoAvrPath}/cores/arduino/**",
+				"${env:arduinoAvrPath}/variants/standard",
+				"${env:arduinoAvrToolsPath}/avr/include",
+				"${env:arduinoLibraryPath}/**"
             ],
             "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
+                "ARDUINO=10810",
+                "__AVR_ATmega328P__",
+                "UBRRH"
             ],
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "gcc-x64",
+			"compilerPath": "${env:arduinoAvrCompilerPath} -std=gnu++11 -mmcu=atmega328p"
         }
     ],
     "version": 4
