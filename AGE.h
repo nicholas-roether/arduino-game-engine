@@ -32,7 +32,7 @@ namespace AGE {
 
 		CharacterBuffer(size_t width, size_t height);
 
-		~CharacterBuffer();
+		virtual ~CharacterBuffer();
 
 		Character get(size_t x, size_t y) const;
 
@@ -103,7 +103,7 @@ namespace AGE {
 	public:
 		GroupComponent(size_t initialCapacity = 5, size_t x = 0, size_t y = 0);
 
-		~GroupComponent();
+		virtual ~GroupComponent();
 
 		virtual void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
 	};
