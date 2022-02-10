@@ -98,8 +98,8 @@ namespace AGE {
 		charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, texture));
 	}
 
-	GroupComponent::GroupComponent(size_t initialCapacity = 5)
-		: capacity(capacity), children((Component*) calloc(capacity, sizeof(Component)))
+	GroupComponent::GroupComponent(size_t initialCapacity = 5, size_t x = 0, size_t y = 0)
+		: Component(x, y), capacity(capacity), children((Component*) calloc(capacity, sizeof(Component)))
 	{}
 
 	GroupComponent::~GroupComponent() {
@@ -124,7 +124,7 @@ namespace AGE {
 		for (size_t i = 0; i < numChildren; i++) children[i].draw(charBuffer, x + xOffs, y + yOffs);
 	}
 
-	TextComponent::TextComponent(const String& str) : GroupComponent(str.length()) {
+	TextComponent::TextComponent(const String& str, size_t x = 0, size_t y = 0) : GroupComponent(str.length(), x, y) {
 		for (size_t i = 0; i < str.length(); i++)
 			add(LetterComponent(str[i], x + i, y));
 	}
