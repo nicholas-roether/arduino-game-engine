@@ -74,16 +74,16 @@ namespace AGE {
 		lcd.setCursor(0, 0);
 	}
 
-	Component::Component(size_t x = 0, size_t y = 0) : x(x), y(y) {}
+	Component::Component(size_t x, size_t y) : x(x), y(y) {}
 
 	void Component::update(uint16_t dt) {}
 
-	void Component::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {}
+	void Component::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {}
 
-	LetterComponent::LetterComponent(char letter, size_t x = 0, size_t y = 0)
+	LetterComponent::LetterComponent(char letter, size_t x, size_t y)
 		: Component(x, y), letter(letter) {}
 
-	void LetterComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
+	void LetterComponent::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {
 		charBuffer.set(x + xOffs, y + yOffs, Character(LETTER, letter));
 	}
 
@@ -91,14 +91,14 @@ namespace AGE {
 		this->letter = letter;
 	}
 
-	TextureComponent::TextureComponent(char texture, size_t x = 0, size_t y = 0)
+	TextureComponent::TextureComponent(char texture, size_t x, size_t y)
 		: Component(x, y), texture(texture) {}
 
-	void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
+	void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {
 		charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, texture));
 	}
 
-	GroupComponent::GroupComponent(size_t initialCapacity = 5, size_t x = 0, size_t y = 0)
+	GroupComponent::GroupComponent(size_t initialCapacity = 5, size_t x, size_t y)
 		: Component(x, y), capacity(capacity), children((Component*) calloc(capacity, sizeof(Component)))
 	{}
 
@@ -120,11 +120,11 @@ namespace AGE {
 		children = newChildren;
 	}
 
-	void GroupComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const {
+	void GroupComponent::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {
 		for (size_t i = 0; i < numChildren; i++) children[i].draw(charBuffer, x + xOffs, y + yOffs);
 	}
 
-	TextComponent::TextComponent(const String& str, size_t x = 0, size_t y = 0) : GroupComponent(str.length(), x, y) {
+	TextComponent::TextComponent(const String& str, size_t x, size_t y) : GroupComponent(str.length(), x, y) {
 		for (size_t i = 0; i < str.length(); i++)
 			add(LetterComponent(str[i], x + i, y));
 	}
