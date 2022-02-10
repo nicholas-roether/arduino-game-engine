@@ -22,7 +22,6 @@ namespace AGE {
 	};
 
 	class CharacterBuffer {
-	private:
 		Character* buffer;
 
 		size_t getBufferIndex(size_t x, size_t y, bool& valid) const;
@@ -39,7 +38,6 @@ namespace AGE {
 	};
 
 	class CharacterRenderer {
-	private:
 		LiquidCrystal& lcd;
 		const CharacterBuffer& charBuffer;
 		CharacterBuffer lastCharBuffer;
@@ -48,5 +46,46 @@ namespace AGE {
 		CharacterRenderer(LiquidCrystal& lcd, const CharacterBuffer& charBuffer);
 
 		void render();
+	};
+
+	class Component {
+	protected:
+		size_t x;
+		size_t y;
+
+		Component(size_t x = 0, size_t y = 0);
+
+	public:
+		void update(uint16_t dt);
+
+		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+
+		size_t getX();
+
+		size_t getY();
+	};
+
+	class LetterComponent : public Component {
+	private:
+		char letter;
+
+	public:
+		LetterComponent(char letter, size_t x = 0, size_t y = 0);
+
+		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+
+		void setLetter(char letter);
+	};
+
+	class TextureComponent : public Component {
+	private:
+		char texture;
+
+	public:
+		TextureComponent(char texture, size_t x = 0, size_t y = 0);
+
+		void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0);
+
+		void setTexture(char texture);
 	};
 }

@@ -70,4 +70,28 @@ namespace AGE {
 		}
 		lcd.setCursor(0, 0);
 	}
+
+	Component::Component(size_t x = 0, size_t y = 0) : x(x), y(y) {}
+
+	void Component::update(uint16_t dt) {}
+
+	void Component::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {}
+
+	LetterComponent::LetterComponent(char letter, size_t x = 0, size_t y = 0)
+		: Component(x, y), letter(letter) {}
+
+	void LetterComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {
+		charBuffer.set(x + xOffs, y + yOffs, Character(LETTER, letter));
+	}
+
+	void LetterComponent::setLetter(char letter) {
+		this->letter = letter;
+	}
+
+	TextureComponent::TextureComponent(char texture, size_t x = 0, size_t y = 0)
+		: Component(x, y), texture(texture) {}
+
+	void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) {
+		charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, texture));
+	}
 }
