@@ -84,7 +84,7 @@ namespace AGE::Utils {
 	}
 
 	void strToLCDEncoding(String& string) {
-		for (char& character : string)
-			character = getCharCode(character);
+		for (unsigned int i = 0; i < string.length(); i++)
+			string.setCharAt(i, getCharCode(string.charAt(i)));
 	}
 }
