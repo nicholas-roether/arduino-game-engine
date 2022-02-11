@@ -77,7 +77,7 @@ namespace AGE::Utils {
 	}
 
 	char getCharCode(char32_t character) {
-		Serial.print(character);
+		Serial.print((char) character);
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
