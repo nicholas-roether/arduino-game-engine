@@ -1,7 +1,7 @@
 #include "AGE_character_map.h"
 
 namespace AGE::Utils {
-	uint8_t getCharCode(wchar_t character) {
+	uint8_t getCharCode(char16_t character) {
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
