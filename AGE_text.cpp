@@ -1,5 +1,3 @@
-#include <WCharacter.h>
-
 #include "AGE_text.h"
 
 namespace AGE::Utils {
