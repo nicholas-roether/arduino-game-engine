@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "AGE.h"
-#include "utils/AGE_character_map.h"
+#include "AGE_character_map.h"
 
 namespace AGE {
 	Component::Component() {};
