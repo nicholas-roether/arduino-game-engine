@@ -1,8 +1,7 @@
 #include "AGE_text.h"
 
 namespace AGE::Utils {
-	uint8_t getCharCode(wchar_t character) {
-		Serial.println((char) character);
+	uint8_t getCharCode(char16_t character) {
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
@@ -86,8 +85,9 @@ namespace AGE::Utils {
 
 	void strToLCDEncoding(const String& string, String& target) {
 		target = string;
-		for (unsigned int i = 0; i < string.length(); i++) {
-			target.setCharAt(i, getCharCode(string.charAt(i)));
+		for (unsigned int i = 0; i < string.length() / 2; i++) {
+			char16_t c = ((char16_t) string.charAt(i) << 8) + string.charAt(i + 1);
+			target.setCharAt(i, getCharCode(c));
 		}
 	}
 }
