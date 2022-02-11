@@ -62,8 +62,8 @@ namespace AGE::Utils {
 
 	char32_t UnicodeString::charAt(size_t i) const {
 		if (i >= len) return 0x00000000;
-		char32_t character;
-		memcpy(&character, charPtr + i * charSize, charSize);
+		char character;
+		memcpy(&character, charPtr + i, 1);
 		return character;
 	}
 
