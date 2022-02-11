@@ -1,7 +1,7 @@
 #include "AGE_text.h"
 
 namespace AGE::Utils {
-	uint8_t getCharCode(wchar_t character) {
+	uint8_t getCharCode(char character) {
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
