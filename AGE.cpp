@@ -22,7 +22,7 @@ namespace AGE {
 		return y;
 	}
 
-	Text::Text(const String& string, uint8_t x, uint8_t y)  {
+	Text::Text(const char16_t* string, uint8_t x, uint8_t y)  {
 		this->x = x;
 		this->y = y;
 		Utils::strToLCDEncoding(string, this->string);

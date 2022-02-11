@@ -83,10 +83,10 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
-	void strToLCDEncoding(const String& string, String& target) {
-		target = string;
-		for (unsigned int i = 0; i < string.length() / 2; i++) {
-			char16_t c = ((char16_t) string.charAt(i) << 8) + string.charAt(i + 1);
+	void strToLCDEncoding(const char16_t* string, String& target) {
+		size_t length = (strlen((const char*) string) + 1) / 2;
+		for (unsigned int i = 0; i < length / 2; i++) {
+			char16_t c = string[i];
 			target.setCharAt(i, getCharCode(c));
 		}
 	}
