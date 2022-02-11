@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "AGE.h"
-#include "AGE_character_map.h"
+#include "AGE_text.h"
 
 namespace AGE {
 	Component::Component() {};
@@ -22,10 +22,10 @@ namespace AGE {
 		return y;
 	}
 
-	Text::Text(const String& string, uint8_t x, uint8_t y) : string(string) {
+	Text::Text(const String& string, uint8_t x, uint8_t y)  {
 		this->x = x;
 		this->y = y;
-		Utils::strToLCDEncoding(this->string);
+		Utils::strToLCDEncoding(string, this->string);
 	}
 
 	void Text::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {

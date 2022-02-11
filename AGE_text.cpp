@@ -1,7 +1,9 @@
-#include "AGE_character_map.h"
+#include <WCharacter.h>
+
+#include "AGE_text.h"
 
 namespace AGE::Utils {
-	uint8_t getCharCode(char16_t character) {
+	uint8_t getCharCode(wchar_t character) {
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
@@ -83,8 +85,9 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
-	void strToLCDEncoding(String& string) {
-		for (unsigned int i = 0; i < string.length(); i++)
-			string.setCharAt(i, getCharCode(string.charAt(i)));
+	void strToLCDEncoding(const String& string, String& target) {
+		for (unsigned int i = 0; i < string.length(); i++) {
+			target.setCharAt(i, getCharCode(string.charAt(i)));
+		}
 	}
 }

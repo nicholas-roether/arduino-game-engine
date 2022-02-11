@@ -23,6 +23,7 @@ namespace AGE {
 
 	class Text : public Component {
 		String string;
+
 	public:
 
 		Text(const String& string, uint8_t x, uint8_t y);
