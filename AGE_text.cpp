@@ -84,7 +84,7 @@ namespace AGE::Utils {
 	}
 
 	void strToLCDEncoding(const char16_t* string, String& target) {
-		size_t length = (strlen((const char*) string) + 1) / 2;
+		size_t length = strlen((const char*) string);
 		for (unsigned int i = 0; i < length / 2; i++) {
 			char16_t c = string[i];
 			target.setCharAt(i, getCharCode(c));
