@@ -4,7 +4,7 @@
 
 namespace AGE {
 	namespace Utils {
-		uint8_t getCharCode(char character);
+		uint8_t getCharCode(wchar_t character);
 
 		void strToLCDEncoding(const String& string, String& target);
 	}
