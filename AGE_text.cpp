@@ -83,8 +83,14 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
+	size_t strlen16(const char16_t* string) {
+		size_t size = 0;
+		while(string[size] != 0x0000) size++;
+		return size;
+	}
+
 	void strToLCDEncoding(const char16_t* string, String& target) {
-		size_t length = (strlen((const char*) string) + 1) / 2;
+		size_t length = strlen16(string);
 		target = "";
 		target.reserve(length);
 		for (unsigned int i = 0; i < length; i++) {
