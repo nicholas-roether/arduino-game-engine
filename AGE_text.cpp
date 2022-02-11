@@ -25,19 +25,19 @@ namespace AGE::Utils {
 	UnicodeString::UnicodeString(const char* str)
 		: charSize(sizeof(char)), len(strlen(str)), capacity(len)
 	{
-		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
 	}
 
 	UnicodeString::UnicodeString(const char16_t* str)
 		: charSize(sizeof(char16_t)), len(strlen16(str)), capacity(len)
 	{
-		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
 	}
 
 	UnicodeString::UnicodeString(const char32_t* str)
 		: charSize(sizeof(char32_t)), len(strlen32(str)), capacity(len)
 	{
-		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
 	}
 
 	UnicodeString::UnicodeString(const String& str) : UnicodeString(str.c_str()) {}
@@ -45,7 +45,7 @@ namespace AGE::Utils {
 	UnicodeString::UnicodeString(const UnicodeString& str)
 		: charSize(str.charSize), len(str.len), capacity(str.capacity)
 	{
-		charPtr = allocAndCopy(str.charPtr, capacity * charSize, len * charSize);
+		charPtr = (char*) allocAndCopy(str.charPtr, capacity * charSize, len * charSize);
 	}
 
 	UnicodeString::~UnicodeString() {
@@ -73,7 +73,7 @@ namespace AGE::Utils {
 	}
 
 	const char* UnicodeString::c_str() const {
-		return (const char*) charPtr;
+		return charPtr;
 	}
 
 	char getCharCode(char32_t character) {

@@ -8,7 +8,7 @@ namespace AGE {
 			const size_t charSize;
 			size_t capacity;
 			size_t len;
-			void* charPtr;
+			char* charPtr;
 		
 		public:
 			UnicodeString();
