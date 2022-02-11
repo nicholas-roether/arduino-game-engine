@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
+#include "AGE_text.h"
+
 namespace AGE {
 	class Component {
 	protected:
@@ -26,7 +28,7 @@ namespace AGE {
 
 	public:
 
-		Text(const char16_t* string, uint8_t x, uint8_t y);
+		Text(const Utils::UnicodeString& string, uint8_t x, uint8_t y);
 
 		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
 	};

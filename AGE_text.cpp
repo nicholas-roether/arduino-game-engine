@@ -1,7 +1,82 @@
 #include "AGE_text.h"
 
 namespace AGE::Utils {
-	char getCharCode(char16_t character) {
+	size_t strlen16(const char16_t* string) {
+		size_t size = 0;
+		while(string[size] != 0x0000) size++;
+		return size;
+	}
+
+	size_t strlen32(const char32_t* string) {
+		size_t size = 0;
+		while(string[size] != 0x00000000) size++;
+		return size;
+	}
+
+	void* allocAndCopy(const void* source, size_t capacity, size_t length) {
+		void* ptr = malloc(capacity);
+		memcpy(ptr, source, length);
+		return ptr;
+	}
+
+	UnicodeString::UnicodeString()
+		: charSize(sizeof(char)), capacity(0), len(0), charPtr(nullptr) {}
+
+	UnicodeString::UnicodeString(const char* str)
+		: charSize(sizeof(char)), len(strlen(str)), capacity(len)
+	{
+		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+	}
+
+	UnicodeString::UnicodeString(const char16_t* str)
+		: charSize(sizeof(char16_t)), len(strlen16(str)), capacity(len)
+	{
+		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+	}
+
+	UnicodeString::UnicodeString(const char32_t* str)
+		: charSize(sizeof(char32_t)), len(strlen32(str)), capacity(len)
+	{
+		charPtr = allocAndCopy(str, capacity * charSize, len * charSize);
+	}
+
+	UnicodeString::UnicodeString(const String& str) : UnicodeString(str.c_str()) {}
+
+	UnicodeString::UnicodeString(const UnicodeString& str)
+		: charSize(str.charSize), len(str.len), capacity(str.capacity)
+	{
+		charPtr = allocAndCopy(str.charPtr, capacity * charSize, len * charSize);
+	}
+
+	UnicodeString::~UnicodeString() {
+		free(charPtr);
+	}
+	
+	size_t UnicodeString::length() const {
+		return len;
+	}
+
+	size_t UnicodeString::getCharSize() const {
+		return charSize;
+	}
+
+	char32_t UnicodeString::charAt(size_t i) const {
+		if (i >= len) return 0x00000000;
+		char32_t character;
+		memcpy(&character, charPtr + i * charSize, charSize);
+		return character;
+	}
+
+	void UnicodeString::setCharAt(size_t i, const char32_t& character) {
+		if (i >= len) return;
+		memcpy(charPtr + i * charSize, &character, charSize);
+	}
+
+	const char* UnicodeString::c_str() const {
+		return (const char*) charPtr;
+	}
+
+	char getCharCode(char32_t character) {
 		switch(character) {
 			case 'g': return 0xE7;
 			case 'j': return 0xEA;
@@ -83,18 +158,11 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
-	size_t strlen16(const char16_t* string) {
-		size_t size = 0;
-		while(string[size] != 0x0000) size++;
-		return size;
-	}
-
-	void strToLCDEncoding(const char16_t* string, String& target) {
-		size_t length = strlen16(string);
+	void strToLCDEncoding(const Utils::UnicodeString& string, String& target) {
 		target = "";
-		target.reserve(length);
-		for (unsigned int i = 0; i < length; i++) {
-			char16_t c = string[i];
+		target.reserve(string.length());
+		for (unsigned int i = 0; i < string.length(); i++) {
+			char32_t c = string.charAt(i);
 			target += getCharCode(c);
 		}
 	}
