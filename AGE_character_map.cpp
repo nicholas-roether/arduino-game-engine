@@ -12,7 +12,7 @@ namespace AGE::Utils {
 		if (character >= L'ア' && character <= L'ト' && character % 2 == 0)
 			return 0xB1 + (character - L'ア') / 2;
 		if (character >= L'ナ' && character <= L'ノ')
-			return 0xC5 + character - 'ナ'; 
+			return 0xC5 + character - L'ナ'; 
 		if (character  >= L'ハ' && character <= L'ホ' && character % 3 == 0)
 			return 0xCA + (character - L'ハ') / 3;
 		if (character >= L'マ' && character <= L'モ')
@@ -74,7 +74,6 @@ namespace AGE::Utils {
 			case L'ü': return 0xF5;
 			case L'Σ': return 0xF6;
 			case L'π': return 0xF7;
-			case L'x̄': return 0xF8;
 			case L'千': return 0xFA;
 			case L'万': return 0xFB;
 			case L'円': return 0xFE;
