@@ -7,7 +7,7 @@ namespace AGE {
 	Component::Component() {};
 
 	void Component::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
-		lcd.write((char) BLOCK);
+		lcd.write(0xFF);
 	}
 
 	bool Component::shouldRedraw() {
