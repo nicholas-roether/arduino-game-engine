@@ -20,32 +20,27 @@ namespace AGE::Utils {
 	}
 
 	UnicodeString::UnicodeString()
-		: charSize(sizeof(char)), capacity(0), len(0), charPtr(nullptr) {}
+		: capacity(0), len(0), charPtr(nullptr) {}
 
 	UnicodeString::UnicodeString(const char* str)
-		: charSize(sizeof(char)), len(strlen(str)), capacity(len)
+		: len(strlen(str)), capacity(len + 1)
 	{
-		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
+		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
 	}
 
 	UnicodeString::UnicodeString(const char16_t* str)
-		: charSize(sizeof(char16_t)), len(strlen16(str)), capacity(len)
+		: len(strlen16(str)), capacity(len + 1)
 	{
-		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
+		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+		memcpy(charPtr, str, (len + 1) * sizeof(char16_t));
 	}
-
-	UnicodeString::UnicodeString(const char32_t* str)
-		: charSize(sizeof(char32_t)), len(strlen32(str)), capacity(len)
-	{
-		charPtr = (char*) allocAndCopy(str, capacity * charSize, len * charSize);
-	}
-
-	UnicodeString::UnicodeString(const String& str) : UnicodeString(str.c_str()) {}
 
 	UnicodeString::UnicodeString(const UnicodeString& str)
-		: charSize(str.charSize), len(str.len), capacity(str.capacity)
+		: len(str.len), capacity(str.capacity)
 	{
-		charPtr = (char*) allocAndCopy(str.charPtr, capacity * charSize, len * charSize);
+		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+		memcpy(charPtr, str.charPtr, (len + 1) * sizeof(char16_t));
 	}
 
 	UnicodeString::~UnicodeString() {
@@ -56,29 +51,25 @@ namespace AGE::Utils {
 		return len;
 	}
 
-	size_t UnicodeString::getCharSize() const {
-		return charSize;
-	}
-
-	char32_t UnicodeString::charAt(size_t i) const {
+	char16_t UnicodeString::charAt(size_t i) const {
 		if (i >= len) return 0x00000000;
-		return '#';
-		// char32_t character = 0;
-		// for (int j = 0; j < charSize; j++) character += charPtr[i * charSize + j] << (charSize - j);
-		// return character;
-		return charPtr[i * charSize];
+		return charPtr[i];
 	}
 
-	void UnicodeString::setCharAt(size_t i, const char32_t& character) {
+	void UnicodeString::setCharAt(size_t i, const char16_t& character) {
 		if (i >= len) return;
-		memcpy(charPtr + i * charSize, &character, charSize);
+		charPtr[i] = character;
 	}
 
 	const char* UnicodeString::c_str() const {
+		return (const char*) charPtr;
+	}
+
+	const char16_t* UnicodeString::charArray() const {
 		return charPtr;
 	}
 
-	char getCharCode(char32_t character) {
+	char getCharCode(char16_t character) {
 		Serial.print((char) character);
 		switch(character) {
 			case 'g': return 0xE7;
@@ -87,76 +78,76 @@ namespace AGE::Utils {
 			case 'q': return 0xF1;
 		}
 		if (character >= ' ' && character <= '}') return character;
-		if (character >= L'ア' && character <= L'ト' && character % 2 == 0)
-			return 0xB1 + (character - L'ア') / 2;
-		if (character >= L'ナ' && character <= L'ノ')
-			return 0xC5 + character - L'ナ'; 
-		if (character  >= L'ハ' && character <= L'ホ' && character % 3 == 0)
-			return 0xCA + (character - L'ハ') / 3;
-		if (character >= L'マ' && character <= L'モ')
-			return 0xCF + character - L'マ';
-		if (character >= L'ヤ' && character <= L'ヨ' && character % 2 == 0)
-			return 0xD4 + (character - L'ヤ') / 2;
-		if (character >= L'ラ' && character <= L'ロ')
-			return 0xD7 + character - L'ラ';
+		if (character >= u'ア' && character <= u'ト' && character % 2 == 0)
+			return 0xB1 + (character - u'ア') / 2;
+		if (character >= u'ナ' && character <= u'ノ')
+			return 0xC5 + character - u'ナ'; 
+		if (character  >= u'ハ' && character <= u'ホ' && character % 3 == 0)
+			return 0xCA + (character - u'ハ') / 3;
+		if (character >= u'マ' && character <= u'モ')
+			return 0xCF + character - u'マ';
+		if (character >= u'ヤ' && character <= u'ヨ' && character % 2 == 0)
+			return 0xD4 + (character - u'ヤ') / 2;
+		if (character >= u'ラ' && character <= u'ロ')
+			return 0xD7 + character - u'ラ';
 		switch(character) {
-			case L'→': return 0x7E;
-			case L'←': return 0x7F;
-			case L'　': return 0xA0;
-			case L'。': return 0xA1;
-			case L'「': return 0xA2;
-			case L'」': return 0xA3;
-			case L'、': return 0xA4;
-			case L'・': return 0xA5;
-			case L'∙': return 0xA5;
-			case L'⋅': return 0xA5;
-			case L'ヲ': return 0xA6;
-			case L'ァ': return 0xA7;
-			case L'ィ': return 0xA8;
-			case L'ゥ': return 0xA9;
-			case L'ェ': return 0xAA;
-			case L'ォ': return 0xAB;
-			case L'ャ': return 0xAC;
-			case L'ュ': return 0xAD;
-			case L'ョ': return 0xAE;
-			case L'ッ': return 0xAF;
-			case L'ー': return 0xB0;
-			case L'ワ': return 0xDC;
-			case L'ン': return 0xDD;
-			case L'゛': return 0xDE;
-			case L'゜': return 0xDF;
-			case L'°': return 0xDF;
-			case L'α': return 0xE0;
-			case L'Ä': return 0xE1;
-			case L'ä': return 0xE1;
-			case L'β': return 0xE2;
-			case L'ß': return 0xE2;
-			case L'ε': return 0xE3;
-			case L'μ': return 0xE4;
-			case L'σ': return 0xE5;
-			case L'ρ': return 0xE6;
-			case L'√': return 0xE8;
-			case L'⁻': return 0xE9;
-			case L'ˣ': return 0xEB;
-			case L'¢': return 0xEC;
-			case L'₵': return 0xEC;
-			case L'£': return 0xED;
-			case L'Ñ': return 0xEE;
-			case L'ñ': return 0xEE;
-			case L'Ö': return 0xEF;
-			case L'ö': return 0xEF;
-			case L'θ': return 0xF2;
-			case L'∞': return 0xF3;
-			case L'Ω': return 0xF4;
-			case L'Ü': return 0xF5;
-			case L'ü': return 0xF5;
-			case L'Σ': return 0xF6;
-			case L'π': return 0xF7;
-			case L'千': return 0xFA;
-			case L'万': return 0xFB;
-			case L'円': return 0xFE;
-			case L'÷': return 0xFD;
-			case L'∎': return 0xFF;
+			case u'→': return 0x7E;
+			case u'←': return 0x7F;
+			case u'　': return 0xA0;
+			case u'。': return 0xA1;
+			case u'「': return 0xA2;
+			case u'」': return 0xA3;
+			case u'、': return 0xA4;
+			case u'・': return 0xA5;
+			case u'∙': return 0xA5;
+			case u'⋅': return 0xA5;
+			case u'ヲ': return 0xA6;
+			case u'ァ': return 0xA7;
+			case u'ィ': return 0xA8;
+			case u'ゥ': return 0xA9;
+			case u'ェ': return 0xAA;
+			case u'ォ': return 0xAB;
+			case u'ャ': return 0xAC;
+			case u'ュ': return 0xAD;
+			case u'ョ': return 0xAE;
+			case u'ッ': return 0xAF;
+			case u'ー': return 0xB0;
+			case u'ワ': return 0xDC;
+			case u'ン': return 0xDD;
+			case u'゛': return 0xDE;
+			case u'゜': return 0xDF;
+			case u'°': return 0xDF;
+			case u'α': return 0xE0;
+			case u'Ä': return 0xE1;
+			case u'ä': return 0xE1;
+			case u'β': return 0xE2;
+			case u'ß': return 0xE2;
+			case u'ε': return 0xE3;
+			case u'μ': return 0xE4;
+			case u'σ': return 0xE5;
+			case u'ρ': return 0xE6;
+			case u'√': return 0xE8;
+			case u'⁻': return 0xE9;
+			case u'ˣ': return 0xEB;
+			case u'¢': return 0xEC;
+			case u'₵': return 0xEC;
+			case u'£': return 0xED;
+			case u'Ñ': return 0xEE;
+			case u'ñ': return 0xEE;
+			case u'Ö': return 0xEF;
+			case u'ö': return 0xEF;
+			case u'θ': return 0xF2;
+			case u'∞': return 0xF3;
+			case u'Ω': return 0xF4;
+			case u'Ü': return 0xF5;
+			case u'ü': return 0xF5;
+			case u'Σ': return 0xF6;
+			case u'π': return 0xF7;
+			case u'千': return 0xFA;
+			case u'万': return 0xFB;
+			case u'円': return 0xFE;
+			case u'÷': return 0xFD;
+			case u'∎': return 0xFF;
 		}
 		return 0xFF;
 	}
@@ -165,7 +156,7 @@ namespace AGE::Utils {
 		target = "";
 		target.reserve(string.length());
 		for (unsigned int i = 0; i < string.length(); i++) {
-			char32_t c = string.charAt(i);
+			char16_t c = string.charAt(i);
 			target += getCharCode(c);
 		}
 	}
