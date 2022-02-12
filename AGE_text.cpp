@@ -66,8 +66,12 @@ namespace AGE::Utils {
 			case 'q': return 0xF1;
 		}
 		if (character >= ' ' && character <= '}') return character;
-		if (character >= u'ア' && character <= u'ト' && character % 2 == 0)
+		if (character >= u'ア' && character <= u'オ' && character % 2 == 0)
 			return 0xB1 + (character - u'ア') / 2;
+		if (character >= u'カ' && character <= u'チ' && character % 2 == 1)
+			return 0xB6 + (character - u'カ') / 2;
+		if (character >= u'ツ' && character <= u'ト' && character % 2 == 0)
+			return 0xC2 + (character - u'ツ') / 2;
 		if (character >= u'ナ' && character <= u'ノ')
 			return 0xC5 + character - u'ナ'; 
 		if (character  >= u'ハ' && character <= u'ホ' && character % 3 == 0)
@@ -140,49 +144,46 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
-	LCDString::LCDString()
-		: capacity(0), len(0), charPtr(nullptr) {}
+	LCDString::LCDString() {}
 
-	LCDString::LCDString(const char* str)
-		: len(strlen(str)), capacity(len), charPtr((char*) calloc(capacity + 1, sizeof(char)))
-	{
-		for (unsigned int i = 0; i < len; i++) charPtr[i] = getCharCode(str[i]);
+	LCDString::LCDString(const char* str) {
+		size_t len = strlen(str);
+		string.reserve(len);
+		for (unsigned int i = 0; i < len; i++) string += getCharCode(str[i]);
+	}
+	
+	LCDString::LCDString(const char16_t* str) {
+		size_t len = strlen16(str);
+		string.reserve(len);
+		for (unsigned int i = 0; i < len; i++) string += getCharCode(str[i]);
 	}
 
-	LCDString::LCDString(const char16_t* str)
-		: len(strlen16(str)), capacity(len), charPtr((char*) calloc(capacity + 1, sizeof(char)))
-	{
-		for (unsigned int i = 0; i < len; i++) charPtr[i] = getCharCode(str[i]);
-	}
-
-	LCDString::LCDString(const LCDString& str)
-		: len(str.len), capacity(str.capacity), charPtr((char*) calloc(capacity + 1, sizeof(char)))
-	{
-		memcpy(charPtr, str.charPtr, capacity);
-	}
-
-	LCDString::~LCDString() {
-		free(charPtr);
+	LCDString::LCDString(const LCDString& str) {
+		string = str.string;
 	}
 
 	size_t LCDString::length() const {
-		return len;
+		return string.length();
 	}
 
 	char LCDString::charAt(size_t i) const {
-		if (i >= len) return 0x00;
+		return string.charAt(i);
+	}
+
+	char LCDString::operator[](size_t i) const {
+		return charAt(i);
 	}
 
 	const char* LCDString::c_str() const {
-		return (const char*) charPtr;
+		return string.c_str();
 	}
 
 	const char* LCDString::begin() const {
-		return charPtr;
+		return string.begin();
 	}
 
 	const char* LCDString::end() const {
-		return charPtr + len;
+		return string.end();
 	}
 
 	// void strToLCDEncoding(const Utils::UnicodeString& string, String& target) {
