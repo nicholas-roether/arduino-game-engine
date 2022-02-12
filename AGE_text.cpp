@@ -59,12 +59,6 @@ namespace AGE::Utils {
 
 	char getCharCode(char16_t character) {
 		Serial.print((char) character);
-		switch(character) {
-			case 'g': return 0xE7;
-			case 'j': return 0xEA;
-			case 'p': return 0xF0;
-			case 'q': return 0xF1;
-		}
 		if (character >= ' ' && character <= '}') return character;
 		if (character >= u'ア' && character <= u'オ' && character % 2 == 0)
 			return 0xB1 + (character - u'ア') / 2;
