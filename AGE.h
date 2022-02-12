@@ -24,11 +24,11 @@ namespace AGE {
 	};
 
 	class Text : public Component {
-		String string;
+		Utils::LCDString string;
 
 	public:
 
-		Text(const Utils::UnicodeString& string, uint8_t x, uint8_t y);
+		Text(const Utils::LCDString& string, uint8_t x, uint8_t y);
 
 		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
 	};

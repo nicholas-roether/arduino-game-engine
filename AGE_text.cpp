@@ -7,71 +7,55 @@ namespace AGE::Utils {
 		return size;
 	}
 
-	size_t strlen32(const char32_t* string) {
-		size_t size = 0;
-		while(string[size] != 0x00000000) size++;
-		return size;
-	}
+	// UnicodeString::UnicodeString()
+	// 	: capacity(0), len(0), charPtr(nullptr) {}
 
-	void* allocAndCopy(const void* source, size_t capacity, size_t length) {
-		void* ptr = malloc(capacity);
-		memcpy(ptr, source, length);
-		return ptr;
-	}
+	// UnicodeString::UnicodeString(const char* str)
+	// 	: len(strlen(str)), capacity(len + 1)
+	// {
+	// 	charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+	// 	for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
+	// }
 
-	UnicodeString::UnicodeString()
-		: capacity(0), len(0), charPtr(nullptr) {}
+	// UnicodeString::UnicodeString(const char16_t* str)
+	// 	: len(strlen16(str)), capacity(len + 1)
+	// {
+	// 	charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+	// 	for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
+	// }
 
-	UnicodeString::UnicodeString(const char* str)
-		: len(strlen(str)), capacity(len + 1)
-	{
-		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
-	}
+	// UnicodeString::UnicodeString(const UnicodeString& str)
+	// 	: len(str.len), capacity(str.capacity)
+	// {
+	// 	charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
+	// 	for (unsigned int i = 0; i <= len; i++) charPtr[i] = str.charAt(i);
+	// }
 
-	UnicodeString::UnicodeString(const char16_t* str)
-		: len(strlen16(str)), capacity(len + 1)
-	{
-		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		for (unsigned int i = 0; i <= len; i++) {
-			char16_t sourceChar = str[i];
-			char16_t targetChar = sourceChar << 8 | sourceChar % 256;
-			charPtr[i] = targetChar;
-		}
-	}
-
-	UnicodeString::UnicodeString(const UnicodeString& str)
-		: len(str.len), capacity(str.capacity)
-	{
-		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str.charAt(i);
-	}
-
-	UnicodeString::~UnicodeString() {
-		free(charPtr);
-	}
+	// UnicodeString::~UnicodeString() {
+	// 	free(charPtr);
+	// }
 	
-	size_t UnicodeString::length() const {
-		return len;
-	}
+	// size_t UnicodeString::length() const {
+	// 	return len;
+	// }
 
-	char16_t UnicodeString::charAt(size_t i) const {
-		if (i >= len) return 0x00000000;
-		return charPtr[i];
-	}
+	// char16_t UnicodeString::charAt(size_t i) const {
+	// 	if (i >= len) return 0x00000000;
+	// 	return charPtr[i];
+	// }
 
-	void UnicodeString::setCharAt(size_t i, const char16_t& character) {
-		if (i >= len) return;
-		charPtr[i] = character;
-	}
+	// void UnicodeString::setCharAt(size_t i, const char16_t& character) {
+	// 	if (i >= len) return;
+	// 	charPtr[i] = character;
+	// }
 
-	const char* UnicodeString::c_str() const {
-		return (const char*) charPtr;
-	}
+	// const char* UnicodeString::c_str() const {
+	// 	return (const char*) charPtr;
+	// }
 
-	const char16_t* UnicodeString::charArray() const {
-		return charPtr;
-	}
+	// const char16_t* UnicodeString::charArray() const {
+	// 	return charPtr;
+	// }
 
 	char getCharCode(char16_t character) {
 		Serial.print((char) character);
@@ -156,12 +140,51 @@ namespace AGE::Utils {
 		return 0xFF;
 	}
 
-	void strToLCDEncoding(const Utils::UnicodeString& string, String& target) {
-		target = "";
-		target.reserve(string.length());
-		for (unsigned int i = 0; i < string.length(); i++) {
-			char16_t c = string.charAt(i);
-			target += getCharCode(c);
-		}
+	LCDString::LCDString()
+		: capacity(0), len(0), charPtr(nullptr) {}
+
+	LCDString::LCDString(const char* str)
+		: len(strlen(str)), capacity(len), charPtr((char*) calloc(capacity + 1, sizeof(char)))
+	{
+		for (unsigned int i = 0; i < len; i++) charPtr[i] = getCharCode(str[i]);
 	}
+
+	LCDString::LCDString(const char16_t* str)
+		: len(strlen16(str)), capacity(len), charPtr((char*) calloc(capacity + 1, sizeof(char)))
+	{
+		for (unsigned int i = 0; i < len; i++) charPtr[i] = getCharCode(str[i]);
+	}
+
+	LCDString::~LCDString() {
+		free(charPtr);
+	}
+
+	size_t LCDString::length() const {
+		return len;
+	}
+
+	char LCDString::charAt(size_t i) const {
+		if (i >= len) return 0x00;
+	}
+
+	const char* LCDString::c_str() const {
+		return (const char*) charPtr;
+	}
+
+	const char* LCDString::begin() const {
+		return charPtr;
+	}
+
+	const char* LCDString::end() const {
+		return charPtr + len;
+	}
+
+	// void strToLCDEncoding(const Utils::UnicodeString& string, String& target) {
+	// 	target = "";
+	// 	target.reserve(string.length());
+	// 	for (unsigned int i = 0; i < string.length(); i++) {
+	// 		char16_t c = string.charAt(i);
+	// 		target += getCharCode(c);
+	// 	}
+	// }
 }

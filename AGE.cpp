@@ -22,10 +22,11 @@ namespace AGE {
 		return y;
 	}
 
-	Text::Text(const Utils::UnicodeString& string, uint8_t x, uint8_t y)  {
+	Text::Text(const Utils::LCDString& string, uint8_t x, uint8_t y) 
+		: string(string)
+	{
 		this->x = x;
 		this->y = y;
-		Utils::strToLCDEncoding(string, this->string);
 	}
 
 	void Text::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
