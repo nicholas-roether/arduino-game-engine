@@ -33,7 +33,11 @@ namespace AGE::Utils {
 		: len(strlen16(str)), capacity(len + 1)
 	{
 		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
+		for (unsigned int i = 0; i <= len; i++) {
+			char16_t sourceChar = str[i];
+			char16_t targetChar = sourceChar << 8 | sourceChar % 256;
+			charPtr[i] = targetChar;
+		}
 	}
 
 	UnicodeString::UnicodeString(const UnicodeString& str)
