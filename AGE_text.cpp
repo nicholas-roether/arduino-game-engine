@@ -33,14 +33,14 @@ namespace AGE::Utils {
 		: len(strlen16(str)), capacity(len + 1)
 	{
 		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		memcpy(charPtr, str, (len + 1) * sizeof(char16_t));
+		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str[i];
 	}
 
 	UnicodeString::UnicodeString(const UnicodeString& str)
 		: len(str.len), capacity(str.capacity)
 	{
 		charPtr = (char16_t*) calloc(capacity, sizeof(char16_t));
-		memcpy(charPtr, str.charPtr, (len + 1) * sizeof(char16_t));
+		for (unsigned int i = 0; i <= len; i++) charPtr[i] = str.charAt(i);
 	}
 
 	UnicodeString::~UnicodeString() {
