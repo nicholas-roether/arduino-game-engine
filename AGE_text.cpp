@@ -92,37 +92,13 @@ namespace AGE::Utils {
 
 	LCDString::LCDString(const char* str) {
 		size_t len = strlen(str);
-		string.reserve(len);
-		for (unsigned int i = 0; i < len; i++) string += getCharCode(str[i]);
+		reserve(len);
+		for (unsigned int i = 0; i < len; i++) operator+=(getCharCode(str[i]));
 	}
 	
 	LCDString::LCDString(const char16_t* str) {
 		size_t len = strlen16(str);
-		string.reserve(len);
-		for (unsigned int i = 0; i < len; i++) string += getCharCode(str[i]);
-	}
-
-	size_t LCDString::length() const {
-		return string.length();
-	}
-
-	char LCDString::charAt(size_t i) const {
-		return string.charAt(i);
-	}
-
-	char LCDString::operator[](size_t i) const {
-		return charAt(i);
-	}
-
-	const char* LCDString::c_str() const {
-		return string.c_str();
-	}
-
-	const char* LCDString::begin() const {
-		return string.begin();
-	}
-
-	const char* LCDString::end() const {
-		return string.end();
+		reserve(len);
+		for (unsigned int i = 0; i < len; i++) operator+=(getCharCode(str[i]));
 	}
 }
