@@ -158,10 +158,6 @@ namespace AGE::Utils {
 		for (unsigned int i = 0; i < len; i++) string += getCharCode(str[i]);
 	}
 
-	LCDString::LCDString(const LCDString& str) {
-		string = str.string;
-	}
-
 	size_t LCDString::length() const {
 		return string.length();
 	}
