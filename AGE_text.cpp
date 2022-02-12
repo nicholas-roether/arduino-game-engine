@@ -155,6 +155,12 @@ namespace AGE::Utils {
 		for (unsigned int i = 0; i < len; i++) charPtr[i] = getCharCode(str[i]);
 	}
 
+	LCDString::LCDString(const LCDString& str)
+		: len(str.len), capacity(str.capacity), charPtr((char*) calloc(capacity + 1, sizeof(char)))
+	{
+		memcpy(charPtr, str.charPtr, capacity);
+	}
+
 	LCDString::~LCDString() {
 		free(charPtr);
 	}
