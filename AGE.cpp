@@ -4,22 +4,42 @@
 #include "AGE_text.h"
 
 namespace AGE {
-	Component::Component() {};
+	Element::Element() {};
 
-	void Component::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
+	void Element::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
 		lcd.write(0xFF);
 	}
 
-	bool Component::shouldRedraw() {
+	bool Element::shouldRedraw() {
 		return false;
 	}
 
-	uint8_t Component::getX() {
+	uint8_t Element::getX() {
 		return x;
 	}
 
-	uint8_t Component::getY() {
+	uint8_t Element::getY() {
 		return y;
+	}
+
+	void StatefulElement::stateChange() {
+		stateDidChange = true;
+	}
+
+	bool StatefulElement::shouldRedraw() {
+		bool shouldRedraw = stateDidChange;
+		stateDidChange = false;
+		return shouldRedraw;
+	}
+
+	void StatefulElement::setX(uint8_t x) {
+		this->x = x;
+		stateChange();
+	}
+
+	void StatefulElement::setY(uint8_t y) {
+		this->y = y;
+		stateChange();
 	}
 
 	Text::Text(const Utils::LCDString& string, uint8_t x, uint8_t y) 
@@ -32,6 +52,26 @@ namespace AGE {
 	void Text::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
 		lcd.setCursor(x + xOffs, y + yOffs);
 		lcd.write(string.c_str());
+	}
+
+	void Text::set(const Utils::LCDString& string) {
+		this->string = string;
+		stateChange();
+	}
+
+	Texture::Texture(uint8_t id, uint8_t x, uint8_t y) : id(id) {
+		this->x = x;
+		this->y = y;
+	}
+
+	void Texture::draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs) {
+		lcd.setCursor(x + xOffs, y + yOffs);
+		lcd.write(id);
+	}
+
+	void Texture::set(uint8_t id) {
+		this->id = id;
+		stateChange();
 	}
 
 	// constexpr size_t CHARACTER_SIZE = sizeof(CharacterType) + sizeof(char);
@@ -122,11 +162,11 @@ namespace AGE {
 	// 	this->letter = letter;
 	// }
 
-	// TextureComponent::TextureComponent(char texture, size_t x, size_t y)
-	// 	: Component(x, y), texture(texture) {}
+	// TextureComponent::TextureComponent(char id, size_t x, size_t y)
+	// 	: Component(x, y), id(id) {}
 
 	// void TextureComponent::draw(CharacterBuffer& charBuffer, size_t xOffs, size_t yOffs) const {
-	// 	charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, texture));
+	// 	charBuffer.set(x + xOffs, y + yOffs, Character(TEXTURE, id));
 	// }
 
 	// GroupComponent::GroupComponent(size_t initialCapacity = 5, size_t x, size_t y)

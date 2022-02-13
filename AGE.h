@@ -6,12 +6,12 @@
 #include "AGE_text.h"
 
 namespace AGE {
-	class Component {
+	class Element {
 	protected:
 		uint8_t x;
 		uint8_t y;
 
-		Component();
+		Element();
 
 	public:
 		virtual void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
@@ -23,15 +23,53 @@ namespace AGE {
 		uint8_t getY();
 	};
 
-	class Text : public Component {
+	class StatefulElement : public Element {
+		bool stateDidChange = false;
+
+	protected:
+		void stateChange();
+
+		bool shouldRedraw();
+
+	public:
+		void setX(uint8_t x);
+
+		void setY(uint8_t y);
+	};
+
+	class Text : public StatefulElement {
 		Utils::LCDString string;
 
 	public:
-
 		Text(const Utils::LCDString& string, uint8_t x, uint8_t y);
 
 		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
+
+		void set(const Utils::LCDString& string);
 	};
+
+	class Texture : public StatefulElement {
+		uint8_t id;
+
+	public:
+		Texture(uint8_t id, uint8_t x, uint8_t y);
+
+		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
+
+		void set(uint8_t id);
+	};
+
+	class Component : public StatefulElement {
+		size_t capacity;
+		size_t numChildren;
+		Element** childrenPtrBuffer;
+
+		void increaseBufferSize();
+
+	protected:
+		void registerChild(const Element& child);
+	};
+
 
 	// enum CharacterType {
 	// 	EMPTY,
@@ -108,14 +146,14 @@ namespace AGE {
 	// };
 
 	// class TextureComponent : public Component {
-	// 	char texture;
+	// 	char id;
 
 	// public:
-	// 	TextureComponent(char texture, size_t x = 0, size_t y = 0);
+	// 	TextureComponent(char id, size_t x = 0, size_t y = 0);
 
 	// 	void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
 
-	// 	void setTexture(char texture);
+	// 	void setTexture(char id);
 	// };
 
 	// class GroupComponent : public Component {
