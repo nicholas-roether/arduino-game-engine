@@ -6,6 +6,79 @@
 #include "AGE_text.h"
 
 namespace AGE {
+	template<typename T>
+	class Array {
+		size_t capacity;
+		size_t size;
+		T* elements;
+
+		void increaseCapacity() {
+			size_t cap = 2 * capacity;
+			if (cap == 0) cap = 5;
+			T* newElements = calloc(cap, sizeof(T));
+			memcpy(newElements, elements, cap * sizeof(T));
+			capacity = cap;
+			if (size >= capacity) size = capacity;
+			free(elements);
+			elements = newElements;
+		}
+
+	public:
+		Array()	: capacity(0), size(0), elements(nullptr) {}
+		Array(size_t capacity)
+			: capacity(capacity), size(0), elements(calloc(capacity, sizeof(T))) {}
+
+		~Array() {
+			free(elements);
+		}
+
+		void push(const T& elem) {
+			if (size >= capacity) increaseCapacity();
+			elements[size] = elem;
+			size++;
+		}
+
+		T pop() {
+			T elem = elements[size - 1];
+			delete elements[size - 1];
+			size--;
+			return elem;
+		}
+
+		T& at(size_t i) {
+			// TODO das ist dumm.
+			if (i >= size) return (T) 0;
+			return elements[i];
+		}
+
+		size_t size() {
+			return size;
+		}
+
+		T* begin() {
+			return elements;
+		}
+
+		T* end() {
+			return elements + size;
+		}
+
+		T& operator[](size_t i) {
+			return at(i);
+		}
+	};
+
+	class EventManager {
+		Array<Array<void*>> callbacks;
+		
+	public:
+		void on(uint16_t eventId, const void* callback);
+
+		void dispatch(uint16_t eventId);
+
+		uint16_t newEvent();
+	};
+
 	class Component {
 	public:
 		virtual void draw(const LiquidCrystal& lcd);
@@ -15,7 +88,7 @@ namespace AGE {
 		virtual void didRedraw();
 	};
 
-	class Group : public Component{
+	class Group : public Component {
 		size_t capacity;
 		size_t numChildren;
 		Component* buffer;
