@@ -15,7 +15,7 @@ namespace AGE {
 		void increaseCapacity() {
 			size_t cap = 2 * capacity;
 			if (cap == 0) cap = 5;
-			T* newElements = calloc(cap, sizeof(T));
+			T* newElements = (T*) calloc(cap, sizeof(T));
 			memcpy(newElements, elements, cap * sizeof(T));
 			capacity = cap;
 			if (numElems >= capacity) numElems = capacity;
@@ -47,7 +47,7 @@ namespace AGE {
 
 		T& at(size_t i) const {
 			// TODO das ist dumm.
-			if (i >= numElems) return (T) 0;
+			if (i >= numElems) throw 0;
 			return elements[i];
 		}
 
