@@ -69,12 +69,12 @@ namespace AGE {
 	};
 
 	class EventManager {
-		Array<Array<void*>> callbackListBuffer;
+		Array<Array<const void(*) ()>> callbackListBuffer;
 
 		void pushCallbackList();
 
 	public:
-		void on(uint16_t eventId, const void* callback);
+		void on(uint16_t eventId, const void(*callback)());
 
 		void dispatch(uint16_t eventId);
 
