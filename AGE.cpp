@@ -24,4 +24,12 @@ namespace AGE {
 		pushCallbackList();
 		return callbackListBuffer.size() - 1;
 	}
+
+	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
+		: text(text), x(x), y(y) {}
+	
+	void Text::draw(LiquidCrystal& lcd) {
+		lcd.setCursor(x, y);
+		lcd.write(text.c_str());
+	}
 }

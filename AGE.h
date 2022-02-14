@@ -83,7 +83,7 @@ namespace AGE {
 
 	class Component {
 	public:
-		virtual void draw(const LiquidCrystal& lcd);
+		virtual void draw(LiquidCrystal& lcd);
 
 		virtual bool shouldRedraw();
 
@@ -100,10 +100,21 @@ namespace AGE {
 	public:
 		void add(const Component& child);
 
-		void draw(const LiquidCrystal& lcd);
+		void draw(LiquidCrystal& lcd);
 
 		bool shouldRedraw();
 
 		void didRedraw();
+	};
+
+	class Text : public Component {
+		const Utils::LCDString text;
+		const uint8_t x;
+		const uint8_t y;
+	
+	public:
+		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
+
+		void draw(LiquidCrystal& lcd);
 	};
 }
