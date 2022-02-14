@@ -24,9 +24,9 @@ namespace AGE {
 		}
 
 	public:
-		Array()	: capacity(0), size(0), elements(nullptr) {}
+		Array()	: capacity(0), numElems(0), elements(nullptr) {}
 		Array(size_t capacity)
-			: capacity(capacity), size(0), elements(calloc(capacity, sizeof(T))) {}
+			: capacity(capacity), numElems(0), elements(calloc(capacity, sizeof(T))) {}
 
 		~Array() {
 			free(elements);
