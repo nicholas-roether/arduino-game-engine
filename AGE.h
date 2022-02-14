@@ -45,25 +45,25 @@ namespace AGE {
 			return elem;
 		}
 
-		T& at(size_t i) {
+		T& at(size_t i) const {
 			// TODO das ist dumm.
 			if (i >= size) return (T) 0;
 			return elements[i];
 		}
 
-		size_t size() {
+		size_t size() const {
 			return size;
 		}
 
-		T* begin() {
+		T* begin() const {
 			return elements;
 		}
 
-		T* end() {
+		T* end() const {
 			return elements + size;
 		}
 
-		T& operator[](size_t i) {
+		T& operator[](size_t i) const {
 			return at(i);
 		}
 	};
