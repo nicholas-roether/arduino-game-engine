@@ -6,177 +6,29 @@
 #include "AGE_text.h"
 
 namespace AGE {
-	class Element {
-	protected:
-		uint8_t x;
-		uint8_t y;
-
-		Element();
-
+	class Component {
 	public:
-		virtual void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
+		virtual void draw(const LiquidCrystal& lcd);
 
 		virtual bool shouldRedraw();
 
-		uint8_t getX();
-
-		uint8_t getY();
+		virtual void didRedraw();
 	};
 
-	class StatefulElement : public Element {
-		bool stateDidChange = false;
+	class Group : public Component{
+		size_t capacity;
+		size_t numChildren;
+		Component* buffer;
 
-	protected:
-		void stateChange();
+		void increaseCapacity();
+
+	public:
+		void add(const Component& child);
+
+		void draw(const LiquidCrystal& lcd);
 
 		bool shouldRedraw();
 
-	public:
-		void setX(uint8_t x);
-
-		void setY(uint8_t y);
+		void didRedraw();
 	};
-
-	class Text : public StatefulElement {
-		Utils::LCDString string;
-
-	public:
-		Text(const Utils::LCDString& string, uint8_t x, uint8_t y);
-
-		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
-
-		void set(const Utils::LCDString& string);
-	};
-
-	class Texture : public StatefulElement {
-		uint8_t id;
-
-	public:
-		Texture(uint8_t id, uint8_t x, uint8_t y);
-
-		void draw(LiquidCrystal& lcd, uint8_t xOffs, uint8_t yOffs);
-
-		void set(uint8_t id);
-	};
-
-	class Component : public StatefulElement {
-		size_t capacity;
-		size_t numChildren;
-		Element** childrenPtrBuffer;
-
-		void increaseBufferSize();
-
-	protected:
-		void registerChild(const Element& child);
-	};
-
-
-	// enum CharacterType {
-	// 	EMPTY,
-	// 	LETTER,
-	// 	TEXTURE
-	// };
-
-	// struct Character {
-	// 	CharacterType type = EMPTY;
-	// 	char value = 0;
-
-	// 	Character() = default;
-	// 	Character(CharacterType type, char value);
-
-	// 	bool operator==(Character other);
-	// 	bool operator!=(Character other);
-	// };
-
-	// class CharacterBuffer {
-	// 	Character* buffer;
-
-	// 	size_t getBufferIndex(size_t x, size_t y, bool& valid) const;
-
-	// public:
-	// 	const size_t width;
-	// 	const size_t height;
-
-	// 	CharacterBuffer(size_t width, size_t height);
-
-	// 	virtual ~CharacterBuffer();
-
-	// 	Character get(size_t x, size_t y) const;
-
-	// 	void set(size_t x, size_t y, Character character);
-	// };
-
-	// class CharacterRenderer {
-	// 	LiquidCrystal& lcd;
-	// 	const CharacterBuffer& charBuffer;
-	// 	CharacterBuffer lastCharBuffer;
-
-	// public:
-	// 	CharacterRenderer(LiquidCrystal& lcd, const CharacterBuffer& charBuffer);
-
-	// 	void render();
-	// };
-
-	// class Component {
-	// protected:
-	// 	size_t x;
-	// 	size_t y;
-
-	// 	Component(size_t x = 0, size_t y = 0);
-
-	// public:
-	// 	virtual void update(uint16_t dt);
-
-	// 	virtual void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
-
-	// 	size_t getX() const;
-
-	// 	size_t getY() const;
-	// };
-
-	// class LetterComponent : public Component {
-	// 	char letter;
-
-	// public:
-	// 	LetterComponent(char letter, size_t x = 0, size_t y = 0);
-
-	// 	void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
-
-	// 	void setLetter(char letter);
-	// };
-
-	// class TextureComponent : public Component {
-	// 	char id;
-
-	// public:
-	// 	TextureComponent(char id, size_t x = 0, size_t y = 0);
-
-	// 	void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
-
-	// 	void setTexture(char id);
-	// };
-
-	// class GroupComponent : public Component {
-	// private:
-	// 	size_t capacity;
-	// 	size_t numChildren = 0;
-	// 	Component* children;
-
-	// 	void increaseCapacity();
-
-	// protected:
-	// 	void add(const Component& child);
-
-	// public:
-	// 	GroupComponent(size_t initialCapacity = 5, size_t x = 0, size_t y = 0);
-
-	// 	virtual ~GroupComponent();
-
-	// 	virtual void draw(CharacterBuffer& charBuffer, size_t xOffs = 0, size_t yOffs = 0) const;
-	// };
-
-	// class TextComponent : public GroupComponent {
-	// public:
-	// 	TextComponent(const String& str, size_t x = 0, size_t y = 0);
-	// };
 }
