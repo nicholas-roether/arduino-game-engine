@@ -9,7 +9,7 @@ namespace AGE {
 	template<typename T>
 	class Array {
 		size_t capacity;
-		size_t size;
+		size_t numElems;
 		T* elements;
 
 		void increaseCapacity() {
@@ -18,7 +18,7 @@ namespace AGE {
 			T* newElements = calloc(cap, sizeof(T));
 			memcpy(newElements, elements, cap * sizeof(T));
 			capacity = cap;
-			if (size >= capacity) size = capacity;
+			if (numElems >= capacity) numElems = capacity;
 			free(elements);
 			elements = newElements;
 		}
@@ -33,26 +33,26 @@ namespace AGE {
 		}
 
 		void push(const T& elem) {
-			if (size >= capacity) increaseCapacity();
-			elements[size] = elem;
-			size++;
+			if (numElems >= capacity) increaseCapacity();
+			elements[numElems] = elem;
+			numElems++;
 		}
 
 		T pop() {
-			T elem = elements[size - 1];
-			delete elements[size - 1];
-			size--;
+			T elem = elements[numElems - 1];
+			delete elements[numElems - 1];
+			numElems--;
 			return elem;
 		}
 
 		T& at(size_t i) const {
 			// TODO das ist dumm.
-			if (i >= size) return (T) 0;
+			if (i >= numElems) return (T) 0;
 			return elements[i];
 		}
 
 		size_t size() const {
-			return size;
+			return numElems;
 		}
 
 		T* begin() const {
@@ -60,7 +60,7 @@ namespace AGE {
 		}
 
 		T* end() const {
-			return elements + size;
+			return elements + numElems;
 		}
 
 		T& operator[](size_t i) const {
@@ -111,7 +111,7 @@ namespace AGE {
 		const uint8_t y;
 	
 	public:
-		Text(const Utils::LCDString text, uint8_t x, uint8_t y);
+		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
 
 		void draw(LiquidCrystal& lcd);
 	};

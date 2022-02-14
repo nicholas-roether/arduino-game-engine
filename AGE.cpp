@@ -50,7 +50,7 @@ namespace AGE {
 		return false;
 	}
 
-	Text::Text(const Utils::LCDString text, uint8_t x, uint8_t y)
+	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
 		: text(text), x(x), y(y) {}
 	
 	void Text::draw(LiquidCrystal& lcd) {
