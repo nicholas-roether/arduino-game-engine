@@ -8,23 +8,6 @@ namespace AGE {
 		callbackListBuffer.push(Array<const void(*) ()>());
 	}
 
-	void Group::add(const Component& child) {
-		buffer.push(child);
-		didChange = true;
-	}
-
-	void Group::draw(const LiquidCrystal& lcd) {
-		for (Component child : buffer) child.draw(lcd);
-	}
-
-	void Group::didRedraw() {
-		didChange = false;
-	}
-
-	bool Group::shouldRedraw() {
-		return didChange;
-	}
-
 	void EventManager::on(uint16_t eventId, const void(*callback) ()) {
 		if (eventId >= callbackListBuffer.size()) return;
 		Array<const void(*) ()> list = callbackListBuffer[eventId];
@@ -40,5 +23,22 @@ namespace AGE {
 	uint16_t EventManager::newEvent() {
 		pushCallbackList();
 		return callbackListBuffer.size() - 1;
+	}
+
+	void Group::add(const Component& child) {
+		buffer.push(child);
+		didChange = true;
+	}
+
+	void Group::draw(const LiquidCrystal& lcd) {
+		for (Component child : buffer) child.draw(lcd);
+	}
+
+	void Group::didRedraw() {
+		didChange = false;
+	}
+
+	bool Group::shouldRedraw() {
+		return didChange;
 	}
 }
