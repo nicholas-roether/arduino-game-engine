@@ -41,4 +41,12 @@ namespace AGE {
 	bool Group::shouldRedraw() {
 		return didChange;
 	}
+
+	void Component::draw(LiquidCrystal& lcd) {}
+
+	void Component::didRedraw() {}
+
+	bool Component::shouldRedraw() {
+		return false;
+	}
 }
