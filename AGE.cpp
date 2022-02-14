@@ -30,7 +30,7 @@ namespace AGE {
 		didChange = true;
 	}
 
-	void Group::draw(const LiquidCrystal& lcd) {
+	void Group::draw(LiquidCrystal& lcd) {
 		for (Component child : buffer) child.draw(lcd);
 	}
 
@@ -49,7 +49,7 @@ namespace AGE {
 	bool Component::shouldRedraw() {
 		return false;
 	}
-	
+
 	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
 		: text(text), x(x), y(y) {}
 	
