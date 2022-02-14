@@ -91,11 +91,9 @@ namespace AGE {
 	};
 
 	class Group : public Component {
-		size_t capacity;
-		size_t numChildren;
-		Component* buffer;
+		Array<Component> buffer;
 
-		void increaseCapacity();
+		bool didChange = false;
 
 	public:
 		void add(const Component& child);

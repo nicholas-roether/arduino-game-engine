@@ -25,6 +25,23 @@ namespace AGE {
 		return callbackListBuffer.size() - 1;
 	}
 
+	void Group::add(const Component& child) {
+		buffer.push(child);
+		didChange = true;
+	}
+
+	void Group::draw(const LiquidCrystal& lcd) {
+		for (Component child : buffer) child.draw(lcd);
+	}
+
+	void Group::didRedraw() {
+		didChange = false;
+	}
+
+	bool Group::shouldRedraw() {
+		return didChange;
+	}
+
 	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
 		: text(text), x(x), y(y) {}
 	
