@@ -1,0 +1,14 @@
+{
+    "port": "COM10",
+    "board": "arduino:avr:uno",
+    "programmer": "arduino:avrispmkii",
+    "sketch": "demo.ino",
+    "intelliSenseGen": "disable",
+    "buildPreferences": [
+        [
+            "compiler.cpp.flags",
+            "-c -g -Os {compiler.warning_flags} -std=gnu++11 -fpermissive -fexceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto"
+        ]
+    ],
+    "output": "build"
+}

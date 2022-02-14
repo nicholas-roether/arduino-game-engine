@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AGE_TEXT_H
+#define AGE_TEXT_H
 
 #include <Arduino.h>
 
@@ -14,3 +15,5 @@ namespace AGE {
 		};
 	}
 }
+
+#endif
