@@ -111,7 +111,7 @@ namespace AGE {
 		const uint8_t y;
 	
 	public:
-		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
+		Text(const Utils::LCDString text, uint8_t x, uint8_t y);
 
 		void draw(LiquidCrystal& lcd);
 	};
