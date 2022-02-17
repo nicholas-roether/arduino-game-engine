@@ -6,53 +6,65 @@
 
 #include "AGE_text.h"
 
+template<class T>
+void printHexValue(T* ptr) {
+	char* charPtr = (char*) ptr;
+	for (unsigned int i = 0; i < sizeof(T); i++) {
+		char c = *(charPtr + i);
+		Serial.print((uint8_t) c, 16);
+		if (i != sizeof(T) - 1) Serial.print(" ");
+	}
+}
+
 namespace AGE {
-	template<typename T>
+	template<class T>
 	class Array {
 		size_t capacity;
 		size_t numElems;
 		T* elements;
 
+		void resizeTo(size_t newCapacity) {
+			T* newElems = (T*) realloc(elements, newCapacity);
+			if (!newElems) /* throw 0; */ return;
+			elements = newElems;
+			capacity = newCapacity;		
+		}
+
 		void increaseCapacity() {
-			size_t cap = 2 * capacity;
-			if (cap == 0) cap = 5;
-			T* newElements = (T*) calloc(cap, sizeof(T));
-			memcpy(newElements, elements, cap * sizeof(T));
-			capacity = cap;
-			if (numElems >= capacity) numElems = capacity;
-			free(elements);
-			elements = newElements;
+			resizeTo(capacity == 0 ? 1 : 2 * capacity);
 		}
 
 	public:
-		Array()	: capacity(0), numElems(0), elements(nullptr) {}
+		Array() : capacity(0), numElems(0), elements(nullptr) {}
 		Array(size_t capacity)
-			: capacity(capacity), numElems(0), elements(calloc(capacity, sizeof(T))) {}
+			: capacity(capacity), numElems(0), elements(malloc(capacity * sizeof(T))) {}
 
 		~Array() {
 			free(elements);
 		}
 
 		void push(const T& elem) {
-			if (numElems >= capacity) increaseCapacity();
-			elements[numElems] = elem;
-			numElems++;
+			Serial.print("push value hex: ");
+			printHexValue(&elem);
+			Serial.println();
+			if (numElems == capacity) increaseCapacity();
+			*(elements + numElems++) = elem;
+			Serial.print("inserted hex: ");
+			printHexValue(elements + numElems - 1);
+			Serial.println();
 		}
 
 		T pop() {
-			T elem = elements[numElems - 1];
-			delete elements[numElems - 1];
-			numElems--;
-			return elem;
+			return *(elements + --numElems);
 		}
 
 		T& at(size_t i) const {
-			// TODO das ist dumm.
-			if (i >= numElems) throw 0;
+			// TODO proper errors
+			// if (i >= numElems) throw 0;
 			return elements[i];
 		}
 
-		size_t size() const {
+		size_t size() const  {
 			return numElems;
 		}
 
@@ -96,7 +108,10 @@ namespace AGE {
 
 		bool didChange = false;
 
-	public:
+	public:		
+		Group() = default;
+		Group(size_t initialCapacity);
+
 		void add(const Component& child);
 
 		void draw(LiquidCrystal& lcd);
@@ -107,9 +122,9 @@ namespace AGE {
 	};
 
 	class Text : public Component {
-		const Utils::LCDString text;
-		const uint8_t x;
-		const uint8_t y;
+		Utils::LCDString text;
+		uint8_t x;
+		uint8_t y;
 	
 	public:
 		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);

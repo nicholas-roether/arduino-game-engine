@@ -2,6 +2,8 @@
 #include "AGE_text.h"
 
 namespace AGE {
+	// Event manager
+
 	void EventManager::pushCallbackList() {
 		callbackListBuffer.push(Array<const void(*) ()>());
 	}
@@ -23,13 +25,21 @@ namespace AGE {
 		return callbackListBuffer.size() - 1;
 	}
 
+	Group::Group(size_t initialCapacity) : buffer(initialCapacity) {}
+
 	void Group::add(const Component& child) {
 		buffer.push(child);
 		didChange = true;
 	}
 
 	void Group::draw(LiquidCrystal& lcd) {
-		for (Component child : buffer) child.draw(lcd);
+		Serial.println("Group drawn.");
+		// for (Component& child : buffer) {
+		// 	// child.draw(lcd);
+		// }
+		// for (unsigned int i = 0; i < buffer.size(); i++)
+		// 	buffer.at(i); //.draw(lcd);
+		buffer[0]; //.draw(lcd);
 	}
 
 	void Group::didRedraw() {
@@ -40,7 +50,9 @@ namespace AGE {
 		return didChange;
 	}
 
-	void Component::draw(LiquidCrystal& lcd) {}
+	void Component::draw(LiquidCrystal& lcd) {
+		Serial.println("Warning: a component didn't define it's draw method.");
+	}
 
 	void Component::didRedraw() {}
 
@@ -52,6 +64,7 @@ namespace AGE {
 		: text(text), x(x), y(y) {}
 	
 	void Text::draw(LiquidCrystal& lcd) {
+		Serial.println("Text drawn.");
 		lcd.setCursor(x, y);
 		lcd.write(text.c_str());
 	}
