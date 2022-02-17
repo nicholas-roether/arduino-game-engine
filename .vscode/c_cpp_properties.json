@@ -23,7 +23,6 @@
 			"compilerArgs": [
 				"-w",
 				"-std=gnu++11",
-				"-fpermissive",
 				"-fexceptions",
 				"-ffunction-sections",
 				"-fdata-sections",
