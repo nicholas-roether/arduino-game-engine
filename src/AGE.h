@@ -6,29 +6,12 @@
 
 #include "AGE_text.h"
 
-template<class T>
-void printHexValue(T* ptr) {
-	char* charPtr = (char*) ptr;
-	for (unsigned int i = 0; i < sizeof(T); i++) {
-		char c = *(charPtr + i);
-		Serial.print((uint8_t) c, 16);
-		if (i != sizeof(T) - 1) Serial.print(" ");
-	}
-}
-
 namespace AGE {
 	template<class T>
 	class Array {
 		size_t capacity;
 		size_t numElems;
 		T* elements;
-
-		void resizeTo(size_t newCapacity) {
-			T* newElems = (T*) realloc(elements, newCapacity);
-			if (!newElems) /* throw 0; */ return;
-			elements = newElems;
-			capacity = newCapacity;		
-		}
 
 		void increaseCapacity() {
 			resizeTo(capacity == 0 ? 1 : 2 * capacity);
@@ -37,21 +20,15 @@ namespace AGE {
 	public:
 		Array() : capacity(0), numElems(0), elements(nullptr) {}
 		Array(size_t capacity)
-			: capacity(capacity), numElems(0), elements(malloc(capacity * sizeof(T))) {}
+			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T))) {}
 
 		~Array() {
 			free(elements);
 		}
 
 		void push(const T& elem) {
-			Serial.print("push value hex: ");
-			printHexValue(&elem);
-			Serial.println();
 			if (numElems == capacity) increaseCapacity();
 			*(elements + numElems++) = elem;
-			Serial.print("inserted hex: ");
-			printHexValue(elements + numElems - 1);
-			Serial.println();
 		}
 
 		T pop() {
@@ -62,6 +39,13 @@ namespace AGE {
 			// TODO proper errors
 			// if (i >= numElems) throw 0;
 			return elements[i];
+		}
+
+		void resizeTo(size_t newCapacity) {
+			T* newElems = (T*) realloc(elements, newCapacity);
+			if (!newElems) /* throw 0; */ return;
+			elements = newElems;
+			capacity = newCapacity;		
 		}
 
 		size_t size() const  {
@@ -82,12 +66,12 @@ namespace AGE {
 	};
 
 	class EventManager {
-		Array<Array<const void(*) ()>> callbackListBuffer;
+		Array<Array<void(*) ()>> callbackListBuffer;
 
 		void pushCallbackList();
 
 	public:
-		void on(uint16_t eventId, const void(*callback)());
+		void on(uint16_t eventId, void(*callback)());
 
 		void dispatch(uint16_t eventId);
 
@@ -104,7 +88,7 @@ namespace AGE {
 	};
 
 	class Group : public Component {
-		Array<Component> buffer;
+		Array<Component*> children;
 
 		bool didChange = false;
 
@@ -112,7 +96,7 @@ namespace AGE {
 		Group() = default;
 		Group(size_t initialCapacity);
 
-		void add(const Component& child);
+		void add(Component* child);
 
 		void draw(LiquidCrystal& lcd);
 
@@ -128,6 +112,8 @@ namespace AGE {
 	
 	public:
 		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
+
+		Text(const Text& text);
 
 		void draw(LiquidCrystal& lcd);
 	};

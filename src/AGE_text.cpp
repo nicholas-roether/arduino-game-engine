@@ -8,7 +8,6 @@ namespace AGE::Utils {
 	}
 
 	char getCharCode(char16_t character) {
-		Serial.print((char) character);
 		if (character >= ' ' && character <= '}') return character;
 		if (character >= u'ア' && character <= u'オ' && character % 2 == 0)
 			return 0xB1 + (character - u'ア') / 2;
@@ -101,4 +100,7 @@ namespace AGE::Utils {
 		reserve(len);
 		for (unsigned int i = 0; i < len; i++) operator+=(getCharCode(str[i]));
 	}
+
+	LCDString::LCDString(const LCDString& str)
+		: String::String(str) {}
 }
