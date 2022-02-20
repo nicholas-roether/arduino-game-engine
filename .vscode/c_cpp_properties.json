@@ -10,7 +10,7 @@
         {
             "name": "Arduino",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/**",
 				"${env:arduinoAvrPath}/cores/arduino/**",
 				"${env:arduinoAvrPath}/variants/standard",
 				"${env:arduinoAvrToolsPath}/avr/include",
