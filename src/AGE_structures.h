@@ -1,8 +1,6 @@
 #ifndef _AGE_STRUCTURES_H_
 #define _AGE_STRUCTURES_H_
 
-#include "AGE_debug.h"
-
 namespace AGE::Utils {
 	template<typename T>
 	class Array {
@@ -87,6 +85,57 @@ namespace AGE::Utils {
 
 		const T& operator[](unsigned int i) const {
 			return at(i);
+		}
+	};
+
+	class Buffer {
+		size_t capacity;
+		size_t size;
+		void* start;
+
+		void changeCapacity(size_t newCapacity) {
+			void* newStart = realloc(start, size);
+			free(start);
+			start = newStart;
+			capacity = newCapacity;
+			size = min(size, capacity);
+		}
+
+		void requireCapacity(size_t requiredCapacity) {
+			if (requiredCapacity <= capacity - size) return;
+			size_t newCapacity = capacity * 2;
+			while(newCapacity - size <= requiredCapacity) newCapacity *= 2;
+			changeCapacity(newCapacity);
+		}
+	
+	public:
+		Buffer()
+			: capacity(0), size(0), start(nullptr) {}
+
+		Buffer(size_t initialCapacity)
+			: capacity(initialCapacity), size(0), start(malloc(initialCapacity)) {}
+
+		~Buffer() {
+			free(start);
+		}
+
+		template<typename T>
+		T* alloc(size_t num) {
+			T* ptr = (T*) (start + size);
+			size += num * sizeof(T);
+			return ptr;
+		}
+
+		template<typename T>
+		T* alloc() {
+			return alloc<T>(1);
+		}
+
+		template<typename T>
+		T* put(const T& item) {
+			T* ptr = alloc<T>();
+			*ptr = item;
+			return ptr;
 		}
 	};
 }

@@ -9,18 +9,18 @@ namespace AGE {
 
 	EventManager::EventManager() : callbackListBuffer() {}
 
-	void EventManager::on(uint16_t eventId, void(*callback)()) {
-		if (eventId >= callbackListBuffer.size()) return;
-		callbackListBuffer[eventId].push(callback);
+	void EventManager::on(Event event, void(*callback)()) {
+		if (event >= callbackListBuffer.size()) return;
+		callbackListBuffer[event].push(callback);
 	}
 
-	void EventManager::dispatch(uint16_t eventId) {
-		if (eventId >= callbackListBuffer.size()) return;
-		for (void(*callback)() : callbackListBuffer[eventId])
+	void EventManager::dispatch(Event event) {
+		if (event >= callbackListBuffer.size()) return;
+		for (void(*callback)() : callbackListBuffer[event])
 			callback();
 	}
 
-	uint16_t EventManager::newEvent() {
+	Event EventManager::newEvent() {
 		pushCallbackList();
 		return callbackListBuffer.size() - 1;
 	}

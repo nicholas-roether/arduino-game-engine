@@ -5,10 +5,11 @@
 #include <LiquidCrystal.h>
 
 #include "AGE_text.h"
-#include "AGE_debug.h"
 #include "AGE_structures.h"
 
 namespace AGE {
+	typedef unsigned int Event;
+
 	class EventManager {
 		Utils::Array<Utils::Array<void(*)()>> callbackListBuffer;
 
@@ -17,11 +18,11 @@ namespace AGE {
 	public:
 		EventManager();
 
-		void on(uint16_t eventId, void(*callback)());
+		void on(Event event, void(*callback)());
 
-		void dispatch(uint16_t eventId);
+		void dispatch(Event event);
 
-		uint16_t newEvent();
+		Event newEvent();
 	};
 
 	class Component {
