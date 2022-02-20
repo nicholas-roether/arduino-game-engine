@@ -14,11 +14,6 @@ void onEvent() {
 }
 
 void setup() {
-	// TODO export this to an init function or so
-	#ifdef AGE_DEBUG
-	Serial.begin(115200);
-	#endif
-
 	lcd.begin(16, 2);
 	
 	eventManager.on(TEST_EVT, onEvent);
