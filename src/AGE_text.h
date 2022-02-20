@@ -1,5 +1,5 @@
-#ifndef AGE_TEXT_H
-#define AGE_TEXT_H
+#ifndef _AGE_TEXT_H_
+#define _AGE_TEXT_H_
 
 #include <Arduino.h>
 

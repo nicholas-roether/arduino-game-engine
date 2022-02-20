@@ -1,18 +1,11 @@
-#ifndef AGE_H
-#define AGE_H
-
-#define DEBUG_LOG(str)
-
-#ifdef AGE_DEBUG
-#define DEBUG_LOG(str) Serial.println(str)
-#endif
-
-#define THROW(id) DEBUG_LOG("An error with id " + String(id) + " occurred."); throw id
+#ifndef _AGE_H_
+#define _AGE_H_
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
 #include "AGE_text.h"
+#include "AGE_debug.h"
 #include "AGE_structures.h"
 
 namespace AGE {

@@ -1,5 +1,7 @@
-#ifndef AGE_STRUCTURES_H
-#define AGE_STRUCTURES_H
+#ifndef _AGE_STRUCTURES_H_
+#define _AGE_STRUCTURES_H_
+
+#include "AGE_debug.h"
 
 namespace AGE::Utils {
 	template<typename T>
@@ -40,13 +42,13 @@ namespace AGE::Utils {
 
 		T& at(unsigned int i) {
 			// TODO proper errors
-			// if (i >= numElems) throw 0;
+			if (i >= numElems) abort();
 			return elements[i];
 		}
 
 		const T& at(unsigned int i) const {
 			// TODO proper errors
-			// if (i >= numElems) throw 0;
+			if (i >= numElems) abort();
 			return elements[i];
 		}
 

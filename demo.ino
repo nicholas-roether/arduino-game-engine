@@ -20,8 +20,6 @@ void setup() {
 	#endif
 
 	lcd.begin(16, 2);
-
-	DEBUG_LOG("test!");
 	
 	eventManager.on(TEST_EVT, onEvent);
 
