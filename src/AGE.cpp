@@ -1,22 +1,23 @@
 #include "AGE.h"
-#include "AGE_text.h"
 
 namespace AGE {
 	// Event manager
 	void EventManager::pushCallbackList() {
-		callbackListBuffer.push(Array<void(*) ()>());
+		Utils::Array<void(*)()> callbackList;
+		callbackListBuffer.push(callbackList);
 	}
 
-	void EventManager::on(uint16_t eventId, void(*callback) ()) {
+	EventManager::EventManager() : callbackListBuffer() {}
+
+	void EventManager::on(uint16_t eventId, void(*callback)()) {
 		if (eventId >= callbackListBuffer.size()) return;
-		Array<void(*) ()> list = callbackListBuffer[eventId];
-		list.push(callback);
+		callbackListBuffer[eventId].push(callback);
 	}
 
 	void EventManager::dispatch(uint16_t eventId) {
 		if (eventId >= callbackListBuffer.size()) return;
 		for (void(*callback)() : callbackListBuffer[eventId])
-			(*callback)();
+			callback();
 	}
 
 	uint16_t EventManager::newEvent() {
@@ -25,7 +26,6 @@ namespace AGE {
 	}
 
 	// Group
-
 	Group::Group(size_t initialCapacity) : children(initialCapacity) {}
 
 	void Group::add(Component* childPtr) {

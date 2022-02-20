@@ -1,76 +1,29 @@
 #ifndef AGE_H
 #define AGE_H
 
+#define DEBUG_LOG(str)
+
+#ifdef AGE_DEBUG
+#define DEBUG_LOG(str) Serial.println(str)
+#endif
+
+#define THROW(id) DEBUG_LOG("An error with id " + String(id) + " occurred."); throw id
+
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
 #include "AGE_text.h"
+#include "AGE_structures.h"
 
 namespace AGE {
-	template<class T>
-	class Array {
-		size_t capacity;
-		size_t numElems;
-		T* elements;
-
-		void increaseCapacity() {
-			resizeTo(capacity == 0 ? 1 : 2 * capacity);
-		}
-
-	public:
-		Array() : capacity(0), numElems(0), elements(nullptr) {}
-		Array(size_t capacity)
-			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T))) {}
-
-		~Array() {
-			free(elements);
-		}
-
-		void push(const T& elem) {
-			if (numElems == capacity) increaseCapacity();
-			*(elements + numElems++) = elem;
-		}
-
-		T pop() {
-			return *(elements + --numElems);
-		}
-
-		T& at(size_t i) const {
-			// TODO proper errors
-			// if (i >= numElems) throw 0;
-			return elements[i];
-		}
-
-		void resizeTo(size_t newCapacity) {
-			T* newElems = (T*) realloc(elements, newCapacity);
-			if (!newElems) /* throw 0; */ return;
-			elements = newElems;
-			capacity = newCapacity;		
-		}
-
-		size_t size() const  {
-			return numElems;
-		}
-
-		T* begin() const {
-			return elements;
-		}
-
-		T* end() const {
-			return elements + numElems;
-		}
-
-		T& operator[](size_t i) const {
-			return at(i);
-		}
-	};
-
 	class EventManager {
-		Array<Array<void(*) ()>> callbackListBuffer;
+		Utils::Array<Utils::Array<void(*)()>> callbackListBuffer;
 
 		void pushCallbackList();
 
 	public:
+		EventManager();
+
 		void on(uint16_t eventId, void(*callback)());
 
 		void dispatch(uint16_t eventId);
@@ -88,7 +41,7 @@ namespace AGE {
 	};
 
 	class Group : public Component {
-		Array<Component*> children;
+		Utils::Array<Component*> children;
 
 		bool didChange = false;
 

@@ -1,21 +1,33 @@
 #include <LiquidCrystal.h>
+
+#define AGE_DEBUG
+
 #include "src/AGE.h"
+#include "src/AGE_text.h"
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+AGE::EventManager eventManager;
+static const unsigned int TEST_EVT = eventManager.newEvent();
 
-AGE::Text text1(u"moin", 0, 0);
-AGE::Text text2(u"jungs", 0, 1);
-AGE::Group group(2);
+void onEvent() {
+	lcd.write(AGE::Utils::LCDString(u"イヘ゛ント　カ゛　オコッタ。").c_str());
+}
 
 void setup() {
+	// TODO export this to an init function or so
+	#ifdef AGE_DEBUG
+	Serial.begin(115200);
+	#endif
+
 	lcd.begin(16, 2);
 
-	group.add(&text1);
-	group.add(&text2);
+	DEBUG_LOG("test!");
+	
+	eventManager.on(TEST_EVT, onEvent);
 
-	group.draw(lcd);
+	eventManager.dispatch(TEST_EVT);
 }
 
 void loop() {
-
+	
 }
