@@ -206,4 +206,46 @@ namespace AGE {
 		firstBuild = false;
 		lastRender = now;
 	}
+
+	// Trigger
+
+	void Trigger::activate() {
+		isActive = true;
+	}
+
+	bool Trigger::fired() {
+		return isActive && !didFire;
+	}
+
+	void Trigger::update(unsigned int dt) {
+		bool prev = isActive;
+		isActive = false;
+		checkActive(dt);
+		if (!isActive) {
+			didFire = false;
+		} else if (prev) didFire = true;
+	}
+
+	// ClickTrigger
+
+	ClickTrigger::ClickTrigger(unsigned int pin) : pin(pin), edge(BTN_DOWN) {}
+
+	ClickTrigger::ClickTrigger(unsigned int pin, ClickTriggerEdge edge)
+		: pin(pin), edge(edge) {}
+
+	void ClickTrigger::checkActive(unsigned int dt) {
+		if (sinceLastUp < DEBOUNCE_DELAY) {
+			sinceLastUp += dt;
+			return;
+		}
+		if (digitalRead(pin) == HIGH) {
+			if (edge == BTN_DOWN)
+				activate();
+		} else {
+			if (edge == BTN_UP) {
+				activate();
+				sinceLastUp = 0;
+			}
+		}
+	}
 }

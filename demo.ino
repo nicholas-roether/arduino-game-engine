@@ -8,18 +8,22 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 AGE::Renderer renderer(16, 2);
 
 class TestComponent : public AGE::Component {
-	unsigned int time = 0;
+	unsigned int count = 0;
+	AGE::ClickTrigger clickTrigger = { 8 };
 	AGE::Text text;
 
 public:
 	void build() {
-		text.setText(String(time));
+		text.setText(String(count));
 		addChild(&text);
 	}
 
 	void update(unsigned int dt) {
-		time += dt;
-		setState();
+		clickTrigger.update(dt);
+		if (clickTrigger.fired()) {
+			count++;
+			setState();
+		}
 	}
 };
 

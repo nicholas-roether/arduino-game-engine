@@ -125,6 +125,40 @@ namespace AGE {
 
 		void render(LiquidCrystal& lcd);
 	};
+	
+	class Trigger {
+		bool isActive = false;
+		bool didFire = false;
+
+	protected:
+		void activate();
+
+		virtual void checkActive(unsigned int dt);
+
+	public:
+		bool fired();
+
+		void update(unsigned int dt);
+	};
+
+	enum ClickTriggerEdge {
+		BTN_DOWN,
+		BTN_UP
+	};
+
+	class ClickTrigger : public Trigger {
+		static constexpr unsigned int DEBOUNCE_DELAY = 0;
+		unsigned int pin;
+		ClickTriggerEdge edge;
+		unsigned int sinceLastUp = 0;
+
+	protected:
+		void checkActive(unsigned int dt);
+
+	public:
+		ClickTrigger(unsigned int pin);
+		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
+	};
 }
 
 #endif
