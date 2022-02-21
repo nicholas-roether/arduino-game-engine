@@ -88,11 +88,18 @@ namespace AGE {
 	};
 
 	class Renderer {
-		CharacterBuffer charBuffer;
-		CharacterBuffer prevCharBuffer;
+		CharacterBuffer frontCharBuffer;
+		CharacterBuffer backCharBuffer;
+		bool buffersSwapped = false;
 		Component* root;
 		unsigned int lastRender = 0;
 		bool firstBuild = true;
+
+		CharacterBuffer& getCurrentCharBuffer();
+
+		CharacterBuffer& getPrevCharBuffer();
+
+		void swapCharBuffers();
 
 		void build(Component* component);
 

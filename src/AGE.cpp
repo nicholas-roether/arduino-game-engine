@@ -57,7 +57,7 @@ namespace AGE {
 	void Text::setX(uint8_t x) {
 		this->x = x;
 	}
-	
+
 	void Text::setY(uint8_t y) {
 		this->y = y;
 	}
@@ -134,7 +134,19 @@ namespace AGE {
 	// Renderer
 
 	Renderer::Renderer(size_t width, size_t height)
-		: charBuffer(width, height), prevCharBuffer(width, height) {}
+		: frontCharBuffer(width, height), backCharBuffer(width, height) {}
+
+	CharacterBuffer& Renderer::getCurrentCharBuffer() {
+		return buffersSwapped ? backCharBuffer : frontCharBuffer;
+	}
+
+	CharacterBuffer& Renderer::getPrevCharBuffer() {
+		return buffersSwapped ? frontCharBuffer : backCharBuffer;
+	}
+
+	void Renderer::swapCharBuffers() {
+		buffersSwapped = !buffersSwapped;
+	}
 
 	void Renderer::build(Component* component) {
 		if (firstBuild) component->build();
@@ -153,7 +165,7 @@ namespace AGE {
 	}
 
 	void Renderer::render(Component* component) {
-		component->draw(charBuffer);
+		component->draw(getCurrentCharBuffer());
 		for (Component* child : component->getChildren())
 			render(child);
 	}
@@ -167,10 +179,10 @@ namespace AGE {
 		build(root);
 		update(root, now - lastRender);
 		render(root);
-		for (unsigned int y = 0; y < charBuffer.getHeight(); y++) {
-			for (unsigned int x = 0; x < charBuffer.getWidth(); x++) {
-				char c = charBuffer.get(x, y);
-				if (c != prevCharBuffer.get(x, y)) {
+		for (unsigned int y = 0; y < getCurrentCharBuffer().getHeight(); y++) {
+			for (unsigned int x = 0; x < getCurrentCharBuffer().getWidth(); x++) {
+				char c = getCurrentCharBuffer().get(x, y);
+				if (c != getPrevCharBuffer().get(x, y)) {
 					lcd.setCursor(x, y);
 					lcd.write(c);
 				}
@@ -178,6 +190,7 @@ namespace AGE {
 		}
 		firstBuild = false;
 		lastRender = now;
+		swapCharBuffers();
 	}
 
 	// Trigger
