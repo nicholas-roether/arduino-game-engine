@@ -185,8 +185,14 @@ namespace AGE {
 
 	// Trigger
 
-	void Trigger::activate() {
+	Trigger::Trigger(bool initial) : isActive(initial) {}
+
+	void Trigger::active() {
 		isActive = true;
+	}
+
+	bool Trigger::state() {
+		return isActive;
 	}
 
 	bool Trigger::fired() {
@@ -194,34 +200,27 @@ namespace AGE {
 	}
 
 	void Trigger::update(unsigned int dt) {
-		bool prev = isActive;
-		isActive = false;
-		checkActive(dt);
-		if (!isActive) {
+		bool nextState = checkActive(dt);
+		if (!nextState || !isActive) {
 			didFire = false;
-		} else if (prev) didFire = true;
+		} else if (isActive) didFire = true;
+		isActive = nextState;
 	}
 
 	// ClickTrigger
 
-	ClickTrigger::ClickTrigger(unsigned int pin) : pin(pin), edge(BTN_DOWN) {}
+	ClickTrigger::ClickTrigger(unsigned int pin)
+		: Trigger(false), pin(pin), edge(BTN_DOWN) {}
 
 	ClickTrigger::ClickTrigger(unsigned int pin, ClickTriggerEdge edge)
-		: pin(pin), edge(edge) {}
+		: Trigger(edge == BTN_UP), pin(pin), edge(edge) {}
 
-	void ClickTrigger::checkActive(unsigned int dt) {
+	bool ClickTrigger::checkActive(unsigned int dt) {
 		if (sinceLastUp < DEBOUNCE_DELAY) {
 			sinceLastUp += dt;
-			return;
+			return state();
 		}
-		if (digitalRead(pin) == HIGH) {
-			if (edge == BTN_DOWN)
-				activate();
-		} else {
-			if (edge == BTN_UP) {
-				activate();
-				sinceLastUp = 0;
-			}
-		}
+		if (edge == BTN_DOWN) return digitalRead(pin);
+		if (edge == BTN_UP) return !digitalRead(pin);
 	}
 }

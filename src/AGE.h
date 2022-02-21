@@ -110,15 +110,19 @@ namespace AGE {
 	};
 	
 	class Trigger {
-		bool isActive = false;
-		bool didFire = false;
+		bool isActive;
+		bool didFire = true;
 
 	protected:
-		void activate();
+		Trigger(bool initial);
 
-		virtual void checkActive(unsigned int dt);
+		void active();
+
+		virtual bool checkActive(unsigned int dt) = 0;
 
 	public:
+		bool state();
+
 		bool fired();
 
 		void update(unsigned int dt);
@@ -130,13 +134,13 @@ namespace AGE {
 	};
 
 	class ClickTrigger : public Trigger {
-		static constexpr unsigned int DEBOUNCE_DELAY = 0;
+		static constexpr unsigned int DEBOUNCE_DELAY = 10;
 		unsigned int pin;
 		ClickTriggerEdge edge;
 		unsigned int sinceLastUp = 0;
 
 	protected:
-		void checkActive(unsigned int dt);
+		bool checkActive(unsigned int dt);
 
 	public:
 		ClickTrigger(unsigned int pin);

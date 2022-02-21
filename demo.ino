@@ -9,7 +9,7 @@ AGE::Renderer renderer(16, 2);
 
 class TestComponent : public AGE::Component {
 	unsigned int count = 0;
-	AGE::ClickTrigger clickTrigger = { 8 };
+	AGE::ClickTrigger clickTrigger = { 8, AGE::BTN_UP };
 	AGE::Text text;
 
 public:
