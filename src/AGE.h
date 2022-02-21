@@ -29,36 +29,23 @@ namespace AGE {
 
 	class Component {
 		Utils::Array<Component*> children;
+		bool stateDidChange = false;
 	
 	protected:
 		void addChild(Component* child);
+
+		void setState();
 
 	public:
 		const Utils::Array<Component*>& getChildren();
 
 		void rebuild();
 
+		virtual void update(unsigned int dt);
+
 		virtual void draw(CharacterBuffer& buffer);
 
 		virtual void build();
-
-		virtual bool shouldRebuild();
-
-		virtual void didRebuild();
-	};
-
-	class Group : public Component {
-		Utils::Array<Component*> childPtrs;
-
-		bool didChange = false;
-
-	public:		
-		Group() = default;
-		Group(size_t initialCapacity);
-
-		void add(Component* child);
-
-		void build();
 
 		bool shouldRebuild();
 
@@ -71,13 +58,21 @@ namespace AGE {
 		uint8_t y;
 	
 	public:
+		Text();
+
 		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
 
 		Text(const Text& text);
 
-		Text& operator=(const Text& other);
-
 		void draw(CharacterBuffer& registry);
+
+		void setText(const Utils::LCDString& str);
+
+		void setX(uint8_t x);
+
+		void setY(uint8_t y);
+
+		void setPos(uint8_t x, uint8_t y);
 	};
 
 	class CharacterBuffer {
@@ -113,9 +108,12 @@ namespace AGE {
 		CharacterBuffer charBuffer;
 		CharacterBuffer prevCharBuffer;
 		Component* root;
+		unsigned int lastRender = 0;
 		bool firstBuild = true;
 
 		void build(Component* component);
+
+		void update(Component* component, unsigned int dt);
 
 		void render(Component* component);
 

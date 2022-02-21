@@ -101,6 +101,9 @@ namespace AGE::Utils {
 		for (unsigned int i = 0; i < len; i++) operator+=(getCharCode(str[i]));
 	}
 
+	LCDString::LCDString(const String& str)
+		: String::String(str) {}
+
 	LCDString::LCDString(const LCDString& str)
 		: String::String(str) {}
 }

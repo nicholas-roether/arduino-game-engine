@@ -12,6 +12,7 @@ namespace AGE {
 			LCDString();
 			LCDString(const char* str);
 			LCDString(const char16_t* str);
+			LCDString(const String& str);
 			LCDString(const LCDString& str);
 		};
 	}

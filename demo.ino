@@ -9,26 +9,17 @@ AGE::Renderer renderer(16, 2);
 
 class TestComponent : public AGE::Component {
 	unsigned int time = 0;
-	unsigned int lastTime = 0;
-	AGE::Text text = { "", 0, 0 };
+	AGE::Text text;
 
 public:
 	void build() {
-		String numStr(time);
-		text = AGE::Text(numStr.c_str(), 0, 0);
+		text.setText(String(time));
 		addChild(&text);
 	}
 
-	bool shouldRebuild() {
-		return time != lastTime;
-	}
-
-	void didRebuild() {
-		lastTime = time;
-	}
-
-	void draw(AGE::CharacterBuffer& buffer) {
-		time++;
+	void update(unsigned int dt) {
+		time += dt;
+		setState();
 	}
 };
 

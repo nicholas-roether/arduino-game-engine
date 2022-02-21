@@ -25,31 +25,14 @@ namespace AGE {
 		return callbackListBuffer.size() - 1;
 	}
 
-	// Group
-	Group::Group(size_t initialCapacity)
-		: childPtrs(initialCapacity) {}
-
-	void Group::add(Component* child) {
-		childPtrs.push(child);
-		didChange = true;
-	}
-
-	void Group::build() {
-		for (Component* cPtr : childPtrs) addChild(cPtr);
-	}
-
-	void Group::didRebuild() {
-		didChange = false;
-	}
-
-	bool Group::shouldRebuild() {
-		return didChange;
-	}
-
 	// Component
 
 	void Component::addChild(Component* child) {
 		children.push(child);
+	}
+
+	void Component::setState() {
+		stateDidChange = true;
 	}
 
 	const Utils::Array<Component*>& Component::getChildren() {
@@ -61,17 +44,24 @@ namespace AGE {
 		build();
 	}
 
+	void Component::update(unsigned int dt) {}
+
 	void Component::draw(CharacterBuffer& buffer) {}
 
 	void Component::build() {}
 
-	void Component::didRebuild() {}
-
 	bool Component::shouldRebuild() {
-		return false;
+		return stateDidChange;
+	}
+
+	void Component::didRebuild() {
+		stateDidChange = false;
 	}
 
 	// Text
+
+	Text::Text()
+		: text(""), x(0), y(0) {}
 
 	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
 		: text(text), x(x), y(y) {}
@@ -79,15 +69,29 @@ namespace AGE {
 	Text::Text(const Text& text)
 		: text(text.text), x(text.x), y(text.y)
 	{}
-
-	Text& Text::operator=(const Text& other) {
-		text = other.text.c_str();
-		x = other.x;
-		y = other.y;
-	}
 	
 	void Text::draw(CharacterBuffer& buffer) {
 		buffer.write(text.c_str(), x, y);
+	}
+
+	void Text::setText(const Utils::LCDString& str) {
+		text = str;
+		setState();
+	}
+
+	void Text::setX(uint8_t x) {
+		this->x = x;
+		setState();
+	}
+
+	void Text::setY(uint8_t y) {
+		this->y = y;
+		setState();
+	}
+
+	void Text::setPos(uint8_t x, uint8_t y) {
+		setX(x);
+		setY(y);
 	}
 
 	// CharacterBuffer
@@ -169,6 +173,12 @@ namespace AGE {
 			build(child);
 	}
 
+	void Renderer::update(Component* component, unsigned int dt) {
+		component->update(dt);
+		for (Component* child : component->getChildren())
+			render(child);
+	}
+
 	void Renderer::render(Component* component) {
 		component->draw(charBuffer);
 		for (Component* child : component->getChildren())
@@ -180,7 +190,9 @@ namespace AGE {
 	}
 
 	void Renderer::render(LiquidCrystal& lcd) {
+		unsigned int now = millis();
 		build(root);
+		update(root, now - lastRender);
 		render(root);
 		for (unsigned int y = 0; y < charBuffer.getHeight(); y++) {
 			for (unsigned int x = 0; x < charBuffer.getWidth(); x++) {
@@ -192,5 +204,6 @@ namespace AGE {
 			}
 		}
 		firstBuild = false;
+		lastRender = now;
 	}
 }
