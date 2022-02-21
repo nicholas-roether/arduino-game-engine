@@ -1,30 +1,6 @@
 #include "AGE.h"
 
 namespace AGE {
-	// Event manager
-	void EventManager::pushCallbackList() {
-		Utils::Array<void(*)()> callbackList;
-		callbackListBuffer.push(callbackList);
-	}
-
-	EventManager::EventManager() : callbackListBuffer() {}
-
-	void EventManager::on(Event event, void(*callback)()) {
-		if (event >= callbackListBuffer.size()) return;
-		callbackListBuffer[event].push(callback);
-	}
-
-	void EventManager::dispatch(Event event) {
-		if (event >= callbackListBuffer.size()) return;
-		for (void(*callback)() : callbackListBuffer[event])
-			callback();
-	}
-
-	Event EventManager::newEvent() {
-		pushCallbackList();
-		return callbackListBuffer.size() - 1;
-	}
-
 	// Component
 
 	void Component::addChild(Component* child) {

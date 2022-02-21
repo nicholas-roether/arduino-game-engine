@@ -10,23 +10,6 @@
 namespace AGE {
 	class CharacterBuffer;
 
-	typedef unsigned int Event;
-
-	class EventManager {
-		Utils::Array<Utils::Array<void(*)()>> callbackListBuffer;
-
-		void pushCallbackList();
-
-	public:
-		EventManager();
-
-		void on(Event event, void(*callback)());
-
-		void dispatch(Event event);
-
-		Event newEvent();
-	};
-
 	class Component {
 		Utils::Array<Component*> children;
 		bool stateDidChange = false;
