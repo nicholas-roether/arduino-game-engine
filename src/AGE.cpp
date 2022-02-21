@@ -27,36 +27,47 @@ namespace AGE {
 
 	// Group
 	Group::Group(size_t initialCapacity)
-		: childPtrs(initialCapacity), childrenBuffer(initialCapacity * sizeof(Component)) {}
+		: childPtrs(initialCapacity) {}
 
-	void Group::draw(LiquidCrystal& lcd) {
-		Serial.println("draw");
-		for (Component* cPtr : childPtrs) {
-			Serial.print("Component at: ");
-			Serial.println((unsigned int) cPtr);
-			delay(100);
-			cPtr->draw(lcd);
-		}
+	void Group::add(Component* child) {
+		childPtrs.push(child);
+		didChange = true;
 	}
 
-	void Group::didRedraw() {
+	void Group::build() {
+		for (Component* cPtr : childPtrs) addChild(cPtr);
+	}
+
+	void Group::didRebuild() {
 		didChange = false;
 	}
 
-	bool Group::shouldRedraw() {
+	bool Group::shouldRebuild() {
 		return didChange;
 	}
 
 	// Component
 
-	void Component::draw(LiquidCrystal& lcd) {
-		Serial.println("Component::draw");
-		delay(100);
+	void Component::addChild(Component* child) {
+		children.push(child);
 	}
 
-	void Component::didRedraw() {}
+	const Utils::Array<Component*>& Component::getChildren() {
+		return children;
+	}
 
-	bool Component::shouldRedraw() {
+	void Component::rebuild() {
+		children.clear();
+		build();
+	}
+
+	void Component::draw(CharacterBuffer& buffer) {}
+
+	void Component::build() {}
+
+	void Component::didRebuild() {}
+
+	bool Component::shouldRebuild() {
 		return false;
 	}
 
@@ -73,18 +84,113 @@ namespace AGE {
 		text = other.text.c_str();
 		x = other.x;
 		y = other.y;
-		Serial.print("text assignment ");
-		Serial.print(x);
-		Serial.print(",");
-		Serial.println(y);
 	}
 	
-	void Text::draw(LiquidCrystal& lcd) {
-		Serial.print("text draw ");
-		Serial.print(x);
-		Serial.print(",");
-		Serial.println(y);
-		lcd.setCursor(x, y);
-		lcd.write(text.c_str());
+	void Text::draw(CharacterBuffer& buffer) {
+		buffer.write(text.c_str(), x, y);
+	}
+
+	// CharacterBuffer
+
+	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
+		: width(width), 
+		  height(height), 
+		  characters((char*) calloc(sizeof(char), width * height))
+	{}
+
+	CharacterBuffer::CharacterBuffer(const CharacterBuffer& other)
+		: width(other.width),
+		  height(other.height),
+		  characters((char*) calloc(sizeof(char), width * height))
+	{
+		memcpy(characters, other.characters, width * height * sizeof(char));
+	}
+
+	CharacterBuffer::~CharacterBuffer() {
+		free(characters);
+	}
+
+	CharacterBuffer& CharacterBuffer::operator=(const CharacterBuffer& other) {
+		if (width != other.width || height != other.height) {
+			free(characters);
+			width = other.width;
+			height = other.height;
+			characters = (char*) malloc(width * height * sizeof(char));
+		}
+		memcpy(characters, other.characters, width * height * sizeof(char));
+	}
+
+	char CharacterBuffer::get(unsigned int x, unsigned int y) {
+		if (x >= width || y >= height) abort();
+		return characters[x + y * width];
+	}
+
+	void CharacterBuffer::put(char character, unsigned int x, unsigned int y) {
+		if (x >= width || y >= height) return;
+		characters[x + y * width] = character;
+	}
+
+	void CharacterBuffer::write(const char* characters, unsigned int x, unsigned int y) {
+		for (int i = 0; ; i++) {
+			char c = characters[i];
+			if (c == '\0') break;
+			put(c, x + i, y);
+		}
+	}
+	
+	char* CharacterBuffer::begin() {
+		return characters;
+	}
+
+	char* CharacterBuffer::end() {
+		return characters + width * height;
+	}
+
+	size_t CharacterBuffer::getWidth() {
+		return width;
+	}
+
+	size_t CharacterBuffer::getHeight() {
+		return height;
+	}
+
+	// Renderer
+
+	Renderer::Renderer(size_t width, size_t height)
+		: charBuffer(width, height), prevCharBuffer(width, height) {}
+
+	void Renderer::build(Component* component) {
+		if (firstBuild) component->build();
+		else if (component->shouldRebuild()) {
+			component->rebuild();
+			component->didRebuild();
+		}
+		for (Component* child : component->getChildren())
+			build(child);
+	}
+
+	void Renderer::render(Component* component) {
+		component->draw(charBuffer);
+		for (Component* child : component->getChildren())
+			render(child);
+	}
+
+	void Renderer::setRoot(Component* root) {
+		this->root = root;
+	}
+
+	void Renderer::render(LiquidCrystal& lcd) {
+		build(root);
+		render(root);
+		for (unsigned int y = 0; y < charBuffer.getHeight(); y++) {
+			for (unsigned int x = 0; x < charBuffer.getWidth(); x++) {
+				char c = charBuffer.get(x, y);
+				if (c != prevCharBuffer.get(x, y)) {
+					lcd.setCursor(x, y);
+					lcd.write(c);
+				}
+			}
+		}
+		firstBuild = false;
 	}
 }

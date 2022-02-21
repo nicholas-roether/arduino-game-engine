@@ -8,6 +8,8 @@
 #include "AGE_structures.h"
 
 namespace AGE {
+	class CharacterBuffer;
+
 	typedef unsigned int Event;
 
 	class EventManager {
@@ -26,16 +28,26 @@ namespace AGE {
 	};
 
 	class Component {
+		Utils::Array<Component*> children;
+	
+	protected:
+		void addChild(Component* child);
+
 	public:
-		virtual void draw(LiquidCrystal& lcd);
+		const Utils::Array<Component*>& getChildren();
 
-		virtual bool shouldRedraw();
+		void rebuild();
 
-		virtual void didRedraw();
+		virtual void draw(CharacterBuffer& buffer);
+
+		virtual void build();
+
+		virtual bool shouldRebuild();
+
+		virtual void didRebuild();
 	};
 
 	class Group : public Component {
-		Utils::Buffer childrenBuffer;
 		Utils::Array<Component*> childPtrs;
 
 		bool didChange = false;
@@ -44,18 +56,13 @@ namespace AGE {
 		Group() = default;
 		Group(size_t initialCapacity);
 
-		template<typename C>
-		void add(const C& child) {
-			C* childPtr = childrenBuffer.put(child);
-			childPtrs.push(childPtr);
-			didChange = true;
-		}
+		void add(Component* child);
 
-		void draw(LiquidCrystal& lcd);
+		void build();
 
-		bool shouldRedraw();
+		bool shouldRebuild();
 
-		void didRedraw();
+		void didRebuild();
 	};
 
 	class Text : public Component {
@@ -70,7 +77,55 @@ namespace AGE {
 
 		Text& operator=(const Text& other);
 
-		void draw(LiquidCrystal& lcd);
+		void draw(CharacterBuffer& registry);
+	};
+
+	class CharacterBuffer {
+		size_t width;
+		size_t height;
+		char* characters;
+
+	public:
+		CharacterBuffer() = delete;
+		CharacterBuffer(size_t width, size_t height);
+		CharacterBuffer(const CharacterBuffer& other);
+
+		~CharacterBuffer();
+
+		CharacterBuffer& operator=(const CharacterBuffer& other);
+
+		char get(unsigned int x, unsigned int y);
+
+		void put(char character, unsigned int x, unsigned int y);
+
+		void write(const char* characters, unsigned int x, unsigned int y);
+
+		char* begin();
+
+		char* end();
+
+		size_t getWidth();
+
+		size_t getHeight();
+	};
+
+	class Renderer {
+		CharacterBuffer charBuffer;
+		CharacterBuffer prevCharBuffer;
+		Component* root;
+		bool firstBuild = true;
+
+		void build(Component* component);
+
+		void render(Component* component);
+
+	public:
+		Renderer() = delete;
+		Renderer(size_t width, size_t height);
+
+		void setRoot(Component* root);
+
+		void render(LiquidCrystal& lcd);
 	};
 }
 
