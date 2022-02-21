@@ -50,6 +50,10 @@ namespace AGE::Utils {
 			return elements[i];
 		}
 
+		void clear() {
+			numElems = 0;
+		}
+
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) malloc(newCapacity * sizeof(T));
 			for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
