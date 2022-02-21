@@ -115,12 +115,26 @@ namespace AGE::Utils {
 		Buffer(size_t initialCapacity)
 			: capacity(initialCapacity), size(0), start(malloc(initialCapacity)) {}
 
+		Buffer(const Buffer& other)
+			: capacity(other.capacity), size(other.size), start(malloc(capacity))
+		{
+			memcpy(start, other.start, size);
+		}
+
+		Buffer& operator=(const Buffer& other) {
+			changeCapacity(other.capacity);
+			memcpy(start, other.start, other.size);
+			size = other.size;
+			capacity = other.capacity;
+		}
+
 		~Buffer() {
 			free(start);
 		}
 
 		template<typename T>
 		T* alloc(size_t num) {
+			requireCapacity(num * sizeof(T));
 			T* ptr = (T*) (start + size);
 			size += num * sizeof(T);
 			return ptr;

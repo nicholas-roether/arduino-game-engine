@@ -35,7 +35,8 @@ namespace AGE {
 	};
 
 	class Group : public Component {
-		Utils::Array<Component*> children;
+		Utils::Buffer childrenBuffer;
+		Utils::Array<Component*> childPtrs;
 
 		bool didChange = false;
 
@@ -43,7 +44,12 @@ namespace AGE {
 		Group() = default;
 		Group(size_t initialCapacity);
 
-		void add(Component* child);
+		template<typename C>
+		void add(const C& child) {
+			C* childPtr = childrenBuffer.put(child);
+			childPtrs.push(childPtr);
+			didChange = true;
+		}
 
 		void draw(LiquidCrystal& lcd);
 
@@ -61,6 +67,8 @@ namespace AGE {
 		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
 
 		Text(const Text& text);
+
+		Text& operator=(const Text& other);
 
 		void draw(LiquidCrystal& lcd);
 	};

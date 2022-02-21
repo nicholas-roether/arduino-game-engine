@@ -26,16 +26,17 @@ namespace AGE {
 	}
 
 	// Group
-	Group::Group(size_t initialCapacity) : children(initialCapacity) {}
-
-	void Group::add(Component* childPtr) {
-		children.push(childPtr);
-		didChange = true;
-	}
+	Group::Group(size_t initialCapacity)
+		: childPtrs(initialCapacity), childrenBuffer(initialCapacity * sizeof(Component)) {}
 
 	void Group::draw(LiquidCrystal& lcd) {
-		for (Component* cPtr : children)
+		Serial.println("draw");
+		for (Component* cPtr : childPtrs) {
+			Serial.print("Component at: ");
+			Serial.println((unsigned int) cPtr);
+			delay(100);
 			cPtr->draw(lcd);
+		}
 	}
 
 	void Group::didRedraw() {
@@ -48,7 +49,10 @@ namespace AGE {
 
 	// Component
 
-	void Component::draw(LiquidCrystal& lcd) {}
+	void Component::draw(LiquidCrystal& lcd) {
+		Serial.println("Component::draw");
+		delay(100);
+	}
 
 	void Component::didRedraw() {}
 
@@ -62,10 +66,24 @@ namespace AGE {
 		: text(text), x(x), y(y) {}
 	
 	Text::Text(const Text& text)
-		: text(text.text), x(x), y(y)
+		: text(text.text), x(text.x), y(text.y)
 	{}
+
+	Text& Text::operator=(const Text& other) {
+		text = other.text.c_str();
+		x = other.x;
+		y = other.y;
+		Serial.print("text assignment ");
+		Serial.print(x);
+		Serial.print(",");
+		Serial.println(y);
+	}
 	
 	void Text::draw(LiquidCrystal& lcd) {
+		Serial.print("text draw ");
+		Serial.print(x);
+		Serial.print(",");
+		Serial.println(y);
 		lcd.setCursor(x, y);
 		lcd.write(text.c_str());
 	}
