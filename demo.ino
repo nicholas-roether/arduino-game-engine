@@ -10,11 +10,10 @@ AGE::Renderer renderer(16, 2);
 class TestComponent : public AGE::Component {
 	unsigned int count = 0;
 	AGE::ClickTrigger clickTrigger = { 8, AGE::BTN_UP };
-	AGE::Text text;
+	AGE::Text text = { "0", 0, 0 };
 
 public:
 	void build() {
-		text.setText(String(count));
 		addChild(&text);
 	}
 
@@ -22,7 +21,7 @@ public:
 		clickTrigger.update(dt);
 		if (clickTrigger.fired()) {
 			count++;
-			setState();
+			text.setText(String(count));
 		}
 	}
 };
