@@ -52,17 +52,14 @@ namespace AGE {
 
 	void Text::setText(const Utils::LCDString& str) {
 		text = str;
-		setState();
 	}
 
 	void Text::setX(uint8_t x) {
 		this->x = x;
-		setState();
 	}
-
+	
 	void Text::setY(uint8_t y) {
 		this->y = y;
-		setState();
 	}
 
 	void Text::setPos(uint8_t x, uint8_t y) {
