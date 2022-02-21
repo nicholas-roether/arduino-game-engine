@@ -7,8 +7,8 @@ namespace AGE {
 		children.push(child);
 	}
 
-	void Component::setState() {
-		stateDidChange = true;
+	void Component::requestRebuild() {
+		rebuildRequested = true;
 	}
 
 	const Utils::Array<Component*>& Component::getChildren() {
@@ -27,11 +27,11 @@ namespace AGE {
 	void Component::build() {}
 
 	bool Component::shouldRebuild() {
-		return stateDidChange;
+		return rebuildRequested;
 	}
 
 	void Component::didRebuild() {
-		stateDidChange = false;
+		rebuildRequested = false;
 	}
 
 	// Text

@@ -12,12 +12,12 @@ namespace AGE {
 
 	class Component {
 		Utils::Array<Component*> children;
-		bool stateDidChange = false;
+		bool rebuildRequested = false;
 	
 	protected:
 		void addChild(Component* child);
 
-		void setState();
+		void requestRebuild();
 
 	public:
 		const Utils::Array<Component*>& getChildren();
