@@ -1,37 +1,66 @@
 namespace AGE {
+	template<typename T>
 	struct Vector {
-		float x;
-		float y;
+		T x;
+		T y;
 
-		Vector operator+(const Vector& other);
+		Vector<T> Vector::operator+(const Vector<T>& other) {
+			return { x + other.x, y + other.y };
+		}
 
-		Vector operator-(const Vector& other);
+		Vector<T> Vector::operator-(const Vector<T>& other) {
+			return { x - other.x, y - other.y };
+		}
 
-		Vector operator*(float factor);
+		Vector<T> Vector::operator*(T factor) {
+			return { x * factor, y * factor };
+		}
 
-		Vector operator+=(const Vector& other);
+		Vector<T>& Vector::operator+=(const Vector<T>& other) {
+			x += other.x;
+			y += other.y;
+			return *this;
+		}
 
-		Vector operator-=(const Vector& other);
+		Vector<T>& Vector::operator-=(const Vector<T>& other) {
+			x -= other.x;
+			y -= other.y;
+			return *this;
+		}
 
-		Vector operator*=(float factor);
+		Vector<T>& Vector::operator*=(T factor) {
+			x *= factor;
+			y *= factor;
+			return *this;
+		}
 	};
 
 	class PhysicsObject {
+		Vector<double> pos;
+		Vector<double> velocity;
+		Vector<double> acceleration;
+
 	public:
-		Vector pos;
-		Vector velocity;
-		Vector acceleration;
+		virtual void update(unsigned int dt);
+
+		Vector<int> getPos() const;
+
+		void setPos(const Vector<int>& newPos);
+
+		void setVelocity(const Vector<double>& newVel);
+
+		void setAcceleration(const Vector<double>& newAcc);
+	};
+
+	class CollidingPhysicsObject : public PhysicsObject {
 		unsigned int width;
 		unsigned int height;
 
-		PhysicsObject(unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+	public:
+		CollidingPhysicsObject(unsigned int width, unsigned int height);
 
-		void update(unsigned int dt);
+		bool collides(Vector<int> pos) const;
 
-		void setWidth(unsigned int width);
-
-		void setHeight(unsigned int height);
-
-		bool collidesWith(unsigned int x, unsigned int y);
+		bool collides(const CollidingPhysicsObject& other) const;
 	};
 }
