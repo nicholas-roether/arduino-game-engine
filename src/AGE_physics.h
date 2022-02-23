@@ -70,7 +70,6 @@ namespace AGE {
 
 		unsigned int getObjectType();
 
-		// TODO
 		bool operator==(const CollidingPhysicsObject& other);
 	};
 
