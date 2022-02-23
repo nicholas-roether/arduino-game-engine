@@ -188,6 +188,7 @@ namespace AGE {
 				}
 			}
 		}
+		Serial.println();
 		firstBuild = false;
 		lastRender = now;
 		swapCharBuffers();
@@ -232,5 +233,41 @@ namespace AGE {
 		}
 		if (edge == BTN_DOWN) return digitalRead(pin);
 		if (edge == BTN_UP) return !digitalRead(pin);
+	}
+
+	// Process
+
+	Process::Process(const ProcessConfig& cfg)
+		: width(cfg.width),
+		  height(cfg.height),
+		  loopsPerSecond(cfg.loopsPerSecond),
+		  lcd(LiquidCrystal(
+			  cfg.lcdConfig.rs,
+			  cfg.lcdConfig.enable,
+			  cfg.lcdConfig.d0,
+			  cfg.lcdConfig.d1,
+			  cfg.lcdConfig.d2,
+			  cfg.lcdConfig.d3
+		  )),
+		  renderer(cfg.width, cfg.height),
+		  collisionSystem()
+	{}
+
+	void Process::start(Component* root) {
+		if (running) return;
+		lcd.begin(width, height);
+		renderer.setRoot(root);
+		running = true;
+	}
+
+	void Process::loop() {
+		if (!running || loopsPerSecond == 0) return;
+		static unsigned int loopDelay = 1000 / loopsPerSecond;
+		renderer.render(lcd);
+		delay(loopDelay);
+	}
+
+	CollisionSystem& Process::getCollisionSystem() {
+		return collisionSystem;
 	}
 }

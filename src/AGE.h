@@ -6,6 +6,7 @@
 
 #include "AGE_text.h"
 #include "AGE_utils.h"
+#include "AGE_physics.h"
 
 namespace AGE {
 	class CharacterBuffer;
@@ -152,6 +153,41 @@ namespace AGE {
 	public:
 		ClickTrigger(unsigned int pin);
 		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
+	};
+
+	struct LCDConfig {
+		uint8_t rs;
+		uint8_t enable;
+		uint8_t d0;
+		uint8_t d1;
+		uint8_t d2;
+		uint8_t d3;
+	};
+	
+	struct ProcessConfig {
+		unsigned int width;
+		unsigned int height;
+		unsigned int loopsPerSecond;
+		LCDConfig lcdConfig;
+	};
+
+	class Process {
+		unsigned int width;
+		unsigned int height;
+		unsigned int loopsPerSecond;
+		bool running = false;
+		LiquidCrystal lcd;
+		Renderer renderer;
+		CollisionSystem collisionSystem;
+
+	public:
+		Process(const ProcessConfig& cfg);
+
+		void start(Component* root);
+
+		void loop();
+
+		CollisionSystem& getCollisionSystem();
 	};
 }
 

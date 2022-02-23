@@ -1,10 +1,10 @@
-#include <LiquidCrystal.h>
-
 #include "src/AGE.h"
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-
-AGE::Renderer renderer(16, 2);
+AGE::Process game({
+	16, 2,
+	10,
+	{ 12, 11, 5, 4, 3, 1 }
+});
 
 class TestComponent : public AGE::Component {
 	unsigned int count = 0;
@@ -28,12 +28,11 @@ public:
 TestComponent testComponent;
 
 void setup() {
-	lcd.begin(16, 2);
-
-	renderer.setRoot(&testComponent);
+	Serial.begin(115200);
+	Serial.println("test");
+	// game.start(&testComponent);
 }
 
 void loop() {
-	renderer.render(lcd);
-	delay(100);
+	// game.loop();
 }

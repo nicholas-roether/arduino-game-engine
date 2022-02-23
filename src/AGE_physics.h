@@ -6,31 +6,31 @@ namespace AGE {
 		T x;
 		T y;
 
-		Vector<T> Vector::operator+(const Vector<T>& other) {
+		Vector<T> operator+(const Vector<T>& other) {
 			return { x + other.x, y + other.y };
 		}
 
-		Vector<T> Vector::operator-(const Vector<T>& other) {
+		Vector<T> operator-(const Vector<T>& other) {
 			return { x - other.x, y - other.y };
 		}
 
-		Vector<T> Vector::operator*(T factor) {
+		Vector<T> operator*(T factor) {
 			return { x * factor, y * factor };
 		}
 
-		Vector<T>& Vector::operator+=(const Vector<T>& other) {
+		Vector<T>& operator+=(const Vector<T>& other) {
 			x += other.x;
 			y += other.y;
 			return *this;
 		}
 
-		Vector<T>& Vector::operator-=(const Vector<T>& other) {
+		Vector<T>& operator-=(const Vector<T>& other) {
 			x -= other.x;
 			y -= other.y;
 			return *this;
 		}
 
-		Vector<T>& Vector::operator*=(T factor) {
+		Vector<T>& operator*=(T factor) {
 			x *= factor;
 			y *= factor;
 			return *this;
