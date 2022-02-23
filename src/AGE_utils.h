@@ -1,5 +1,5 @@
-#ifndef _AGE_STRUCTURES_H_
-#define _AGE_STRUCTURES_H_
+#ifndef _AGE_UTILS_H_
+#define _AGE_UTILS_H_
 
 namespace AGE::Utils {
 	template<typename T>
@@ -91,6 +91,10 @@ namespace AGE::Utils {
 			return at(i);
 		}
 	};
+
+	typedef uint32_t UUID;
+
+	UUID uuid();
 }
 
 #endif

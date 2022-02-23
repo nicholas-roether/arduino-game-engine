@@ -1,3 +1,5 @@
+#include "AGE_utils.h"
+
 namespace AGE {
 	template<typename T>
 	struct Vector {
@@ -53,14 +55,31 @@ namespace AGE {
 	};
 
 	class CollidingPhysicsObject : public PhysicsObject {
+		Utils::UUID id;
+		unsigned int objType;
 		unsigned int width;
 		unsigned int height;
 
 	public:
-		CollidingPhysicsObject(unsigned int width, unsigned int height);
+		CollidingPhysicsObject() = delete;
+		CollidingPhysicsObject(unsigned int objType, unsigned int width, unsigned int height);
 
 		bool collides(Vector<int> pos) const;
 
 		bool collides(const CollidingPhysicsObject& other) const;
+
+		unsigned int getObjectType();
+
+		// TODO
+		bool operator==(const CollidingPhysicsObject& other);
+	};
+
+	class CollisionSystem {
+		Utils::Array<CollidingPhysicsObject*> objects;
+
+	public:
+		void add(CollidingPhysicsObject* obj);
+
+		Utils::Array<unsigned int> getCollisionList(const CollidingPhysicsObject& obj);
 	};
 }

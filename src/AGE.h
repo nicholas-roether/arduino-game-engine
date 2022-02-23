@@ -5,7 +5,7 @@
 #include <LiquidCrystal.h>
 
 #include "AGE_text.h"
-#include "AGE_structures.h"
+#include "AGE_utils.h"
 
 namespace AGE {
 	class CharacterBuffer;
