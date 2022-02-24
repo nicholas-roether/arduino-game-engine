@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 #include "AGE_physics.h"
 
 namespace AGE {
@@ -12,7 +13,7 @@ namespace AGE {
 	}
 
 	Vector<int> PhysicsObject::getPos() const {
-		return { round(pos.x), round(pos.y) };
+		return { (int) round(pos.x), (int) round(pos.y) };
 	}
 
 	void PhysicsObject::setPos(const Vector<int>& newPos) {
@@ -67,7 +68,7 @@ namespace AGE {
 		objects.push(obj);
 	}
 
-	Utils::Array<unsigned int> CollisionSystem::getCollisionList(const CollidingPhysicsObject& obj) {
+	Utils::Array<unsigned int> CollisionSystem::getCollisionList(const CollidingPhysicsObject& obj) const {
 		Utils::Array<unsigned int> collisions;
 		for (CollidingPhysicsObject* other : objects) {
 			if (*other == obj) continue;

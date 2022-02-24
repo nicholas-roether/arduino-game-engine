@@ -1,38 +1,38 @@
 #include "src/AGE.h"
 
-AGE::Process game({
-	16, 2,
-	10,
-	{ 12, 11, 5, 4, 3, 1 }
+AGE::Process process({
+	20, 4,
+	20,
+	{ 12, 11, 5, 4, 3, 2 }
 });
 
-class TestComponent : public AGE::Component {
-	unsigned int count = 0;
-	AGE::ClickTrigger clickTrigger = { 8, AGE::BTN_UP };
-	AGE::Text text = { "0", 0, 0 };
+byte TEX_PLAYER_DATA[8] = {
+	B00000,
+	B11100,
+	B00110,
+	B01111,
+	B01111,
+	B00110,
+	B11100,
+	B00000
+};
 
-public:
+AGE::TextureID TEX_PLAYER = process.createTexture(TEX_PLAYER_DATA);
+
+class Player : public AGE::Component {
+	AGE::Texture texture = { TEX_PLAYER };
+
 	void build() {
-		addChild(&text);
-	}
-
-	void update(unsigned int dt) {
-		clickTrigger.update(dt);
-		if (clickTrigger.fired()) {
-			count++;
-			text.setText(String(count));
-		}
+		addChild(&texture);
 	}
 };
 
-TestComponent testComponent;
+Player player;
 
 void setup() {
-	Serial.begin(115200);
-	Serial.println("test");
-	// game.start(&testComponent);
+	process.start(&player);
 }
 
 void loop() {
-	// game.loop();
+	process.loop();
 }

@@ -67,6 +67,34 @@ namespace AGE {
 		setY(y);
 	}
 
+	// Texture
+
+	Texture::Texture(uint8_t textureId) : textureId(textureId) {}
+
+	Texture::Texture(uint8_t textureId, uint8_t x, uint8_t y)
+		: textureId(textureId), x(x), y(y) {}
+
+	void Texture::draw(CharacterBuffer& buffer) {
+		buffer.put(textureId, x, y);
+	}
+
+	void Texture::setTexture(uint8_t textureId) {
+		this->textureId = textureId;
+	}
+
+	void Texture::setX(uint8_t x) {
+		this->x = x;
+	}
+
+	void Texture::setY(uint8_t y) {
+		this->y = y;
+	}
+
+	void Texture::setPos(uint8_t x, uint8_t y) {
+		setX(x);
+		setY(y);
+	}
+
 	// CharacterBuffer
 
 	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
@@ -188,10 +216,66 @@ namespace AGE {
 				}
 			}
 		}
-		Serial.println();
 		firstBuild = false;
 		lastRender = now;
 		swapCharBuffers();
+	}
+
+	// TextureRegistry
+
+	unsigned int TextureRegistry::numTextures;
+
+	TextureRegistry::TextureRegistry(LiquidCrystal& lcd)
+		: lcd(lcd) {}
+
+	TextureID TextureRegistry::create(byte textureData[8]) {
+		if (numTextures >= maxTextures) abort();
+		TextureID texture = numTextures++;
+		lcd.createChar(texture, textureData);
+		return texture;
+	}
+
+	// Process
+
+	Process::Process(const ProcessConfig& cfg)
+		: width(cfg.width),
+		  height(cfg.height),
+		  loopDelay(1000 / cfg.loopsPerSecond),
+		  lcd(
+			  cfg.lcdConfig.rs,
+			  cfg.lcdConfig.enable,
+			  cfg.lcdConfig.d0,
+			  cfg.lcdConfig.d1,
+			  cfg.lcdConfig.d2,
+			  cfg.lcdConfig.d3
+		  ),
+		  renderer(cfg.width, cfg.height),
+		  textureRegistry(lcd)
+	{}
+
+	void Process::start(Component* root) {
+		if (running) return;
+		lcd.begin(width, height);
+		renderer.setRoot(root);
+		running = true;
+	}
+
+	void Process::loop() {
+		if (!running) return;
+		renderer.render(lcd);
+		delay(loopDelay);
+	}
+
+	CollisionSystem& Process::getCollisionSystem() {
+		return collisionSystem;
+	}
+
+	const CollisionSystem& Process::getCollisionSystem() const {
+		return collisionSystem;
+	}
+
+	TextureID Process::createTexture(byte textureData[8]) {
+		return textureRegistry.create(textureData);
 	}
 
 	// Trigger
@@ -235,39 +319,17 @@ namespace AGE {
 		if (edge == BTN_UP) return !digitalRead(pin);
 	}
 
-	// Process
+	// CollisionTrigger
 
-	Process::Process(const ProcessConfig& cfg)
-		: width(cfg.width),
-		  height(cfg.height),
-		  loopsPerSecond(cfg.loopsPerSecond),
-		  lcd(LiquidCrystal(
-			  cfg.lcdConfig.rs,
-			  cfg.lcdConfig.enable,
-			  cfg.lcdConfig.d0,
-			  cfg.lcdConfig.d1,
-			  cfg.lcdConfig.d2,
-			  cfg.lcdConfig.d3
-		  )),
-		  renderer(cfg.width, cfg.height),
-		  collisionSystem()
-	{}
+	CollisionTrigger::CollisionTrigger(
+		const CollidingPhysicsObject* collider,
+		unsigned int objType,
+		const Process* process
+	) : Trigger(false), collider(collider), objType(objType), process(process) {}
 
-	void Process::start(Component* root) {
-		if (running) return;
-		lcd.begin(width, height);
-		renderer.setRoot(root);
-		running = true;
-	}
-
-	void Process::loop() {
-		if (!running || loopsPerSecond == 0) return;
-		static unsigned int loopDelay = 1000 / loopsPerSecond;
-		renderer.render(lcd);
-		delay(loopDelay);
-	}
-
-	CollisionSystem& Process::getCollisionSystem() {
-		return collisionSystem;
+	bool CollisionTrigger::checkActive(unsigned int dt) {
+		return process->getCollisionSystem()
+			.getCollisionList(*collider)
+			.includes(objType);
 	}
 }

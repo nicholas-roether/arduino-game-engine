@@ -1,6 +1,8 @@
 #ifndef _AGE_UTILS_H_
 #define _AGE_UTILS_H_
 
+#include <Arduino.h>
+
 namespace AGE::Utils {
 	template<typename T>
 	class Array {
@@ -39,13 +41,11 @@ namespace AGE::Utils {
 		}
 
 		T& at(unsigned int i) {
-			// TODO proper errors
 			if (i >= numElems) abort();
 			return elements[i];
 		}
 
 		const T& at(unsigned int i) const {
-			// TODO proper errors
 			if (i >= numElems) abort();
 			return elements[i];
 		}
@@ -61,6 +61,12 @@ namespace AGE::Utils {
 			free(elements);
 			elements = newElems;
 			capacity = newCapacity;		
+		}
+
+		bool includes(const T& element) const {
+			for (const T& elem : *this)
+				if (elem == element) return true;
+			return false;
 		}
 
 		size_t size() const {

@@ -48,9 +48,29 @@ namespace AGE {
 
 		Text(const Text& text);
 
-		void draw(CharacterBuffer& registry);
+		void draw(CharacterBuffer& buffer);
 
 		void setText(const Utils::LCDString& str);
+
+		void setX(uint8_t x);
+
+		void setY(uint8_t y);
+
+		void setPos(uint8_t x, uint8_t y);
+	};
+
+	class Texture : public Component {
+		uint8_t textureId;
+		uint8_t x;
+		uint8_t y;
+
+	public:
+		Texture(uint8_t textureId);
+		Texture(uint8_t textureId, uint8_t x, uint8_t y);
+
+		void draw(CharacterBuffer& buffer);
+
+		void setTexture(uint8_t texutreId);
 
 		void setX(uint8_t x);
 
@@ -116,6 +136,59 @@ namespace AGE {
 
 		void render(LiquidCrystal& lcd);
 	};
+
+	typedef uint8_t TextureID;
+
+	class TextureRegistry {
+		static constexpr unsigned int maxTextures = 16;
+		static unsigned int numTextures;
+		LiquidCrystal& lcd;
+
+	public:
+		TextureRegistry(LiquidCrystal& lcd);
+
+		TextureID create(byte textureData[8]);
+	};
+
+	struct LCDConfig {
+		uint8_t rs;
+		uint8_t enable;
+		uint8_t d0;
+		uint8_t d1;
+		uint8_t d2;
+		uint8_t d3;
+	};
+	
+	struct ProcessConfig {
+		unsigned int width;
+		unsigned int height;
+		unsigned int loopsPerSecond;
+		LCDConfig lcdConfig;
+	};
+
+	class Process {
+		unsigned int width;
+		unsigned int height;
+		unsigned int loopDelay;
+		bool running = false;
+		LiquidCrystal lcd;
+		Renderer renderer;
+		TextureRegistry textureRegistry;
+		CollisionSystem collisionSystem;
+
+	public:
+		Process(const ProcessConfig& cfg);
+
+		void start(Component* root);
+
+		void loop();
+
+		CollisionSystem& getCollisionSystem();
+
+		const CollisionSystem& getCollisionSystem() const;
+
+		TextureID createTexture(byte textureData[8]);
+	};
 	
 	class Trigger {
 		bool isActive;
@@ -155,39 +228,20 @@ namespace AGE {
 		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
 	};
 
-	struct LCDConfig {
-		uint8_t rs;
-		uint8_t enable;
-		uint8_t d0;
-		uint8_t d1;
-		uint8_t d2;
-		uint8_t d3;
-	};
-	
-	struct ProcessConfig {
-		unsigned int width;
-		unsigned int height;
-		unsigned int loopsPerSecond;
-		LCDConfig lcdConfig;
-	};
+	class CollisionTrigger : public Trigger {
+		const CollidingPhysicsObject* collider;
+		unsigned int objType;
+		const Process* process;
 
-	class Process {
-		unsigned int width;
-		unsigned int height;
-		unsigned int loopsPerSecond;
-		bool running = false;
-		LiquidCrystal lcd;
-		Renderer renderer;
-		CollisionSystem collisionSystem;
+	protected:
+		bool checkActive(unsigned int dt);
 
 	public:
-		Process(const ProcessConfig& cfg);
-
-		void start(Component* root);
-
-		void loop();
-
-		CollisionSystem& getCollisionSystem();
+		CollisionTrigger(
+			const CollidingPhysicsObject* collider,
+			unsigned int objType,
+			const Process* process
+		);
 	};
 }
 
