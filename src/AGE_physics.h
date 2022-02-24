@@ -74,11 +74,11 @@ namespace AGE {
 	};
 
 	class CollisionSystem {
-		Utils::Array<CollidingPhysicsObject*> objects;
+		Utils::List<CollidingPhysicsObject*> objects;
 
 	public:
 		void add(CollidingPhysicsObject* obj);
 
-		Utils::Array<unsigned int> getCollisionList(const CollidingPhysicsObject& obj) const;
+		Utils::List<unsigned int> getCollisionList(const CollidingPhysicsObject& obj) const;
 	};
 }

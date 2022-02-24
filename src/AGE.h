@@ -12,7 +12,7 @@ namespace AGE {
 	class CharacterBuffer;
 
 	class Component {
-		Utils::Array<Component*> children;
+		Utils::List<Component*> children;
 		bool rebuildRequested = false;
 	
 	protected:
@@ -21,7 +21,7 @@ namespace AGE {
 		void requestRebuild();
 
 	public:
-		const Utils::Array<Component*>& getChildren();
+		const Utils::List<Component*>& getChildren();
 
 		void rebuild();
 

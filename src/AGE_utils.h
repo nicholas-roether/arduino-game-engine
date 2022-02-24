@@ -5,7 +5,7 @@
 
 namespace AGE::Utils {
 	template<typename T>
-	class Array {
+	class List {
 		size_t capacity;
 		size_t numElems;
 		T* elements;
@@ -15,19 +15,19 @@ namespace AGE::Utils {
 		}
 
 	public:
-		Array() : capacity(0), numElems(0), elements(nullptr) {}
-		Array(size_t capacity)
+		List() : capacity(0), numElems(0), elements(nullptr) {}
+		List(size_t capacity)
 			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T)))
 		{}
 
-		Array(const Array<T>& other)
+		List(const List<T>& other)
 			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(capacity * sizeof(T)))
 		{
 			for (unsigned int i = 0; i < numElems; i++)
 				elements[i] = other.elements[i];
 		}
 
-		~Array() {
+		~List() {
 			free(elements);
 		}
 

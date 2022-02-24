@@ -11,7 +11,7 @@ namespace AGE {
 		rebuildRequested = true;
 	}
 
-	const Utils::Array<Component*>& Component::getChildren() {
+	const Utils::List<Component*>& Component::getChildren() {
 		return children;
 	}
 
