@@ -18,24 +18,53 @@ AGE::TextureID TEX_PLAYER_SPACESHIP = process.createTexture({
 });
 
 AGE::TextureID TEX_PLAYER_FIRE = process.createTexture({
-  B00000,
-  B00000,
-  B00001,
-  B01111,
-  B00111,
-  B00001,
-  B00000,
-  B00000
+	B00000,
+	B00000,
+	B00001,
+	B01111,
+	B00111,
+	B00001,
+	B00000,
+	B00000
 });
+
+class PlayerFire : public AGE::Component {
+	static constexpr unsigned int ANIM_STEP_DURATION = 100;
+	uint8_t yPos = 0;
+	unsigned int animationTime = 0;
+	bool show = true;
+
+	AGE::Texture texture = { TEX_PLAYER_FIRE, 0, yPos };
+
+public:
+	void setY(uint8_t y) {
+		yPos = y;
+	}
+
+	void build() {
+		if (show) addChild(&texture);
+	}
+
+	void update(unsigned int dt) {
+		animationTime += dt;
+		if (animationTime >= ANIM_STEP_DURATION) {
+			show = !show;
+			animationTime = 0;
+			requestRebuild();
+		}
+		texture.setY(yPos);
+	}
+};
 
 class Player : public AGE::Component {
 	uint8_t yPos = 0;
-	AGE::Texture fire = { TEX_PLAYER_FIRE, 0, yPos };
+	
 	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1, yPos };
-
+	PlayerFire fire;
 	AGE::ClickTrigger upTrigger = { 7 };
 	AGE::ClickTrigger downTrigger = { 8 };
 
+public:
 	void build() {
 		addChild(&fire);
 		addChild(&spaceship);
@@ -56,6 +85,7 @@ class Player : public AGE::Component {
 Player player;
 
 void setup() {
+	Serial.begin(115200);
 	process.start(&player);
 }
 
