@@ -6,7 +6,7 @@ AGE::Process process({
 	{ 12, 11, 5, 4, 3, 2 }
 });
 
-byte TEX_PLAYER_DATA[8] = {
+AGE::TextureID TEX_PLAYER = process.createTexture({
 	B00000,
 	B11100,
 	B00110,
@@ -15,9 +15,7 @@ byte TEX_PLAYER_DATA[8] = {
 	B00110,
 	B11100,
 	B00000
-};
-
-AGE::TextureID TEX_PLAYER = process.createTexture(TEX_PLAYER_DATA);
+});
 
 class Player : public AGE::Component {
 	AGE::Texture texture = { TEX_PLAYER };

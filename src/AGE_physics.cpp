@@ -70,6 +70,7 @@ namespace AGE {
 
 	Utils::List<unsigned int> CollisionSystem::getCollisionList(const CollidingPhysicsObject& obj) const {
 		Utils::List<unsigned int> collisions;
+		objects.begin();
 		for (CollidingPhysicsObject* other : objects) {
 			if (*other == obj) continue;
 			if (obj.collides(*other)) collisions.push(other->getObjectType());

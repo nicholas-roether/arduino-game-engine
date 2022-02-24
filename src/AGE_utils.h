@@ -2,16 +2,65 @@
 #define _AGE_UTILS_H_
 
 #include <Arduino.h>
+#include <stdarg.h>
 
 namespace AGE::Utils {
 	template<typename T>
-	class List {
+	class Iterable {
+	protected:
+		Iterable() = default;
+
+		virtual T* getPointer() const = 0;
+
+	public:
+		virtual T& at(unsigned int i) = 0;
+
+		virtual size_t size() const = 0;
+
+		T* begin() {
+			return getPointer();
+		}
+
+		const T* begin() const {
+			return getPointer();
+		}
+
+		T* end() {
+			return begin() + size();
+		}
+
+		const T* end() const {
+			return begin() + size();
+		}
+
+		bool includes(const T& element) const {
+			for (const T& elem : *this)
+				if (elem == element) return true;
+			return false;
+		}
+
+		T& operator[](unsigned int i) {
+			return at(i);
+		}
+
+		const T& operator[](unsigned int i) const {
+			return at(i);
+		}
+	};
+
+	template<typename T>
+	class List : public Iterable<T> {
 		size_t capacity;
 		size_t numElems;
 		T* elements;
 
 		void increaseCapacity() {
 			resizeTo(capacity == 0 ? 1 : 2 * capacity);
+		}
+
+	protected:
+		T* getPointer() const {
+			return elements;
 		}
 
 	public:
@@ -31,6 +80,15 @@ namespace AGE::Utils {
 			free(elements);
 		}
 
+		T& at(unsigned int i) {
+			if (i >= numElems) abort();
+			return elements[i];
+		}
+
+		size_t size() const {
+			return numElems;
+		}
+
 		void push(const T& elem) {
 			if (numElems == capacity) increaseCapacity();
 			elements[numElems++] = elem;
@@ -38,16 +96,6 @@ namespace AGE::Utils {
 
 		T pop() {
 			return elements[--numElems];
-		}
-
-		T& at(unsigned int i) {
-			if (i >= numElems) abort();
-			return elements[i];
-		}
-
-		const T& at(unsigned int i) const {
-			if (i >= numElems) abort();
-			return elements[i];
 		}
 
 		void clear() {
@@ -62,39 +110,39 @@ namespace AGE::Utils {
 			elements = newElems;
 			capacity = newCapacity;		
 		}
+	};
 
-		bool includes(const T& element) const {
-			for (const T& elem : *this)
-				if (elem == element) return true;
-			return false;
+	template<typename T, size_t numElems>
+	class Array : public Iterable<T> {
+		T elements[numElems];
+
+	protected:
+		T* getPointer() const {
+			return (T*) elements;
+		}
+
+	public:
+		Array() = default;
+		Array(const T elements[numElems]) {
+			memcpy(this->elements, elements, numElems);
+		}
+		Array(T elem...) {
+			va_list args;
+			va_start(args, elem);
+
+			for (unsigned int i = 0; i < numElems; i++)
+				elements[i] = va_arg(args, int);
+			
+			va_end(args);
+		}
+
+		T& at(unsigned int i) {
+			if (i >= size()) abort();
+			return elements[i];
 		}
 
 		size_t size() const {
 			return numElems;
-		}
-
-		T* begin() {
-			return elements;
-		}
-
-		const T* begin() const {
-			return elements;
-		}
-
-		T* end() {
-			return elements + numElems;
-		}
-
-		const T* end() const {
-			return elements + numElems;
-		}
-
-		T& operator[](unsigned int i) {
-			return at(i);
-		}
-
-		const T& operator[](unsigned int i) const {
-			return at(i);
 		}
 	};
 

@@ -147,7 +147,7 @@ namespace AGE {
 	public:
 		TextureRegistry(LiquidCrystal& lcd);
 
-		TextureID create(byte textureData[8]);
+		TextureID create(Utils::Array<byte, 8> textureData);
 	};
 
 	struct LCDConfig {
@@ -187,7 +187,7 @@ namespace AGE {
 
 		const CollisionSystem& getCollisionSystem() const;
 
-		TextureID createTexture(byte textureData[8]);
+		TextureID createTexture(Utils::Array<byte, 8> textureData);
 	};
 	
 	class Trigger {
