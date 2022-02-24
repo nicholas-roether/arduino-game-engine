@@ -67,6 +67,41 @@ namespace AGE {
 
 		void update(unsigned int dt);
 	};
+
+		enum ClickTriggerEdge {
+		BTN_DOWN,
+		BTN_UP
+	};
+
+	class ClickTrigger : public Trigger {
+		static constexpr unsigned int DEBOUNCE_DELAY = 10;
+		unsigned int pin;
+		ClickTriggerEdge edge;
+		unsigned int sinceLastUp = 0;
+
+	protected:
+		bool checkActive(unsigned int dt);
+
+	public:
+		ClickTrigger(unsigned int pin);
+		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
+	};
+
+	class CollisionTrigger : public Trigger {
+		const CollidingPhysicsObject* collider;
+		unsigned int objType;
+		const Process* process;
+
+	protected:
+		bool checkActive(unsigned int dt);
+
+	public:
+		CollisionTrigger(
+			const CollidingPhysicsObject* collider,
+			unsigned int objType,
+			const Process* process
+		);
+	};
 }
 
 #endif

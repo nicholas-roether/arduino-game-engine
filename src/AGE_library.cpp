@@ -1,4 +1,4 @@
-#include "AGE_components.h"
+#include "AGE_library.h"
 
 namespace AGE {
 	// Text
@@ -91,5 +91,36 @@ namespace AGE {
 			showing = visible;
 			requestRebuild();
 		}
+	}
+
+	// ClickTrigger
+
+	ClickTrigger::ClickTrigger(unsigned int pin)
+		: Trigger(false), pin(pin), edge(BTN_DOWN) {}
+
+	ClickTrigger::ClickTrigger(unsigned int pin, ClickTriggerEdge edge)
+		: Trigger(edge == BTN_UP), pin(pin), edge(edge) {}
+
+	bool ClickTrigger::checkActive(unsigned int dt) {
+		if (sinceLastUp < DEBOUNCE_DELAY) {
+			sinceLastUp += dt;
+			return state();
+		}
+		if (edge == BTN_DOWN) return digitalRead(pin);
+		if (edge == BTN_UP) return !digitalRead(pin);
+	}
+
+	// CollisionTrigger
+
+	CollisionTrigger::CollisionTrigger(
+		const CollidingPhysicsObject* collider,
+		unsigned int objType,
+		const Process* process
+	) : Trigger(false), collider(collider), objType(objType), process(process) {}
+
+	bool CollisionTrigger::checkActive(unsigned int dt) {
+		return process->getCollisionSystem()
+			.getCollisionList(*collider)
+			.includes(objType);
 	}
 }
