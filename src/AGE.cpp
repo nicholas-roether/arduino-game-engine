@@ -206,8 +206,6 @@ namespace AGE {
 				char c = frontBuffer->get(x, y);
 				if (c != backBuffer->get(x, y)) {
 					lcd.setCursor(x, y);
-					Serial.print("wrote ");
-					Serial.println((unsigned int) c);
 					lcd.write(c);
 				}
 			}
