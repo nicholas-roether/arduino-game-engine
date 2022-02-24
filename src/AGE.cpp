@@ -162,18 +162,12 @@ namespace AGE {
 	// Renderer
 
 	Renderer::Renderer(size_t width, size_t height)
-		: frontCharBuffer(width, height), backCharBuffer(width, height) {}
-
-	CharacterBuffer& Renderer::getCurrentCharBuffer() {
-		return buffersSwapped ? backCharBuffer : frontCharBuffer;
-	}
-
-	CharacterBuffer& Renderer::getPrevCharBuffer() {
-		return buffersSwapped ? frontCharBuffer : backCharBuffer;
-	}
+		: buffer1(width, height), buffer2(width, height) {}
 
 	void Renderer::swapCharBuffers() {
-		buffersSwapped = !buffersSwapped;
+		CharacterBuffer* newFrontBuffer = backBuffer;
+		backBuffer = frontBuffer;
+		frontBuffer = newFrontBuffer;
 	}
 
 	void Renderer::build(Component* component) {
@@ -193,7 +187,7 @@ namespace AGE {
 	}
 
 	void Renderer::render(Component* component) {
-		component->draw(getCurrentCharBuffer());
+		component->draw(*frontBuffer);
 		for (Component* child : component->getChildren())
 			render(child);
 	}
@@ -204,14 +198,16 @@ namespace AGE {
 
 	void Renderer::render(LiquidCrystal& lcd) {
 		unsigned int now = millis();
-		build(root);
 		update(root, now - lastRender);
+		build(root);
 		render(root);
-		for (unsigned int y = 0; y < getCurrentCharBuffer().getHeight(); y++) {
-			for (unsigned int x = 0; x < getCurrentCharBuffer().getWidth(); x++) {
-				char c = getCurrentCharBuffer().get(x, y);
-				if (c != getPrevCharBuffer().get(x, y)) {
+		for (unsigned int y = 0; y < frontBuffer->getHeight(); y++) {
+			for (unsigned int x = 0; x < frontBuffer->getWidth(); x++) {
+				char c = frontBuffer->get(x, y);
+				if (c != backBuffer->get(x, y)) {
 					lcd.setCursor(x, y);
+					Serial.print("wrote ");
+					Serial.println((unsigned int) c);
 					lcd.write(c);
 				}
 			}

@@ -28,6 +28,7 @@ class Player : public AGE::Component {
 Player player;
 
 void setup() {
+	Serial.begin(115200);
 	process.start(&player);
 }
 
