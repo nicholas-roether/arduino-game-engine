@@ -11,7 +11,7 @@
 namespace AGE {
 	class CharacterBuffer;
 
-	class Component {
+		class Component {
 		Utils::List<Component*> children;
 		bool rebuildRequested = false;
 	
@@ -34,49 +34,6 @@ namespace AGE {
 		bool shouldRebuild();
 
 		void didRebuild();
-	};
-
-	class Text : public Component {
-		Utils::LCDString text;
-		uint8_t x;
-		uint8_t y;
-	
-	public:
-		Text();
-
-		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
-
-		Text(const Text& text);
-
-		void draw(CharacterBuffer& buffer);
-
-		void setText(const Utils::LCDString& str);
-
-		void setX(uint8_t x);
-
-		void setY(uint8_t y);
-
-		void setPos(uint8_t x, uint8_t y);
-	};
-
-	class Texture : public Component {
-		uint8_t textureId;
-		uint8_t x;
-		uint8_t y;
-
-	public:
-		Texture(uint8_t textureId);
-		Texture(uint8_t textureId, uint8_t x, uint8_t y);
-
-		void draw(CharacterBuffer& buffer);
-
-		void setTexture(uint8_t texutreId);
-
-		void setX(uint8_t x);
-
-		void setY(uint8_t y);
-
-		void setPos(uint8_t x, uint8_t y);
 	};
 
 	class CharacterBuffer {
@@ -240,5 +197,7 @@ namespace AGE {
 		);
 	};
 }
+
+#include "AGE_components.h"
 
 #endif
