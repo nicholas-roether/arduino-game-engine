@@ -101,7 +101,9 @@ namespace AGE {
 		: width(width), 
 		  height(height), 
 		  characters((char*) calloc(sizeof(char), width * height))
-	{}
+	{
+		memset(characters, ' ', width * height * sizeof(char));
+	}
 
 	CharacterBuffer::CharacterBuffer(const CharacterBuffer& other)
 		: width(other.width),

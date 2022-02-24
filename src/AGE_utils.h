@@ -126,11 +126,13 @@ namespace AGE::Utils {
 		Array(const T elements[numElems]) {
 			memcpy(this->elements, elements, numElems);
 		}
-		Array(T elem...) {
-			va_list args;
-			va_start(args, elem);
+		Array(T first...) {
+			elements[0] = first;
 
-			for (unsigned int i = 0; i < numElems; i++)
+			va_list args;
+			va_start(args, first);
+
+			for (unsigned int i = 1; i < numElems; i++)
 				elements[i] = va_arg(args, int);
 			
 			va_end(args);
