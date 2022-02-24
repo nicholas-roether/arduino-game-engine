@@ -181,7 +181,7 @@ namespace AGE {
 	void Renderer::update(Component* component, unsigned int dt) {
 		component->update(dt);
 		for (Component* child : component->getChildren())
-			render(child);
+			update(child, dt);
 	}
 
 	void Renderer::render(Component* component) {
