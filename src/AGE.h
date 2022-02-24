@@ -99,9 +99,7 @@ namespace AGE {
 
 		void write(const char* characters, unsigned int x, unsigned int y);
 
-		char* begin();
-
-		char* end();
+		void clear();
 
 		size_t getWidth();
 

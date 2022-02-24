@@ -102,7 +102,7 @@ namespace AGE {
 		  height(height), 
 		  characters((char*) calloc(sizeof(char), width * height))
 	{
-		memset(characters, ' ', width * height * sizeof(char));
+		clear();
 	}
 
 	CharacterBuffer::CharacterBuffer(const CharacterBuffer& other)
@@ -145,12 +145,8 @@ namespace AGE {
 		}
 	}
 	
-	char* CharacterBuffer::begin() {
-		return characters;
-	}
-
-	char* CharacterBuffer::end() {
-		return characters + width * height;
+	void CharacterBuffer::clear() {
+		memset(characters, ' ', width * height * sizeof(char));
 	}
 
 	size_t CharacterBuffer::getWidth() {
@@ -200,6 +196,7 @@ namespace AGE {
 
 	void Renderer::render(LiquidCrystal& lcd) {
 		unsigned int now = millis();
+		frontBuffer->clear();
 		update(root, now - lastRender);
 		build(root);
 		render(root);
