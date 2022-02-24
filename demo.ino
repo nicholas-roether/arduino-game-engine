@@ -32,9 +32,9 @@ class PlayerFire : public AGE::Component {
 	static constexpr unsigned int ANIM_STEP_DURATION = 100;
 	uint8_t yPos = 0;
 	unsigned int animationTime = 0;
-	bool show = true;
 
 	AGE::Texture texture = { TEX_PLAYER_FIRE, 0, yPos };
+	AGE::Toggled toggled = &texture;
 
 public:
 	void setY(uint8_t y) {
@@ -42,15 +42,14 @@ public:
 	}
 
 	void build() {
-		if (show) addChild(&texture);
+		addChild(&toggled);
 	}
 
 	void update(unsigned int dt) {
 		animationTime += dt;
 		if (animationTime >= ANIM_STEP_DURATION) {
-			show = !show;
+			toggled.toggle();
 			animationTime = 0;
-			requestRebuild();
 		}
 		texture.setY(yPos);
 	}

@@ -47,6 +47,26 @@ namespace AGE {
 
 		void setPos(uint8_t x, uint8_t y);
 	};
+
+	class Toggled : public Component {
+		Component* child;
+		bool showing;
+		bool visible;
+
+	public:
+		Toggled(Component* child);
+		Toggled(Component* child, bool visible);
+
+		void setVisible(bool visible);
+
+		void toggle();
+
+		bool isVisible();
+
+		void build();
+
+		void update(unsigned int dt);
+	};
 }
 
 #endif

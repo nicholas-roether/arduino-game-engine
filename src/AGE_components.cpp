@@ -61,4 +61,35 @@ namespace AGE {
 		setX(x);
 		setY(y);
 	}
+
+	// Toggled
+
+	Toggled::Toggled(Component* child)
+		: child(child), showing(true), visible(true) {}
+
+	Toggled::Toggled(Component* child, bool visible)
+		: child(child), showing(visible), visible(visible) {}
+
+	void Toggled::setVisible(bool visible) {
+		this->visible = visible;
+	}
+
+	void Toggled::toggle() {
+		setVisible(!visible);
+	}
+
+	bool Toggled::isVisible() {
+		return visible;
+	}
+
+	void Toggled::build() {
+		if (showing) addChild(child);
+	}
+
+	void Toggled::update(unsigned int dt) {
+		if (showing != visible) {
+			showing = visible;
+			requestRebuild();
+		}
+	}
 }
