@@ -77,64 +77,54 @@ namespace AGE {
 		void die();
 
 	public:
-		virtual bool shouldDie();
+		bool shouldDie();
 	};
-
-	template<typename T>
-	struct SpawnedComponent {
-		Utils::UUID id;
-		T component;
-	};
-
-	typedef Utils::UUID SpawnedID;
 
 	template<typename C>
 	class Spawner : public Component {
-		Utils::List<SpawnedComponent<C>> spawnedComponents;
+		Utils::List<C> spawnedComponents;
+		// C* spawned;
+		// bool shouldDraw = false;
 
 	public:
-		SpawnedID spawn(const C& component) {
+		Spawner() /* : spawned((C*) malloc(sizeof(C))) */ {
+			// Serial.print("allocating ");
+			// Serial.println(sizeof(C));
+			// delay(100);
+			// spawned = (C*) malloc(sizeof(C));
+			// Serial.print("allocated at location ");
+			// Serial.println((unsigned int) spawned);
+			// delay(100);
+		}
+
+		void spawn(const C& component) {
 			Serial.println("spawn");
-			Utils::UUID id = Utils::uuid();
-			spawnedComponents.push({ id, component });
-			Serial.println(spawnedComponents[spawnedComponents.size() - 1].id);
+			// Utils::UUID id = Utils::uuid();
+			spawnedComponents.push(component);
+			// Serial.println(spawnedComponents[spawnedComponents.size() - 1].id);
+			// Serial.println("spawned");
 			requestRebuild();
-			return id;
+			// return id;
+			// memcpy(spawned, &component, sizeof(C));
+			// shouldDraw = true;
 		}
 
-		C* get(SpawnedID id) {
-			for (SpawnedComponent<C>& spc : spawnedComponents)
-				if (spc.id == id) return &spc.component;
-			return nullptr;
-		}
-
-		void kill(SpawnedID id) {
-			Serial.println("kill");
-			delay(100);
-			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
-				if (spawnedComponents[i].id == id) {
-					requestRebuild();
-					spawnedComponents.remove(i);
-					return;
-				}
-			}
-		}
-
-		Utils::List<SpawnedComponent<C>> getSpawnedComponents() {
-			return spawnedComponents;
-		}
 
 		void build() {
 			Serial.println("Spawner::build");
-			delay(100);
-			for (SpawnedComponent<C>& spc : spawnedComponents)
-				addChild(&spc.component);
+			// delay(100);
+			for (C& spc : spawnedComponents)
+				addChild(&spc);
+			// if(shouldDraw) addChild(spawned);
+			// Serial.println("/Spawner::build");
+			// delay(100);
 		}
 
 		void update(unsigned int dt) {
-			// for (SpawnedComponent<C>& spc : spawnedComponents) {
-			// 	if (spc.component.shouldDie()) kill(spc.id);
-			// }
+			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
+				if (spawnedComponents[i].shouldDie()) spawnedComponents.remove(i);
+				requestRebuild();
+			}
 		}
 	};
 

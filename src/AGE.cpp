@@ -108,8 +108,7 @@ namespace AGE {
 	}
 
 	void Renderer::build(Component* component) {
-		if (firstBuild) component->build();
-		else if (component->shouldRebuild()) {
+		if (component->shouldRebuild()) {
 			component->rebuild();
 			component->didRebuild();
 		}

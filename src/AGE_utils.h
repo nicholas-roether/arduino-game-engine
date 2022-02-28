@@ -110,14 +110,9 @@ namespace AGE::Utils {
 		}
 
 		void resizeTo(size_t newCapacity) {
-			Serial.print("resized array to ");
-			Serial.print(newCapacity);
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			Serial.print("; moved to location ");
-			Serial.println((unsigned int) newElems);
-			delay(100);
-			for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
-				newElems[i] = elements[i];
+			// for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
+			// 	newElems[i] = elements[i];
 			if (newElems != elements) free(elements);
 			elements = newElems;
 			capacity = newCapacity;		

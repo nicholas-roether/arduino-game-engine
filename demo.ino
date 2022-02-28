@@ -34,29 +34,21 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 	B00000,
 	B00000,
 	B00000,
+	B00000,
 	B11110,
 	B00000
 });
 
 class Bullet : public AGE::SpawnableComponent {
-	static constexpr double X_VELOCITY = 1;
+	static constexpr double X_VELOCITY = 18;
 
 	AGE::Texture texture = { TEX_BULLET };
 	AGE::PhysicsObject physics;
 
 public:
 	Bullet(uint8_t yPos) {
-		Serial.println("Bullet::Bullet");
-		delay(100);
-		physics.setPos({ 3, yPos});
+		physics.setPos({ 2, yPos});
 		physics.setVelocity({ 0, 0 });
-	}
-	
-	Bullet& operator=(const Bullet& other) {
-		Serial.println("Bullet::operator=");
-		delay(100);
-		// physics = other.physics;
-		// texture = other.texture;
 	}
 
 	void build() {
@@ -82,10 +74,6 @@ public:
 
 	void build() {
 		addChild(&spawner);
-	}
-
-	void draw(AGE::CharacterBuffer& buffer) {
-		buffer.write(String(spawner.getSpawnedComponents().size()).c_str(), 19, 0);
 	}
 
 	void update(unsigned int dt) {
@@ -151,6 +139,7 @@ Player player;
 
 void setup() {
 	Serial.begin(115200);
+	Serial.println("test");
 	process.start(&player);
 }
 

@@ -105,5 +105,5 @@ namespace AGE::Utils {
 		: String::String(str) {}
 
 	LCDString::LCDString(const LCDString& str)
-		: String::String(str) {}
+		: String::String(str.c_str()) {}
 }

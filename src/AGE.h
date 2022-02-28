@@ -13,7 +13,7 @@ namespace AGE {
 
 	class Component {
 		Utils::List<Component*> children;
-		bool rebuildRequested = false;
+		bool rebuildRequested = true;
 	
 	protected:
 		void addChild(Component* child);
