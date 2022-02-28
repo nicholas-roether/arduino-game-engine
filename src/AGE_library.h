@@ -5,6 +5,8 @@
 #include "AGE.h"
 
 namespace AGE {
+	// Components
+
 	class Text : public Component {
 		Utils::LCDString text;
 		uint8_t x;
@@ -68,7 +70,77 @@ namespace AGE {
 		void update(unsigned int dt);
 	};
 
-		enum ClickTriggerEdge {
+	class SpawnableComponent : public Component {
+		bool deathFlag;
+
+	protected:
+		void die();
+
+	public:
+		virtual bool shouldDie();
+	};
+
+	template<typename T>
+	struct SpawnedComponent {
+		Utils::UUID id;
+		T component;
+	};
+
+	typedef Utils::UUID SpawnedID;
+
+	template<typename C>
+	class Spawner : public Component {
+		Utils::List<SpawnedComponent<C>> spawnedComponents;
+
+	public:
+		SpawnedID spawn(const C& component) {
+			Serial.println("spawn");
+			Utils::UUID id = Utils::uuid();
+			spawnedComponents.push({ id, component });
+			Serial.println(spawnedComponents[spawnedComponents.size() - 1].id);
+			requestRebuild();
+			return id;
+		}
+
+		C* get(SpawnedID id) {
+			for (SpawnedComponent<C>& spc : spawnedComponents)
+				if (spc.id == id) return &spc.component;
+			return nullptr;
+		}
+
+		void kill(SpawnedID id) {
+			Serial.println("kill");
+			delay(100);
+			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
+				if (spawnedComponents[i].id == id) {
+					requestRebuild();
+					spawnedComponents.remove(i);
+					return;
+				}
+			}
+		}
+
+		Utils::List<SpawnedComponent<C>> getSpawnedComponents() {
+			return spawnedComponents;
+		}
+
+		void build() {
+			Serial.println("Spawner::build");
+			delay(100);
+			for (SpawnedComponent<C>& spc : spawnedComponents)
+				addChild(&spc.component);
+		}
+
+		void update(unsigned int dt) {
+			// for (SpawnedComponent<C>& spc : spawnedComponents) {
+			// 	if (spc.component.shouldDie()) kill(spc.id);
+			// }
+		}
+	};
+
+	// Triggers
+
+	enum ClickTriggerEdge {
 		BTN_DOWN,
 		BTN_UP
 	};

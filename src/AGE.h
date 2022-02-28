@@ -11,7 +11,7 @@
 namespace AGE {
 	class CharacterBuffer;
 
-		class Component {
+	class Component {
 		Utils::List<Component*> children;
 		bool rebuildRequested = false;
 	
@@ -135,6 +135,10 @@ namespace AGE {
 		void start(Component* root);
 
 		void loop();
+
+		unsigned int getWidth();
+	
+		unsigned int getHeight();
 
 		CollisionSystem& getCollisionSystem();
 

@@ -93,6 +93,16 @@ namespace AGE {
 		}
 	}
 
+	// SpawnableComponent
+
+	void SpawnableComponent::die() {
+		deathFlag = true;
+	}
+
+	bool SpawnableComponent::shouldDie() {
+		return deathFlag;
+	}
+
 	// ClickTrigger
 
 	ClickTrigger::ClickTrigger(unsigned int pin)

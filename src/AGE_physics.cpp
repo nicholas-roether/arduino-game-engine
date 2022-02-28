@@ -12,19 +12,28 @@ namespace AGE {
 		pos += velocity * dtSeconds;
 	}
 
-	Vector<int> PhysicsObject::getPos() const {
-		return { (int) round(pos.x), (int) round(pos.y) };
+	Vector<float> PhysicsObject::getPos() const {
+		return pos;
 	}
+
+	unsigned int PhysicsObject::getX() const {
+		return (unsigned int) round(pos.x);
+	}
+
+	unsigned int PhysicsObject::getY() const {
+		return (unsigned int) round(pos.y);
+	}
+
 
 	void PhysicsObject::setPos(const Vector<int>& newPos) {
-		pos = { (double) newPos.x, (double) newPos.y };
+		pos = { (float) newPos.x, (float) newPos.y };
 	}
 
-	void PhysicsObject::setVelocity(const Vector<double>& newVel) {
+	void PhysicsObject::setVelocity(const Vector<float>& newVel) {
 		velocity = newVel;
 	}
 
-	void PhysicsObject::setAcceleration(const Vector<double>& newAcc) {
+	void PhysicsObject::setAcceleration(const Vector<float>& newAcc) {
 		acceleration = newAcc;
 	}
 

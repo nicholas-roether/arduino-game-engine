@@ -98,15 +98,27 @@ namespace AGE::Utils {
 			return elements[--numElems];
 		}
 
+		void remove(unsigned int i) {
+			if (i >= numElems) abort();
+			for (unsigned int j = i; i < numElems - 1; i++)
+				elements[j] = elements[j + 1];
+			numElems--;
+		}
+
 		void clear() {
 			numElems = 0;
 		}
 
 		void resizeTo(size_t newCapacity) {
-			T* newElems = (T*) malloc(newCapacity * sizeof(T));
+			Serial.print("resized array to ");
+			Serial.print(newCapacity);
+			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
+			Serial.print("; moved to location ");
+			Serial.println((unsigned int) newElems);
+			delay(100);
 			for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
 				newElems[i] = elements[i];
-			free(elements);
+			if (newElems != elements) free(elements);
 			elements = newElems;
 			capacity = newCapacity;		
 		}

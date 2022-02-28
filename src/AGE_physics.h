@@ -38,20 +38,24 @@ namespace AGE {
 	};
 
 	class PhysicsObject {
-		Vector<double> pos;
-		Vector<double> velocity;
-		Vector<double> acceleration;
+		Vector<float> pos;
+		Vector<float> velocity;
+		Vector<float> acceleration;
 
 	public:
 		virtual void update(unsigned int dt);
 
-		Vector<int> getPos() const;
+		Vector<float> getPos() const;
+
+		unsigned int getX() const;
+
+		unsigned int getY() const;
 
 		void setPos(const Vector<int>& newPos);
 
-		void setVelocity(const Vector<double>& newVel);
+		void setVelocity(const Vector<float>& newVel);
 
-		void setAcceleration(const Vector<double>& newAcc);
+		void setAcceleration(const Vector<float>& newAcc);
 	};
 
 	class CollidingPhysicsObject : public PhysicsObject {

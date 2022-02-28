@@ -198,6 +198,14 @@ namespace AGE {
 		delay(loopDelay);
 	}
 
+	unsigned int Process::getWidth() {
+		return width;
+	}
+
+	unsigned int Process::getHeight() {
+		return height;
+	}
+
 	CollisionSystem& Process::getCollisionSystem() {
 		return collisionSystem;
 	}
