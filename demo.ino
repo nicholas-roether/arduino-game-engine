@@ -40,15 +40,20 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 });
 
 class Bullet : public AGE::SpawnableComponent {
-	static constexpr double X_VELOCITY = 18;
+	static constexpr float X_VELOCITY = 18;
 
 	AGE::Texture texture = { TEX_BULLET };
-	AGE::PhysicsObject physics;
+	// AGE::PhysicsObject physics;
+	uint8_t xPos = 2;
+	uint8_t time = 0;
 
 public:
+	Bullet() = default;
+
 	Bullet(uint8_t yPos) {
-		physics.setPos({ 2, yPos});
-		physics.setVelocity({ 0, 0 });
+		texture.setY(yPos);
+		// physics.setPos({ 2, yPos});
+		// physics.setVelocity({ X_VELOCITY, 0 });
 	}
 
 	void build() {
@@ -56,9 +61,17 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		physics.update(dt);
-		if (physics.getPos().x >= process.getWidth()) die();
-		texture.setPos(physics.getX(), physics.getY());
+		// physics.update(dt);
+		// if (physics.getPos().x >= process.getWidth()) die();
+		// texture.setPos(physics.getX(), physics.getY());
+		time += dt;
+		if (time > 1000 / X_VELOCITY) {
+			xPos++;
+			time = 0;
+		}
+		if (xPos >= process.getWidth()) die();
+		texture.setX(xPos);
+
 	}
 };
 
@@ -78,7 +91,7 @@ public:
 
 	void update(unsigned int dt) {
 		shootTrigger.update(dt);
-		if (shootTrigger.fired()) spawner.spawn({ *yPos });
+		if (shootTrigger.fired()) spawner.spawn(Bullet{ *yPos });
 	}
 };
 
@@ -139,7 +152,7 @@ Player player;
 
 void setup() {
 	Serial.begin(115200);
-	Serial.println("test");
+	Serial.println("Program started");
 	process.start(&player);
 }
 

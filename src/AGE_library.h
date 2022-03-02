@@ -1,5 +1,5 @@
-#ifndef _AGE_COMPONENTS_H
-#define _AGE_COMPONENTS_H
+#ifndef _AGE_COMPONENTS_H_
+#define _AGE_COMPONENTS_H_
 
 #include <Arduino.h>
 #include "AGE.h"
@@ -14,6 +14,8 @@ namespace AGE {
 	
 	public:
 		Text();
+
+		Text(const Utils::LCDString& text);
 
 		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
 
@@ -71,7 +73,7 @@ namespace AGE {
 	};
 
 	class SpawnableComponent : public Component {
-		bool deathFlag;
+		bool deathFlag = false;
 
 	protected:
 		void die();
@@ -83,46 +85,24 @@ namespace AGE {
 	template<typename C>
 	class Spawner : public Component {
 		Utils::List<C> spawnedComponents;
-		// C* spawned;
-		// bool shouldDraw = false;
 
 	public:
-		Spawner() /* : spawned((C*) malloc(sizeof(C))) */ {
-			// Serial.print("allocating ");
-			// Serial.println(sizeof(C));
-			// delay(100);
-			// spawned = (C*) malloc(sizeof(C));
-			// Serial.print("allocated at location ");
-			// Serial.println((unsigned int) spawned);
-			// delay(100);
-		}
 
 		void spawn(const C& component) {
-			Serial.println("spawn");
-			// Utils::UUID id = Utils::uuid();
 			spawnedComponents.push(component);
-			// Serial.println(spawnedComponents[spawnedComponents.size() - 1].id);
-			// Serial.println("spawned");
 			requestRebuild();
-			// return id;
-			// memcpy(spawned, &component, sizeof(C));
-			// shouldDraw = true;
 		}
 
 
 		void build() {
-			Serial.println("Spawner::build");
-			// delay(100);
-			for (C& spc : spawnedComponents)
+			for (SpawnableComponent& spc : spawnedComponents)
 				addChild(&spc);
-			// if(shouldDraw) addChild(spawned);
-			// Serial.println("/Spawner::build");
-			// delay(100);
 		}
 
 		void update(unsigned int dt) {
 			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
-				if (spawnedComponents[i].shouldDie()) spawnedComponents.remove(i);
+				if (!spawnedComponents[i].shouldDie()) continue;
+				spawnedComponents.remove(i);
 				requestRebuild();
 			}
 		}

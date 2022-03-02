@@ -21,7 +21,7 @@ namespace AGE {
 		void requestRebuild();
 
 	public:
-		const Utils::List<Component*>& getChildren();
+		const Utils::List<Component*>& getChildren() const;
 
 		void rebuild();
 

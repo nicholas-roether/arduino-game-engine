@@ -6,6 +6,9 @@ namespace AGE {
 	Text::Text()
 		: text(""), x(0), y(0) {}
 
+	Text::Text(const Utils::LCDString& text)
+		: text(text), x(x), y(y) {}
+
 	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
 		: text(text), x(x), y(y) {}
 	

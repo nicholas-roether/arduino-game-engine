@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <new.h>
 
 namespace AGE::Utils {
 	template<typename T>
@@ -13,8 +15,6 @@ namespace AGE::Utils {
 		virtual T* getPointer() const = 0;
 
 	public:
-		virtual T& at(unsigned int i) = 0;
-
 		virtual size_t size() const = 0;
 
 		T* begin() {
@@ -40,11 +40,11 @@ namespace AGE::Utils {
 		}
 
 		T& operator[](unsigned int i) {
-			return at(i);
+			return *(getPointer() + i);
 		}
 
 		const T& operator[](unsigned int i) const {
-			return at(i);
+			return *(getPointer() + i);
 		}
 	};
 
@@ -55,7 +55,7 @@ namespace AGE::Utils {
 		T* elements;
 
 		void increaseCapacity() {
-			resizeTo(capacity == 0 ? 1 : 2 * capacity);
+			resizeTo(2 * capacity);
 		}
 
 	protected:
@@ -64,25 +64,27 @@ namespace AGE::Utils {
 		}
 
 	public:
-		List() : capacity(0), numElems(0), elements(nullptr) {}
+		List() : capacity(1), numElems(0), elements(new T[1]) {}
 		List(size_t capacity)
-			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T)))
+			: capacity(capacity), numElems(0), elements(new T[capacity])
 		{}
 
 		List(const List<T>& other)
-			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(capacity * sizeof(T)))
+			: capacity(other.capacity), numElems(other.numElems), elements(new T[other.capacity])
 		{
 			for (unsigned int i = 0; i < numElems; i++)
 				elements[i] = other.elements[i];
 		}
 
 		~List() {
-			free(elements);
+			delete[] elements;
 		}
 
-		T& at(unsigned int i) {
-			if (i >= numElems) abort();
-			return elements[i];
+		List& operator=(const List& other) {
+			if (capacity < other.capacity) resizeTo(other.capacity);
+			numElems = other.numElems;
+			for (unsigned int i = 0; i < numElems; i++)
+				elements[i] = other[i];
 		}
 
 		size_t size() const {
@@ -91,7 +93,8 @@ namespace AGE::Utils {
 
 		void push(const T& elem) {
 			if (numElems == capacity) increaseCapacity();
-			elements[numElems++] = elem;
+			elements[numElems] = elem;
+			numElems++;
 		}
 
 		T pop() {
@@ -110,10 +113,14 @@ namespace AGE::Utils {
 		}
 
 		void resizeTo(size_t newCapacity) {
-			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			// for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
-			// 	newElems[i] = elements[i];
-			if (newElems != elements) free(elements);
+			Serial.print("array resize: ");
+			Serial.println(sizeof(T) * newCapacity);
+			Serial.println((unsigned int) elements);
+			delay(100);
+			T* newElems = new T[newCapacity];
+			for (unsigned int i = 0; i < numElems; i++)
+				newElems[i] = elements[i];
+			delete[] elements;
 			elements = newElems;
 			capacity = newCapacity;		
 		}
@@ -143,11 +150,6 @@ namespace AGE::Utils {
 				elements[i] = va_arg(args, int);
 			
 			va_end(args);
-		}
-
-		T& at(unsigned int i) {
-			if (i >= size()) abort();
-			return elements[i];
 		}
 
 		size_t size() const {

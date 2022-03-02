@@ -18,7 +18,7 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
-            "intelliSenseMode": "gcc-x64",
+            "intelliSenseMode": "gcc-x86",
 			"compilerPath": "\"${env:arduinoAvrCompilerPath}\" -std=gnu++11 -mmcu=atmega328p",
 			"compilerArgs": [
 				"-w",
