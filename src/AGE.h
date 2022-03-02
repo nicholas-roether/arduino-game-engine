@@ -165,6 +165,31 @@ namespace AGE {
 
 		void update(unsigned int dt);
 	};
+
+	template<typename T>
+	class Prop {
+		T* ptr;
+		bool ownership;
+
+	public:
+		Prop(const T& val) : ptr(malloc(sizeof(T))), ownership(true) {
+			*ptr = val;
+		}
+
+		Prop(T* ptr) : ptr(ptr), ownership(false) {}
+
+		~Prop() {
+			if (ownership) free(ptr);
+		}
+
+		T& value() {
+			return *ptr;
+		}
+
+		const T& value() const {
+			return *ptr;
+		}
+	};
 }
 
 #include "AGE_library.h"
