@@ -111,8 +111,6 @@ namespace AGE::Utils {
 
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			// for (unsigned int i = 0; i < numElems && i < newCapacity; i++)
-			// 	newElems[i] = elements[i];
 			if (newElems != elements) free(elements);
 			elements = newElems;
 			capacity = newCapacity;		
