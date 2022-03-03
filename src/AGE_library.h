@@ -82,13 +82,16 @@ namespace AGE {
 		bool shouldDie();
 	};
 
-	template<typename C>
+	template<typename C, size_t maxChildren>
 	class Spawner : public Component {
-		Utils::List<C> spawnedComponents;
+		Utils::List<C> spawnedComponents = { maxChildren };
 
 	public:
 
 		void spawn(const C& component) {
+			Serial.println(spawnedComponents.size());
+			if (spawnedComponents.size() == maxChildren)
+				spawnedComponents.remove(0);
 			spawnedComponents.push(component);
 			requestRebuild();
 		}

@@ -64,24 +64,26 @@ namespace AGE::Utils {
 		}
 
 	public:
-		List() : capacity(1), numElems(0), elements(new T[1]) {}
+		List() : capacity(1), numElems(0), elements((T*) malloc(sizeof(T))) {}
 		List(size_t capacity)
-			: capacity(capacity), numElems(0), elements(new T[capacity])
+			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T)))
 		{}
 
 		List(const List<T>& other)
-			: capacity(other.capacity), numElems(other.numElems), elements(new T[other.capacity])
+			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(other.capacity * sizeof(T)))
 		{
 			for (unsigned int i = 0; i < numElems; i++)
-				elements[i] = other.elements[i];
+				new (elements + i) T(other.elements[i]);
 		}
 
 		~List() {
-			delete[] elements;
+			for (const T& elem : *this) elem.~T();
+			free(elements);
 		}
 
 		List& operator=(const List& other) {
 			if (capacity < other.capacity) resizeTo(other.capacity);
+			clear();
 			numElems = other.numElems;
 			for (unsigned int i = 0; i < numElems; i++)
 				elements[i] = other[i];
@@ -93,34 +95,42 @@ namespace AGE::Utils {
 
 		void push(const T& elem) {
 			if (numElems == capacity) increaseCapacity();
-			elements[numElems] = elem;
+			new (elements + numElems) T(elem);
 			numElems++;
 		}
 
 		T pop() {
-			return elements[--numElems];
+			T elem = elements[numElems];
+			elements[numElems].~T();
+			numElems--;
+			return elem;
 		}
 
 		void remove(unsigned int i) {
+			Serial.println("removing...");
 			if (i >= numElems) abort();
-			for (unsigned int j = i; i < numElems - 1; i++)
-				elements[j] = elements[j + 1];
+			for (unsigned int j = i + 1; j < numElems; j++)
+				elements[j - 1] = elements[j];
+			elements[numElems - 1].~T();
 			numElems--;
 		}
 
 		void clear() {
+			for (unsigned int i = 0; i < numElems; i++)
+				elements[i].~T();
 			numElems = 0;
 		}
 
 		void resizeTo(size_t newCapacity) {
-			Serial.print("array resize: ");
-			Serial.println(sizeof(T) * newCapacity);
-			Serial.println((unsigned int) elements);
-			delay(100);
-			T* newElems = new T[newCapacity];
-			for (unsigned int i = 0; i < numElems; i++)
-				newElems[i] = elements[i];
-			delete[] elements;
+			// FIXME this crashes :(
+			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
+			if (newElems != elements) {
+				for (unsigned int i = 0; i < numElems; i++) {
+					new (newElems + i) T(elements[i]);
+					elements[i].~T();
+				}
+				free(elements);
+			}
 			elements = newElems;
 			capacity = newCapacity;		
 		}
