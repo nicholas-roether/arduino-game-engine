@@ -4,7 +4,7 @@
 		"arduinoAvrPath": "${env:arduinoPath}/hardware/arduino/avr",
 		"arduinoAvrToolsPath": "${env:arduinoPath}/hardware/tools/avr",
 		"arduinoLibraryPath": "${env:arduinoPath}/libraries",
-		"arduinoAvrCompilerPath": "${env:arduinoAvrToolsPath}/bin/avr-g++.exe"
+		"arduinoAvrCompilerPath": "${env:arduinoAvrToolsPath}/bin/avr-gcc.exe"
 	},
     "configurations": [
         {
