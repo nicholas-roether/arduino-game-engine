@@ -72,21 +72,17 @@ namespace AGE::Utils {
 		List(const List<T>& other)
 			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(other.capacity * sizeof(T)))
 		{
-			for (unsigned int i = 0; i < numElems; i++)
-				new (elements + i) T(other.elements[i]);
+			memcpy(elements, other.elements, numElems * sizeof(T));
 		}
 
 		~List() {
-			for (const T& elem : *this) elem.~T();
 			free(elements);
 		}
 
 		List& operator=(const List& other) {
 			if (capacity < other.capacity) resizeTo(other.capacity);
-			clear();
 			numElems = other.numElems;
-			for (unsigned int i = 0; i < numElems; i++)
-				elements[i] = other[i];
+			memcpy(elements, other.elements, numElems * sizeof(T));
 		}
 
 		size_t size() const {
@@ -95,44 +91,29 @@ namespace AGE::Utils {
 
 		void push(const T& elem) {
 			if (numElems == capacity) increaseCapacity();
-			new (elements + numElems) T(elem);
-			numElems++;
+			elements[numElems++] = elem;
 		}
 
 		T pop() {
-			T elem = elements[numElems];
-			elements[numElems].~T();
-			numElems--;
-			return elem;
+			return elements[--numElems];
 		}
 
 		void remove(unsigned int i) {
-			Serial.println("removing...");
 			if (i >= numElems) abort();
 			for (unsigned int j = i + 1; j < numElems; j++)
 				elements[j - 1] = elements[j];
-			elements[numElems - 1].~T();
 			numElems--;
 		}
 
 		void clear() {
-			for (unsigned int i = 0; i < numElems; i++)
-				elements[i].~T();
 			numElems = 0;
 		}
 
 		void resizeTo(size_t newCapacity) {
-			// FIXME this crashes :(
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			if (newElems != elements) {
-				for (unsigned int i = 0; i < numElems; i++) {
-					new (newElems + i) T(elements[i]);
-					elements[i].~T();
-				}
-				free(elements);
-			}
+			if (newElems != elements) free(elements);
 			elements = newElems;
-			capacity = newCapacity;		
+			capacity = newCapacity;	
 		}
 	};
 

@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "AGE.h"
+#include "AGE_utils.h"
 
 namespace AGE {
 	// Components
@@ -82,29 +83,32 @@ namespace AGE {
 		bool shouldDie();
 	};
 
-	template<typename C, size_t maxChildren>
+	template<typename C>
 	class Spawner : public Component {
-		Utils::List<C> spawnedComponents = { maxChildren };
+		Utils::List<C*> spawnedComponents;
 
 	public:
+		~Spawner() {
+			for (C* component : spawnedComponents)
+				delete component;
+		}
 
 		void spawn(const C& component) {
-			Serial.println(spawnedComponents.size());
-			if (spawnedComponents.size() == maxChildren)
-				spawnedComponents.remove(0);
-			spawnedComponents.push(component);
+			spawnedComponents.push(new C(component));
 			requestRebuild();
 		}
 
 
 		void build() {
-			for (SpawnableComponent& spc : spawnedComponents)
-				addChild(&spc);
+			Serial.println("Spawner::build");
+			for (SpawnableComponent* spc : spawnedComponents)
+				addChild(spc);
 		}
 
 		void update(unsigned int dt) {
 			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
-				if (!spawnedComponents[i].shouldDie()) continue;
+				if (!spawnedComponents[i]->shouldDie()) continue;
+				delete spawnedComponents[i];
 				spawnedComponents.remove(i);
 				requestRebuild();
 			}

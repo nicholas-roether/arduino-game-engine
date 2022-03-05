@@ -78,7 +78,7 @@ public:
 class BulletSpawner : public AGE::Component {
 	const uint8_t* yPos;
 
-	AGE::Spawner<Bullet, 3> spawner;
+	AGE::Spawner<Bullet> spawner;
 
 	AGE::ClickTrigger shootTrigger = { 6 };
 
@@ -125,7 +125,7 @@ class Player : public AGE::Component {
 
 	PlayerFire fire = { &yPos };
 	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1, yPos };
-	BulletSpawner bulletSpawner = { &yPos };
+	// BulletSpawner bulletSpawner = { &yPos };
 
 	AGE::ClickTrigger upTrigger = { 7 };
 	AGE::ClickTrigger downTrigger = { 8 };
@@ -134,7 +134,7 @@ public:
 	void build() {
 		addChild(&fire);
 		addChild(&spaceship);
-		addChild(&bulletSpawner);
+		// addChild(&bulletSpawner);
 	}
 
 	void update(unsigned int dt) {
@@ -154,6 +154,8 @@ void setup() {
 	Serial.begin(115200);
 	Serial.println("Program started");
 	process.start(&player);
+	uint8_t yPos = 0;
+	BulletSpawner bulletSpawner = { &yPos };
 }
 
 void loop() {

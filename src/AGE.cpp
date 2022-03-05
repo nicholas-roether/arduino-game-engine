@@ -4,6 +4,7 @@ namespace AGE {
 	// Component
 
 	void Component::addChild(Component* child) {
+		if (!child) return;
 		children.push(child);
 	}
 
@@ -147,7 +148,6 @@ namespace AGE {
 				}
 			}
 		}
-		firstBuild = false;
 		lastRender = now;
 		swapCharBuffers();
 	}

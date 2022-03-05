@@ -68,10 +68,8 @@ namespace AGE {
 		CharacterBuffer buffer2;
 		CharacterBuffer* frontBuffer = &buffer1;
 		CharacterBuffer* backBuffer = &buffer2;
-		bool buffersSwapped = false;
 		Component* root;
 		unsigned int lastRender = 0;
-		bool firstBuild = true;
 
 		void swapCharBuffers();
 
