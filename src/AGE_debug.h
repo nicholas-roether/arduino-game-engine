@@ -9,11 +9,11 @@
 #define DEBUG_LOG(str)
 #define DEBUG_LOG_F(str, ...)
 
-#define ERROR(message)
-#define ERROR_F(message, ...)
+#define ERROR(message) abort()
+#define ERROR_F(message, ...) abort()
 
-#define ASSERT(cond, message)
-#define ASSERT_F(cond, message, ...)
+#define ASSERT(cond, message) if(!(cond)) abort()
+#define ASSERT_F(cond, message, ...) if(!(cond)) abort()
 
 #ifdef AGE_DEBUG_MODE
 	void __debugInit();
