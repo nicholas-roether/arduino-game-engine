@@ -100,8 +100,7 @@ namespace AGE::Utils {
 
 		void remove(unsigned int i) {
 			if (i >= numElems) abort();
-			for (unsigned int j = i + 1; j < numElems; j++)
-				elements[j - 1] = elements[j];
+			memmove(elements + i, elements + i + 1, (numElems - i - 1) * sizeof(T));
 			numElems--;
 		}
 
@@ -111,7 +110,7 @@ namespace AGE::Utils {
 
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			if (newElems != elements) free(elements);
+			if (newElems == NULL) abort();
 			elements = newElems;
 			capacity = newCapacity;	
 		}
