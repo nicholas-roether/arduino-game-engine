@@ -43,7 +43,6 @@ class Bullet : public AGE::SpawnableComponent {
 	static constexpr float X_VELOCITY = 18;
 
 	AGE::Texture texture = { TEX_BULLET };
-	// AGE::PhysicsObject physics;
 	uint8_t xPos = 2;
 	uint8_t time = 0;
 
@@ -52,8 +51,6 @@ public:
 
 	Bullet(uint8_t yPos) {
 		texture.setY(yPos);
-		// physics.setPos({ 2, yPos});
-		// physics.setVelocity({ X_VELOCITY, 0 });
 	}
 
 	void build() {
@@ -61,9 +58,6 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		// physics.update(dt);
-		// if (physics.getPos().x >= process.getWidth()) die();
-		// texture.setPos(physics.getX(), physics.getY());
 		time += dt;
 		if (time > 1000 / X_VELOCITY) {
 			xPos++;
@@ -125,7 +119,7 @@ class Player : public AGE::Component {
 
 	PlayerFire fire = { &yPos };
 	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1, yPos };
-	// BulletSpawner bulletSpawner = { &yPos };
+	BulletSpawner bulletSpawner = { &yPos };
 
 	AGE::ClickTrigger upTrigger = { 7 };
 	AGE::ClickTrigger downTrigger = { 8 };
@@ -134,7 +128,7 @@ public:
 	void build() {
 		addChild(&fire);
 		addChild(&spaceship);
-		// addChild(&bulletSpawner);
+		addChild(&bulletSpawner);
 	}
 
 	void update(unsigned int dt) {
@@ -153,9 +147,8 @@ Player player;
 void setup() {
 	Serial.begin(115200);
 	Serial.println("Program started");
+
 	process.start(&player);
-	uint8_t yPos = 0;
-	BulletSpawner bulletSpawner = { &yPos };
 }
 
 void loop() {
