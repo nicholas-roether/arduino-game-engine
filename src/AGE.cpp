@@ -42,6 +42,8 @@ namespace AGE {
 		  height(height), 
 		  characters((char*) calloc(sizeof(char), width * height))
 	{
+		if (width > 0 && height > 0)
+			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
 		clear();
 	}
 
@@ -50,6 +52,8 @@ namespace AGE {
 		  height(other.height),
 		  characters((char*) calloc(sizeof(char), width * height))
 	{
+		if (width > 0 && height > 0)
+			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
 		memcpy(characters, other.characters, width * height * sizeof(char));
 	}
 
@@ -63,6 +67,7 @@ namespace AGE {
 			width = other.width;
 			height = other.height;
 			characters = (char*) malloc(width * height * sizeof(char));
+			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
 		}
 		memcpy(characters, other.characters, width * height * sizeof(char));
 	}

@@ -4,65 +4,28 @@ namespace AGE {
 	// Text
 
 	Text::Text()
-		: text(""), x(0), y(0) {}
+		: text(""), x(0su), y(0su) {}
 
-	Text::Text(const Utils::LCDString& text)
-		: text(text), x(x), y(y) {}
+	Text::Text(Prop<Utils::LCDString> text)
+		: text(text), x(0su), y(0su) {}
 
-	Text::Text(const Utils::LCDString& text, uint8_t x, uint8_t y)
+	Text::Text(Prop<Utils::LCDString> text, Prop<uint8_t> x, Prop<uint8_t> y)
 		: text(text), x(x), y(y) {}
-	
-	Text::Text(const Text& text)
-		: text(text.text), x(text.x), y(text.y)
-	{}
 	
 	void Text::draw(CharacterBuffer& buffer) {
-		buffer.write(text.c_str(), x, y);
-	}
-
-	void Text::setText(const Utils::LCDString& str) {
-		text = str;
-	}
-
-	void Text::setX(uint8_t x) {
-		this->x = x;
-	}
-
-	void Text::setY(uint8_t y) {
-		this->y = y;
-	}
-
-	void Text::setPos(uint8_t x, uint8_t y) {
-		setX(x);
-		setY(y);
+		buffer.write((*text).c_str(), *x, *y);
 	}
 
 	// Texture
 
-	Texture::Texture(uint8_t textureId) : textureId(textureId) {}
+	Texture::Texture(Prop<uint8_t> textureId)
+		: textureId(textureId), x(0su), y(0su){}
 
-	Texture::Texture(uint8_t textureId, uint8_t x, uint8_t y)
+	Texture::Texture(Prop<uint8_t> textureId, Prop<uint8_t> x, Prop<uint8_t> y)
 		: textureId(textureId), x(x), y(y) {}
 
 	void Texture::draw(CharacterBuffer& buffer) {
-		buffer.put(textureId, x, y);
-	}
-
-	void Texture::setTexture(uint8_t textureId) {
-		this->textureId = textureId;
-	}
-
-	void Texture::setX(uint8_t x) {
-		this->x = x;
-	}
-
-	void Texture::setY(uint8_t y) {
-		this->y = y;
-	}
-
-	void Texture::setPos(uint8_t x, uint8_t y) {
-		setX(x);
-		setY(y);
+		buffer.put(*textureId, *x, *y);
 	}
 
 	// Toggled
@@ -70,19 +33,19 @@ namespace AGE {
 	Toggled::Toggled(Component* child)
 		: child(child), showing(true), visible(true) {}
 
-	Toggled::Toggled(Component* child, bool visible)
-		: child(child), showing(visible), visible(visible) {}
+	Toggled::Toggled(Component* child, Prop<bool> visible)
+		: child(child), showing(*visible), visible(visible) {}
 
 	void Toggled::setVisible(bool visible) {
 		this->visible = visible;
 	}
 
 	void Toggled::toggle() {
-		setVisible(!visible);
+		setVisible(!*visible);
 	}
 
 	bool Toggled::isVisible() {
-		return visible;
+		return *visible;
 	}
 
 	void Toggled::build() {
@@ -90,8 +53,8 @@ namespace AGE {
 	}
 
 	void Toggled::update(unsigned int dt) {
-		if (showing != visible) {
-			showing = visible;
+		if (showing != *visible) {
+			showing = *visible;
 			requestRebuild();
 		}
 	}

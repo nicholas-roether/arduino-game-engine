@@ -172,17 +172,33 @@ namespace AGE {
 	template<typename T>
 	class Prop {
 		T* ptr;
-		bool ownership;
+		bool isOwned;
 
 	public:
-		Prop(const T& val) : ptr(malloc(sizeof(T))), ownership(true) {
-			*ptr = val;
+		Prop(const T& val) : isOwned(true) {
+			ptr = new T(val);
 		}
 
-		Prop(T* ptr) : ptr(ptr), ownership(false) {}
+		Prop(T* ptr) : ptr(ptr), isOwned(false) {}
 
 		~Prop() {
-			if (ownership) free(ptr);
+			if (isOwned) delete ptr;
+		}
+
+		Prop(const Prop<T>& other) : isOwned(other.isOwned) {
+			if (isOwned) ptr = new T(*other.ptr);
+			else ptr = other.ptr;
+		}
+
+		Prop<T>& operator=(const Prop<T>& other) {
+			if (isOwned) delete ptr;
+			isOwned = other.isOwned;
+			if (isOwned) ptr = new T(*other.ptr);
+			else ptr = other.ptr;
+		}
+
+		T& operator*() {
+			return value();
 		}
 
 		T& value() {

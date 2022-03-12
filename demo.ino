@@ -42,16 +42,15 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 class Bullet : public AGE::SpawnableComponent {
 	static constexpr float X_VELOCITY = 18;
 
-	AGE::Texture texture = { TEX_BULLET };
-	uint8_t xPos = 2;
+	uint8_t xPos = 1;
+	AGE::Prop<uint8_t> yPos;
+	AGE::Texture texture = { TEX_BULLET, &xPos, yPos };
 	uint8_t time = 0;
 
 public:
 	Bullet() = default;
 
-	Bullet(uint8_t yPos) {
-		texture.setY(yPos);
-	}
+	Bullet(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
 
 	void build() {
 		addChild(&texture);
@@ -64,8 +63,6 @@ public:
 			time = 0;
 		}
 		if (xPos >= process.getWidth()) die();
-		texture.setX(xPos);
-
 	}
 };
 
@@ -91,14 +88,14 @@ public:
 
 class PlayerFire : public AGE::Component {
 	static constexpr unsigned int ANIM_STEP_DURATION = 100;
-	const uint8_t* yPos;
+	AGE::Prop<uint8_t> yPos;
 	unsigned int animationTime = 0;
 
-	AGE::Texture texture = { TEX_PLAYER_FIRE, 0, *yPos };
+	AGE::Texture texture = { TEX_PLAYER_FIRE, 0su, yPos };
 	AGE::Toggled toggled = &texture;
 
 public:
-	PlayerFire(const uint8_t* yPos) : yPos(yPos) {}
+	PlayerFire(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
 
 	void build() {
 		addChild(&toggled);
@@ -110,7 +107,6 @@ public:
 			toggled.toggle();
 			animationTime = 0;
 		}
-		texture.setY(*yPos);
 	}
 };
 
@@ -118,7 +114,7 @@ class Player : public AGE::Component {
 	uint8_t yPos = 0;
 
 	PlayerFire fire = { &yPos };
-	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1, yPos };
+	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1su, &yPos };
 	BulletSpawner bulletSpawner = { &yPos };
 
 	AGE::ClickTrigger upTrigger = { 7 };
@@ -137,8 +133,6 @@ public:
 
 		if (upTrigger.fired() && yPos != 0) yPos--;
 		if (downTrigger.fired() && yPos != 3) yPos++;
-
-		spaceship.setY(yPos);
 	}
 };
 

@@ -9,58 +9,40 @@ namespace AGE {
 	// Components
 
 	class Text : public Component {
-		Utils::LCDString text;
-		uint8_t x;
-		uint8_t y;
+		Prop<Utils::LCDString> text;
+		Prop<uint8_t> x;
+		Prop<uint8_t> y;
 	
 	public:
 		Text();
 
-		Text(const Utils::LCDString& text);
+		Text(Prop<Utils::LCDString> text);
 
-		Text(const Utils::LCDString& text, uint8_t x, uint8_t y);
-
-		Text(const Text& text);
+		Text(Prop<Utils::LCDString> text, Prop<uint8_t> x, Prop<uint8_t> y);
 
 		void draw(CharacterBuffer& buffer);
-
-		void setText(const Utils::LCDString& str);
-
-		void setX(uint8_t x);
-
-		void setY(uint8_t y);
-
-		void setPos(uint8_t x, uint8_t y);
 	};
 
 	class Texture : public Component {
-		uint8_t textureId;
-		uint8_t x;
-		uint8_t y;
+		Prop<uint8_t> textureId;
+		Prop<uint8_t> x;
+		Prop<uint8_t> y;
 
 	public:
-		Texture(uint8_t textureId);
-		Texture(uint8_t textureId, uint8_t x, uint8_t y);
+		Texture(Prop<uint8_t> textureId);
+		Texture(Prop<uint8_t> textureId, Prop<uint8_t> x, Prop<uint8_t> y);
 
 		void draw(CharacterBuffer& buffer);
-
-		void setTexture(uint8_t texutreId);
-
-		void setX(uint8_t x);
-
-		void setY(uint8_t y);
-
-		void setPos(uint8_t x, uint8_t y);
 	};
 
 	class Toggled : public Component {
 		Component* child;
 		bool showing;
-		bool visible;
+		Prop<bool> visible;
 
 	public:
 		Toggled(Component* child);
-		Toggled(Component* child, bool visible);
+		Toggled(Component* child, Prop<bool> visible);
 
 		void setVisible(bool visible);
 

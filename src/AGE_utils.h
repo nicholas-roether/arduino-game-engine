@@ -8,6 +8,10 @@
 
 #include "AGE_debug.h"
 
+inline constexpr uint8_t operator ""su(unsigned long long arg) noexcept {
+	return static_cast<uint8_t>(arg);
+}
+
 namespace AGE::Utils {
 	template<typename T>
 	class Iterable {
@@ -71,11 +75,14 @@ namespace AGE::Utils {
 		List() : capacity(1), numElems(0), elements((T*) malloc(sizeof(T))) {}
 		List(size_t capacity)
 			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T)))
-		{}
+		{
+			ASSERT_F(elements != NULL, "Failed to allocate list of size %d: insufficient memory", capacity);
+		}
 
 		List(const List<T>& other)
 			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(other.capacity * sizeof(T)))
 		{
+			ASSERT_F(elements != NULL, "Failed to allocate list of size %d: insufficient memory", capacity);
 			memcpy(elements, other.elements, numElems * sizeof(T));
 		}
 
@@ -114,7 +121,7 @@ namespace AGE::Utils {
 
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			ASSERT_F(newElems != NULL, "Resizing list to %d failed; this likely means the program has run out of memory", newCapacity);
+			ASSERT_F(newElems != NULL, "Resizing list to %d failed: insufficient memory", newCapacity);
 			elements = newElems;
 			capacity = newCapacity;	
 		}
