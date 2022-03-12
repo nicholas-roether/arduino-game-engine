@@ -21,6 +21,8 @@ namespace AGE {
 		void requestRebuild();
 
 	public:
+		virtual ~Component() = default;
+
 		const Utils::List<Component*>& getChildren() const;
 
 		void rebuild();
@@ -151,6 +153,8 @@ namespace AGE {
 
 	protected:
 		Trigger(bool initial);
+
+		virtual ~Trigger() = default;
 
 		void active();
 
