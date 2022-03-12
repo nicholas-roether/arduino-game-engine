@@ -106,6 +106,26 @@ namespace AGE {
 		return deathFlag;
 	}
 
+	// Spawner
+	Spawner::~Spawner() {
+		for (SpawnableComponent* component : spawnedComponents)
+				delete component;
+	}
+
+	void Spawner::build() {
+		for (SpawnableComponent* spc : spawnedComponents)
+			addChild(spc);
+	}
+
+	void Spawner::update(unsigned int dt)  {
+		for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
+			if (!spawnedComponents[i]->shouldDie()) continue;
+			delete spawnedComponents[i];
+			spawnedComponents.remove(i);
+			requestRebuild();
+		}
+	}
+
 	// ClickTrigger
 
 	ClickTrigger::ClickTrigger(unsigned int pin)

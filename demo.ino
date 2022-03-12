@@ -72,7 +72,7 @@ public:
 class BulletSpawner : public AGE::Component {
 	const uint8_t* yPos;
 
-	AGE::Spawner<Bullet> spawner;
+	AGE::Spawner spawner;
 
 	AGE::ClickTrigger shootTrigger = { 6 };
 

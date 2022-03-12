@@ -83,36 +83,21 @@ namespace AGE {
 		bool shouldDie();
 	};
 
-	template<typename C>
 	class Spawner : public Component {
-		Utils::List<C*> spawnedComponents;
+		Utils::List<SpawnableComponent*> spawnedComponents;
 
 	public:
-		~Spawner() {
-			for (C* component : spawnedComponents)
-				delete component;
-		}
+		virtual ~Spawner();
 
+		template<typename C>
 		void spawn(const C& component) {
 			spawnedComponents.push(new C(component));
 			requestRebuild();
 		}
 
+		void build();
 
-		void build() {
-			Serial.println("Spawner::build");
-			for (SpawnableComponent* spc : spawnedComponents)
-				addChild(spc);
-		}
-
-		void update(unsigned int dt) {
-			for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
-				if (!spawnedComponents[i]->shouldDie()) continue;
-				delete spawnedComponents[i];
-				spawnedComponents.remove(i);
-				requestRebuild();
-			}
-		}
+		void update(unsigned int dt);
 	};
 
 	// Triggers
