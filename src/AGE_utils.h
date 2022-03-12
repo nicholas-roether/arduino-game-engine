@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <new.h>
 
+#include "AGE_debug.h"
+
 namespace AGE::Utils {
 	template<typename T>
 	class Iterable {
@@ -40,10 +42,12 @@ namespace AGE::Utils {
 		}
 
 		T& operator[](unsigned int i) {
+			ASSERT_F(i < size(), "Out of bounds: can't access index %d in iterable of size %d", i, size());
 			return *(getPointer() + i);
 		}
 
 		const T& operator[](unsigned int i) const {
+			ASSERT_F(i < size(), "Out of bounds: can't access index %d in iterable of size %d", i, size());
 			return *(getPointer() + i);
 		}
 	};
@@ -99,7 +103,7 @@ namespace AGE::Utils {
 		}
 
 		void remove(unsigned int i) {
-			if (i >= numElems) abort();
+			ASSERT_F(i < numElems, "Out of bounds: can't remove index %d from array of size %d", i, numElems);
 			memmove(elements + i, elements + i + 1, (numElems - i - 1) * sizeof(T));
 			numElems--;
 		}
@@ -110,7 +114,7 @@ namespace AGE::Utils {
 
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			if (newElems == NULL) abort();
+			ASSERT_F(newElems != NULL, "Resizing list to %d failed; this likely means the program has run out of memory", newCapacity);
 			elements = newElems;
 			capacity = newCapacity;	
 		}

@@ -68,7 +68,7 @@ namespace AGE {
 	}
 
 	char CharacterBuffer::get(unsigned int x, unsigned int y) {
-		if (x >= width || y >= height) abort();
+		ASSERT_F(x < width && y < height, "Out of bounds: can't access position (%d, %d) in buffer with dimensions (%d, %d).", x, y, width, height);
 		return characters[x + y * width];
 	}
 
@@ -159,7 +159,7 @@ namespace AGE {
 		: lcd(lcd) {}
 
 	TextureID TextureRegistry::create(Utils::Array<byte, 8> textureData) {
-		if (numTextures >= maxTextures) abort();
+		ASSERT_F(numTextures < maxTextures, "Can't create texture: maximum of %d custom textures reached", maxTextures);
 		TextureID texture = numTextures++;
 		lcd.createChar(texture, textureData.begin());
 		return texture;

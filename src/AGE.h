@@ -7,6 +7,7 @@
 #include "AGE_text.h"
 #include "AGE_utils.h"
 #include "AGE_physics.h"
+#include "AGE_debug.h"
 
 namespace AGE {
 	class CharacterBuffer;

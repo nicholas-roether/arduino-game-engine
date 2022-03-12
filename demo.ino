@@ -145,9 +145,7 @@ public:
 Player player;
 
 void setup() {
-	Serial.begin(115200);
-	Serial.println("Program started");
-
+	DEBUG_INIT;
 	process.start(&player);
 }
 
