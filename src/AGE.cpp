@@ -113,12 +113,11 @@ namespace AGE {
 			component->rebuild();
 			component->didRebuild();
 		}
-		for (Component* child : component->getChildren())
-			build(child);
 	}
 
 	void Renderer::update(Component* component, unsigned int dt) {
 		component->update(dt);
+		build(component);
 		for (Component* child : component->getChildren())
 			update(child, dt);
 	}
