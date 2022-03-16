@@ -1,10 +1,24 @@
 #include "src/AGE.h"
 
 AGE::Process process({
-	20, 4,
-	20,
+	20, 4, 					// 20 x 4 LCD display
+	20, 					// 20 ticks per second
+	/**
+	 * LCD configuration:
+	 * 
+	 * R/W 		-> 	Pin 12
+	 * Reset 	->	Pin 11
+	 * Data 0	-> 	Pin 5
+	 * Data 1	-> 	Pin 4
+	 * Data 2	->	Pin 3
+	 * Data 3	->	Pin 2
+	 */
 	{ 12, 11, 5, 4, 3, 2 }
 });
+
+AGE::ClickTrigger shootTrigger 	= { 6 }; // Pin 6: shoot button
+AGE::ClickTrigger upTrigger 	= { 7 }; // Pin 7: move up button
+AGE::ClickTrigger downTrigger 	= { 8 }; // Pin 8: move down button
 
 AGE::TextureID TEX_PLAYER_SPACESHIP = process.createTexture({
 	B00000,
@@ -71,8 +85,6 @@ class BulletSpawner : public AGE::Component {
 
 	AGE::Spawner spawner;
 
-	AGE::ClickTrigger shootTrigger = { 6 };
-
 public:
 	BulletSpawner(const uint8_t* yPos) : yPos(yPos) {}
 
@@ -81,7 +93,6 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		shootTrigger.update(dt);
 		if (shootTrigger.fired()) spawner.spawn(Bullet{ *yPos });
 	}
 };
@@ -117,9 +128,6 @@ class Player : public AGE::Component {
 	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1su, &yPos };
 	BulletSpawner bulletSpawner = { &yPos };
 
-	AGE::ClickTrigger upTrigger = { 7 };
-	AGE::ClickTrigger downTrigger = { 8 };
-
 public:
 	void build() {
 		addChild(&fire);
@@ -128,9 +136,6 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		upTrigger.update(dt);
-		downTrigger.update(dt);
-
 		if (upTrigger.fired() && yPos != 0) yPos--;
 		if (downTrigger.fired() && yPos != 3) yPos++;
 	}
@@ -139,7 +144,10 @@ public:
 Player player;
 
 void setup() {
-	DEBUG_INIT;
+	DEBUG_LOG("Setup");
+	process.registerTrigger(&shootTrigger);
+	process.registerTrigger(&upTrigger);
+	process.registerTrigger(&downTrigger);
 	process.start(&player);
 }
 
