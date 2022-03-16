@@ -137,10 +137,9 @@ namespace AGE {
 		this->root = root;
 	}
 
-	void Renderer::render(LiquidCrystal& lcd) {
-		unsigned int now = millis();
+	void Renderer::render(LiquidCrystal& lcd, unsigned int dt) {
 		frontBuffer->clear();
-		update(root, now - lastRender);
+		update(root, dt);
 		build(root);
 		render(root);
 		for (unsigned int y = 0; y < frontBuffer->getHeight(); y++) {
@@ -152,7 +151,6 @@ namespace AGE {
 				}
 			}
 		}
-		lastRender = now;
 		swapCharBuffers();
 	}
 
@@ -197,8 +195,12 @@ namespace AGE {
 
 	void Process::loop() {
 		if (!running) return;
-		renderer.render(lcd);
+		unsigned long now = millis();
+		unsigned int dt = now - lastLoop;
+		for (Trigger* trigger : triggers) trigger->update(dt);
+		renderer.render(lcd, dt);
 		delay(loopDelay);
+		lastLoop = now;
 	}
 
 	unsigned int Process::getWidth() {

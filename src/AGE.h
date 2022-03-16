@@ -72,7 +72,6 @@ namespace AGE {
 		CharacterBuffer* frontBuffer = &buffer1;
 		CharacterBuffer* backBuffer = &buffer2;
 		Component* root;
-		unsigned int lastRender = 0;
 
 		void swapCharBuffers();
 
@@ -88,7 +87,7 @@ namespace AGE {
 
 		void setRoot(Component* root);
 
-		void render(LiquidCrystal& lcd);
+		void render(LiquidCrystal& lcd, unsigned int dt);
 	};
 
 	typedef uint8_t TextureID;
@@ -124,11 +123,13 @@ namespace AGE {
 		unsigned int width;
 		unsigned int height;
 		unsigned int loopDelay;
+		unsigned long lastLoop;
 		bool running = false;
 		LiquidCrystal lcd;
 		Renderer renderer;
 		TextureRegistry textureRegistry;
 		CollisionSystem collisionSystem;
+		Utils::List<Trigger*> triggers;
 
 	public:
 		Process(const ProcessConfig& cfg);
@@ -146,6 +147,8 @@ namespace AGE {
 		const CollisionSystem& getCollisionSystem() const;
 
 		TextureID createTexture(Utils::Array<byte, 8> textureData);
+
+		void registerTrigger(Trigger* trigger);
 	};
 	
 	class Trigger {
