@@ -193,11 +193,15 @@ namespace AGE {
 		Prop<T>& operator=(const Prop<T>& other) {
 			if (isOwned) delete ptr;
 			isOwned = other.isOwned;
-			if (isOwned) ptr = new T(*other.ptr);
+			if (isOwned) ptr = new T(*other);
 			else ptr = other.ptr;
 		}
 
 		T& operator*() {
+			return value();
+		}
+
+		const T& operator*() const {
 			return value();
 		}
 
