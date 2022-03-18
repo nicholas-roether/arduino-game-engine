@@ -117,18 +117,4 @@ namespace AGE {
 		if (edge == BTN_DOWN) return digitalRead(pin);
 		if (edge == BTN_UP) return !digitalRead(pin);
 	}
-
-	// CollisionTrigger
-
-	CollisionTrigger::CollisionTrigger(
-		const CollidingPhysicsObject* collider,
-		unsigned int objType,
-		const Process* process
-	) : Trigger(false), collider(collider), objType(objType), process(process) {}
-
-	bool CollisionTrigger::checkActive(unsigned int dt) {
-		return process->getCollisionSystem()
-			.getCollisionList(*collider)
-			.includes(objType);
-	}
 }

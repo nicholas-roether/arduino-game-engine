@@ -54,29 +54,30 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 });
 
 class Bullet : public AGE::SpawnableComponent {
-	static constexpr float X_VELOCITY = 18;
+	static constexpr uint8_t X_VELOCITY = 18;
 
 	uint8_t xPos = 2;
+	AGE::Velocity xVel = { &xPos, X_VELOCITY };
 	AGE::Prop<uint8_t> yPos;
 	AGE::Texture texture = { TEX_BULLET, &xPos, yPos };
-	unsigned int time = 0;
 
 public:
 	Bullet(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
 
-	// Copy constructor is absolutely necessary to ensure the texture has the correct pointer to xPos
-	Bullet(const Bullet& other) : xPos(other.xPos), yPos(other.yPos), texture(TEX_BULLET, &xPos, yPos) {}
+	// Copy constructor is absolutely necessary to ensure the texture and velocity have the correct pointer to xPos
+	Bullet(const Bullet& other)
+		: xPos(other.xPos),
+		  xVel(&xPos, X_VELOCITY),
+		  yPos(other.yPos),
+		  texture(TEX_BULLET, &xPos, yPos)
+	{}
 
 	void build() {
 		addChild(&texture);
 	}
 
 	void update(unsigned int dt) {
-		time += dt;
-		if (time > 1000 / X_VELOCITY) {
-			xPos++;
-			time = 0;
-		}
+		xVel.update(dt);
 		if (xPos >= process.getWidth()) die();
 	}
 };

@@ -3,87 +3,14 @@
 #include "AGE_physics.h"
 
 namespace AGE {
+	Velocity::Velocity(uint8_t* pos, uint8_t velocity)
+		: pos(pos), velocity(velocity) {}
 
-	// PhysicsObject
-
-	void PhysicsObject::update(unsigned int dt) {
-		double dtSeconds = ((double) dt) / 1000;
-		velocity += acceleration * dtSeconds;
-		pos += velocity * dtSeconds;
-	}
-
-	Vector<float> PhysicsObject::getPos() const {
-		return pos;
-	}
-
-	unsigned int PhysicsObject::getX() const {
-		return (unsigned int) round(pos.x);
-	}
-
-	unsigned int PhysicsObject::getY() const {
-		return (unsigned int) round(pos.y);
-	}
-
-
-	void PhysicsObject::setPos(const Vector<int>& newPos) {
-		pos = { (float) newPos.x, (float) newPos.y };
-	}
-
-	void PhysicsObject::setVelocity(const Vector<float>& newVel) {
-		velocity = newVel;
-	}
-
-	void PhysicsObject::setAcceleration(const Vector<float>& newAcc) {
-		acceleration = newAcc;
-	}
-
-	// CollidingPhysicsObject
-
-	static bool checkIntersection(int pos, int start, int width) {
-		return start <= pos && pos <= width;
-	}
-
-	CollidingPhysicsObject::CollidingPhysicsObject(
-		unsigned int objType,
-		unsigned int width, 
-		unsigned int height
-	)
-		: id(Utils::uuid()), objType(objType), width(width), height(height) {}
-
-	bool CollidingPhysicsObject::collides(Vector<int> pos) const {
-		return checkIntersection(pos.x, getPos().x, width) && checkIntersection(pos.y, getPos().y, height);
-	}
-
-	bool CollidingPhysicsObject::collides(const CollidingPhysicsObject& other) const {
-		bool yIntersection = checkIntersection(other.getPos().y, getPos().y, height)
-			|| checkIntersection(other.getPos().y + other.height, getPos().y, height);
-		if (!yIntersection) return false;
-		return checkIntersection(other.getPos().x, getPos().x, width)
-			|| checkIntersection(other.getPos().x + other.width, getPos().x, width);
-	}
-
-	unsigned int CollidingPhysicsObject::getObjectType() {
-		return objType;
-	}
-
-	bool CollidingPhysicsObject::operator==(const CollidingPhysicsObject& other) {
-		return id == other.id;
-	}
-
-	// CollisionSystem
-
-	void CollisionSystem::add(CollidingPhysicsObject* obj) {
-		if (obj->getObjectType() == 0) return;
-		objects.push(obj);
-	}
-
-	Utils::List<unsigned int> CollisionSystem::getCollisionList(const CollidingPhysicsObject& obj) const {
-		Utils::List<unsigned int> collisions;
-		objects.begin();
-		for (CollidingPhysicsObject* other : objects) {
-			if (*other == obj) continue;
-			if (obj.collides(*other)) collisions.push(other->getObjectType());
+	void Velocity::update(unsigned int dt) {
+		time += dt;
+		if (time > 1000 / velocity) {
+			(*pos)++;
+			time = 0;
 		}
-		return collisions;
 	}
 }

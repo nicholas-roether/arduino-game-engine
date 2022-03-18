@@ -115,22 +115,6 @@ namespace AGE {
 		ClickTrigger(unsigned int pin);
 		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
 	};
-
-	class CollisionTrigger : public Trigger {
-		const CollidingPhysicsObject* collider;
-		unsigned int objType;
-		const Process* process;
-
-	protected:
-		bool checkActive(unsigned int dt);
-
-	public:
-		CollisionTrigger(
-			const CollidingPhysicsObject* collider,
-			unsigned int objType,
-			const Process* process
-		);
-	};
 }
 
 #endif

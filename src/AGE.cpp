@@ -235,14 +235,6 @@ namespace AGE {
 		return height;
 	}
 
-	CollisionSystem& Process::getCollisionSystem() {
-		return collisionSystem;
-	}
-
-	const CollisionSystem& Process::getCollisionSystem() const {
-		return collisionSystem;
-	}
-
 	TextureID Process::createTexture(Utils::Array<byte, 8> textureData) {
 		return textureRegistry.create(textureData);
 	}

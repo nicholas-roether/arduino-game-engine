@@ -149,7 +149,6 @@ namespace AGE {
 		LiquidCrystal lcd;
 		Renderer renderer;
 		TextureRegistry textureRegistry;
-		CollisionSystem collisionSystem;
 		Utils::List<Trigger*> triggers;
 
 	public:
@@ -162,10 +161,6 @@ namespace AGE {
 		unsigned int getWidth();
 	
 		unsigned int getHeight();
-
-		CollisionSystem& getCollisionSystem();
-
-		const CollisionSystem& getCollisionSystem() const;
 
 		TextureID createTexture(Utils::Array<byte, 8> textureData);
 
