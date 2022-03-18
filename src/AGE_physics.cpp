@@ -45,6 +45,10 @@ namespace AGE {
 		colSys.remove(this);
 	}
 
+	bool Collider::collides(uint8_t type) {
+		return colSys.collides(this, type);
+	}
+
 	uint8_t Collider::getType() {
 		return type;
 	}
@@ -64,7 +68,7 @@ namespace AGE {
 		for (Collider* other : colliders) {
 			if (other->getType() != type) continue;
 			Position diff = collider->getPos() - other->getPos();
-			if (abs(diff.x) <= 1 && abs(diff.y) <= 1) return true;
+			if (abs(diff.x) < 1 && abs(diff.y) < 1) return true;
 		}
 		return false;
 	}

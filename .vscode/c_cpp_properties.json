@@ -30,7 +30,6 @@
 				"-Wno-error=narrowing"
 			],
 			"defines": [
-				"AGE_DEBUG_MODE",
                 "F_CPU=16000000L",
                 "ARDUINO=10819",
                 "ARDUINO_AVR_UNO",

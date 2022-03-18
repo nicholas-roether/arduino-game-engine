@@ -25,6 +25,7 @@ AGE::CollisionSystem collisionSystem;
 enum ColliderType {
 	PLAYER,
 	OBSTACLE,
+	ENEMY,
 	BULLET
 };
 
@@ -72,26 +73,61 @@ AGE::TextureID TEX_OBSTACLE = process.createTexture({
 	B00000
 });
 
-class Bullet : public AGE::SpawnableComponent, public AGE::Collider {
-	float xPos = 2;
-	AGE::Velocity xVel = 18;
-	AGE::Prop<uint8_t> yPos;
+AGE::TextureID TEX_ENEMY_1 = process.createTexture({
+	B00000,
+	B00000,
+	B01010,
+	B11111,
+	B10101,
+	B11111,
+	B10001,
+	B00000
+});
+
+AGE::TextureID TEX_ENEMY_2 = process.createTexture({
+	B00000,
+	B01010,
+	B11111,
+	B10111,
+	B11101,
+	B11111,
+	B10001,
+	B00000
+});
+
+class Projectile : public AGE::SpawnableComponent, public AGE::Collider {
+protected:
+	float xPos;
+	uint8_t yPos;
+	AGE::Velocity xVel;
 
 public:
-	Bullet(const AGE::Prop<uint8_t>& yPos)
-		: AGE::Collider(collisionSystem, ColliderType::BULLET), yPos(yPos) {}
-
-	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.put(TEX_BULLET, xPos, *yPos);
-	}
+	Projectile(uint8_t xPos, uint8_t yPos, float xVel, uint8_t colliderType)
+		: AGE::Collider(collisionSystem, colliderType), xPos(xPos), yPos(yPos), xVel(xVel) {}
 
 	void update(unsigned int dt) {
 		xVel.update(dt, xPos);
-		if (xPos >= process.getWidth()) die();
+		if (xPos < 0 || xPos >= process.getWidth()) die();
 	}
 
 	AGE::Position getPos() {
-		return { xPos, *yPos };
+		return { xPos, yPos };
+	}
+};
+
+class Bullet : public Projectile {
+public:
+	Bullet(uint8_t yPos)
+		: Projectile(2, yPos, 18, ColliderType::BULLET) {}
+
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_BULLET, xPos, yPos);
+	}
+
+	void update(unsigned int dt) {
+		Projectile::update(dt);
+		if (collides(OBSTACLE)) die();
+		if (collides(ENEMY)) die();
 	}
 };
 
@@ -162,27 +198,28 @@ public:
 	}
 };
 
-class Obstacle : public AGE::SpawnableComponent, public AGE::Collider {
-	float xPos = process.getWidth() - 1;
-	AGE::Velocity xVel = -8;
-	AGE::Prop<uint8_t> yPos;
-
+class Obstacle : public Projectile {
 public:
-	Obstacle(const AGE::Prop<uint8_t>& yPos)
-		: AGE::Collider(collisionSystem, ColliderType::OBSTACLE), yPos(yPos) {}
+	Obstacle(uint8_t yPos)
+		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.put(TEX_OBSTACLE, xPos, *yPos);
+		charBuffer.put(TEX_OBSTACLE, xPos, yPos);
+	}
+};
+
+class Enemy : public Projectile {
+public:
+	Enemy(uint8_t yPos)
+		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE) {}
+
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_ENEMY_1, xPos, yPos);
 	}
 
 	void update(unsigned int dt) {
-		xVel.update(dt, xPos);
-		if (collisionSystem.collides(this, ColliderType::BULLET)) die();
-		if (xPos == 0) die();
-	}
-
-	AGE::Position getPos() {
-		return { xPos, *yPos };
+		Projectile::update(dt);
+		if (collides(BULLET)) die();
 	}
 };
 
@@ -199,6 +236,7 @@ public:
 	void update(unsigned int dt) {
 		if (obstacleSpawnTrigger.fired()) {
 			spawner.spawn(Obstacle(0su));
+			spawner.spawn(Enemy(3su));
 			// spawner.spawn(Obstacle(1su));
 			// spawner.spawn(Obstacle(2su));
 			// spawner.spawn(Obstacle(3su));

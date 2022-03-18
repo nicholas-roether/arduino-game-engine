@@ -33,6 +33,8 @@ namespace AGE {
 
 		virtual ~Collider();
 
+		bool collides(uint8_t type);
+
 		virtual Position getPos() = 0;
 
 		uint8_t getType();
