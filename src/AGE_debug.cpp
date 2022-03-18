@@ -13,12 +13,14 @@ static void serialPrintF(const String& str, va_list args) {
 	int ret = vsprintf(buffer, str.c_str(), args);
 	if (ret < 0) {
 		Serial.println();
+		delete[] buffer;
 		Serial.print("[ERROR] Error while formatting serial message string (errcode: ");
 		Serial.print(ret);
 		Serial.println(")");
+	} else {
+		Serial.print(buffer);
+		delete[] buffer;
 	}
-	Serial.print(buffer);
-	delete[] buffer;
 }
 
 void __debugLog(const String& message) {

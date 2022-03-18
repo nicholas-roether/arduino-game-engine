@@ -11,10 +11,9 @@ namespace AGE {
 	class SpawnableComponent : public Component {
 		bool deathFlag = false;
 
-	protected:
+	public:
 		void die();
 
-	public:
 		bool shouldDie();
 	};
 

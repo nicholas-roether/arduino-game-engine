@@ -3,14 +3,69 @@
 #include "AGE_physics.h"
 
 namespace AGE {
-	Velocity::Velocity(int8_t velocity)
+	// Velocity
+	Velocity::Velocity(float velocity)
 		: velocity(velocity) {}
 
-	void Velocity::update(unsigned int dt, uint8_t& pos) {
-		time += dt;
-		if (time > 1000 / abs(velocity)) {
-			pos += (velocity > 0 ? 1 : -1);
-			time = 0;
+	void Velocity::update(unsigned int dt, float& pos) {
+		pos += dt * velocity / 1000;
+	}
+
+	// Position
+	bool Position::operator==(const Position& other) {
+		return x == other.x && y == other.y;
+	}
+
+	Position Position::operator+(const Position& other) const {
+		return { x + other.x, y + other.y };
+	}
+
+	Position Position::operator-(const Position& other) const {
+		return *this + other * (-1);
+	}
+
+	Position Position::operator*(float num) const {
+		return { x * num, y * num };
+	}
+
+	// Collider
+	Collider::Collider(CollisionSystem& collisionSystem, uint8_t type)
+		: type(type), colSys(collisionSystem)
+	{
+		colSys.add(this);
+	}
+
+	Collider::Collider(const Collider& other)
+		: type(other.type), colSys(other.colSys)
+	{
+		colSys.add(this);
+	}
+
+	Collider::~Collider() {
+		colSys.remove(this);
+	}
+
+	uint8_t Collider::getType() {
+		return type;
+	}
+
+	// CollisionSystem
+	uint8_t CollisionSystem::numTypes = 0;
+
+	void CollisionSystem::add(Collider* collider) {
+		colliders.push(collider);
+	}
+
+	void CollisionSystem::remove(Collider* collider) {
+		colliders.removeElement(collider);
+	}
+
+	bool CollisionSystem::collides(Collider* collider, uint8_t type) {
+		for (Collider* other : colliders) {
+			if (other->getType() != type) continue;
+			Position diff = collider->getPos() - other->getPos();
+			if (abs(diff.x) <= 1 && abs(diff.y) <= 1) return true;
 		}
+		return false;
 	}
 }

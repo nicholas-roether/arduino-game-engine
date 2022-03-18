@@ -115,6 +115,11 @@ namespace AGE::Utils {
 			numElems--;
 		}
 
+		void removeElement(const T& elem) {
+			for (int i = 0; i < size(); i++)
+				if ((*this)[i] == elem) remove(i);
+		}
+
 		void clear() {
 			numElems = 0;
 		}
