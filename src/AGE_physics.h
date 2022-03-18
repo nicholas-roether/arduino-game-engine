@@ -2,13 +2,12 @@
 
 namespace AGE {
 	class Velocity {
-		uint8_t* pos;
 		int8_t velocity;
 		unsigned int time;
 
 	public:
-		Velocity(uint8_t* pos, int8_t velocity);
+		Velocity(int8_t velocity);
 
-		void update(unsigned int dt);
+		void update(unsigned int dt, uint8_t& pos);
 	};
 }

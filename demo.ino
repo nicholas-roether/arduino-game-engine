@@ -65,30 +65,19 @@ AGE::TextureID TEX_OBSTACLE = process.createTexture({
 });
 
 class Bullet : public AGE::SpawnableComponent {
-	static constexpr int8_t X_VELOCITY = 18;
-
 	uint8_t xPos = 2;
-	AGE::Velocity xVel = { &xPos, X_VELOCITY };
+	AGE::Velocity xVel = 18;
 	AGE::Prop<uint8_t> yPos;
-	AGE::Texture texture = { TEX_BULLET, &xPos, yPos };
 
 public:
 	Bullet(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
 
-	// Copy constructor is absolutely necessary to ensure the texture and velocity have the correct pointer to xPos
-	Bullet(const Bullet& other)
-		: xPos(other.xPos),
-		  xVel(&xPos, X_VELOCITY),
-		  yPos(other.yPos),
-		  texture(TEX_BULLET, &xPos, yPos)
-	{}
-
-	void build() {
-		addChild(&texture);
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_BULLET, xPos, *yPos);
 	}
 
 	void update(unsigned int dt) {
-		xVel.update(dt);
+		xVel.update(dt, xPos);
 		if (xPos >= process.getWidth()) die();
 	}
 };
@@ -114,21 +103,19 @@ class PlayerFire : public AGE::Component {
 	static constexpr unsigned int ANIM_STEP_DURATION = 100;
 	AGE::Prop<uint8_t> yPos;
 	unsigned int animationTime = 0;
-
-	AGE::Texture texture = { TEX_PLAYER_FIRE, 0su, yPos };
-	AGE::Toggled toggled = &texture;
+	bool shown;
 
 public:
 	PlayerFire(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
 
-	void build() {
-		addChild(&toggled);
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_PLAYER_FIRE, 0, *yPos);
 	}
 
 	void update(unsigned int dt) {
 		animationTime += dt;
 		if (animationTime >= ANIM_STEP_DURATION) {
-			toggled.toggle();
+			shown = !shown;
 			animationTime = 0;
 		}
 	}
@@ -138,14 +125,16 @@ class Player : public AGE::Component {
 	uint8_t yPos = 0;
 
 	PlayerFire fire = { &yPos };
-	AGE::Texture spaceship = { TEX_PLAYER_SPACESHIP, 1su, &yPos };
 	BulletSpawner bulletSpawner = { &yPos };
 
 public:
 	void build() {
 		addChild(&fire);
-		addChild(&spaceship);
 		addChild(&bulletSpawner);
+	}
+
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_PLAYER_SPACESHIP, 1, yPos);
 	}
 
 	void update(unsigned int dt) {
@@ -155,29 +144,19 @@ public:
 };
 
 class Obstacle : public AGE::SpawnableComponent {
-	static constexpr int8_t X_VELOCITY = -8;
-
 	uint8_t xPos = process.getWidth() - 1;
-	AGE::Velocity xVel = { &xPos, X_VELOCITY };
+	AGE::Velocity xVel = -8;
 	AGE::Prop<uint8_t> yPos;
-	AGE::Texture texture = { TEX_OBSTACLE, &xPos, yPos };
 
 public:
 	Obstacle(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
 
-	Obstacle(const Obstacle& other)
-		: xPos(other.xPos),
-		  xVel(&xPos, X_VELOCITY),
-		  yPos(other.yPos),
-		  texture(TEX_OBSTACLE, &xPos, yPos)
-	{}
-
-	void build() {
-		addChild(&texture);
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.put(TEX_OBSTACLE, xPos, *yPos);
 	}
 
 	void update(unsigned int dt) {
-		xVel.update(dt);
+		xVel.update(dt, xPos);
 		if (xPos == 0) die();
 	}
 };
@@ -185,7 +164,7 @@ public:
 AGE::RandomTrigger obstacleSpawnTrigger = { 0.2 };
 
 class ObstacleSpawner : public AGE::Component {
-	AGE::Spawner spawner = { 4 };
+	AGE::Spawner spawner = { 8 };
 
 public:
 	void build() {

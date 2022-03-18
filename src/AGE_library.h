@@ -8,61 +8,6 @@
 namespace AGE {
 	// Components
 
-	class Text : public Component {
-		Prop<Utils::LCDString> text;
-		Prop<uint8_t> x;
-		Prop<uint8_t> y;
-	
-	public:
-		Text();
-
-		Text(const Prop<Utils::LCDString>& text);
-
-		Text(
-			const Prop<Utils::LCDString>& text,
-			const Prop<uint8_t>& x,
-			const Prop<uint8_t>& y
-		);
-
-		void draw(CharacterBuffer& buffer);
-	};
-
-	class Texture : public Component {
-		Prop<uint8_t> textureId;
-		Prop<uint8_t> x;
-		Prop<uint8_t> y;
-
-	public:
-		Texture(const Prop<uint8_t>& textureId);
-		Texture(
-			const Prop<uint8_t>& textureId,
-			const Prop<uint8_t>& x,
-			const Prop<uint8_t>& y
-		);
-
-		void draw(CharacterBuffer& buffer);
-	};
-
-	class Toggled : public Component {
-		Component* child;
-		bool showing;
-		Prop<bool> visible;
-
-	public:
-		Toggled(Component* child);
-		Toggled(Component* child, const Prop<bool>& visible);
-
-		void setVisible(bool visible);
-
-		void toggle();
-
-		bool isVisible();
-
-		void build();
-
-		void update(unsigned int dt);
-	};
-
 	class SpawnableComponent : public Component {
 		bool deathFlag = false;
 
