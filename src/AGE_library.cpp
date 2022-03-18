@@ -6,10 +6,14 @@ namespace AGE {
 	Text::Text()
 		: text(""), x(0su), y(0su) {}
 
-	Text::Text(Prop<Utils::LCDString> text)
+	Text::Text(const Prop<Utils::LCDString>& text)
 		: text(text), x(0su), y(0su) {}
 
-	Text::Text(Prop<Utils::LCDString> text, Prop<uint8_t> x, Prop<uint8_t> y)
+	Text::Text(
+		const Prop<Utils::LCDString>& text,
+		const Prop<uint8_t>& x,
+		const Prop<uint8_t>& y
+	)
 		: text(text), x(x), y(y) {}
 	
 	void Text::draw(CharacterBuffer& buffer) {
@@ -18,11 +22,17 @@ namespace AGE {
 
 	// Texture
 
-	Texture::Texture(Prop<uint8_t> textureId)
-		: textureId(textureId), x(0su), y(0su){}
+	Texture::Texture(const Prop<uint8_t>& textureId)
+		: textureId(textureId), x(0su), y(0su)
+	{}
 
-	Texture::Texture(Prop<uint8_t> textureId, Prop<uint8_t> x, Prop<uint8_t> y)
-		: textureId(textureId), x(x), y(y) {}
+	Texture::Texture(
+		const Prop<uint8_t>& textureId,
+		const Prop<uint8_t>& x,
+		const Prop<uint8_t>& y
+	)
+		: textureId(textureId), x(x), y(y)
+	{}
 
 	void Texture::draw(CharacterBuffer& buffer) {
 		buffer.put(*textureId, *x, *y);
@@ -33,7 +43,7 @@ namespace AGE {
 	Toggled::Toggled(Component* child)
 		: child(child), showing(true), visible(true) {}
 
-	Toggled::Toggled(Component* child, Prop<bool> visible)
+	Toggled::Toggled(Component* child, const Prop<bool>& visible)
 		: child(child), showing(*visible), visible(visible) {}
 
 	void Toggled::setVisible(bool visible) {

@@ -37,7 +37,7 @@ namespace AGE {
 
 	// CharacterBuffer
 
-	CharacterBuffer::CharacterBuffer(size_t width, size_t height)
+	CharacterBuffer::CharacterBuffer(uint8_t width, uint8_t height)
 		: width(width), 
 		  height(height), 
 		  characters((char*) calloc(sizeof(char), width * height))
@@ -72,17 +72,17 @@ namespace AGE {
 		memcpy(characters, other.characters, width * height * sizeof(char));
 	}
 
-	char CharacterBuffer::get(unsigned int x, unsigned int y) {
+	char CharacterBuffer::get(uint8_t x, uint8_t y) {
 		ASSERT_F(x < width && y < height, "Out of bounds: can't access position (%d, %d) in buffer with dimensions (%d, %d).", x, y, width, height);
 		return characters[x + y * width];
 	}
 
-	void CharacterBuffer::put(char character, unsigned int x, unsigned int y) {
+	void CharacterBuffer::put(char character, uint8_t x, uint8_t y) {
 		if (x >= width || y >= height) return;
 		characters[x + y * width] = character;
 	}
 
-	void CharacterBuffer::write(const char* characters, unsigned int x, unsigned int y) {
+	void CharacterBuffer::write(const char* characters, uint8_t x, uint8_t y) {
 		for (int i = 0; ; i++) {
 			char c = characters[i];
 			if (c == '\0') break;
@@ -168,6 +168,30 @@ namespace AGE {
 		return texture;
 	}
 
+	// Trigger
+
+	Trigger::Trigger(bool initial) : isActive(initial) {}
+
+	void Trigger::active() {
+		isActive = true;
+	}
+
+	bool Trigger::state() {
+		return isActive;
+	}
+
+	bool Trigger::fired() {
+		return isActive && !didFire;
+	}
+
+	void Trigger::update(unsigned int dt) {
+		bool nextState = checkActive(dt);
+		if (!nextState || !isActive) {
+			didFire = false;
+		} else if (isActive) didFire = true;
+		isActive = nextState;
+	}
+
 	// Process
 
 	Process::Process(const ProcessConfig& cfg)
@@ -223,27 +247,7 @@ namespace AGE {
 		return textureRegistry.create(textureData);
 	}
 
-	// Trigger
-
-	Trigger::Trigger(bool initial) : isActive(initial) {}
-
-	void Trigger::active() {
-		isActive = true;
-	}
-
-	bool Trigger::state() {
-		return isActive;
-	}
-
-	bool Trigger::fired() {
-		return isActive && !didFire;
-	}
-
-	void Trigger::update(unsigned int dt) {
-		bool nextState = checkActive(dt);
-		if (!nextState || !isActive) {
-			didFire = false;
-		} else if (isActive) didFire = true;
-		isActive = nextState;
+	void Process::registerTrigger(Trigger* trigger) {
+		triggers.push(trigger);
 	}
 }

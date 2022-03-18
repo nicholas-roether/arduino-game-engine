@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-#define DEBUG_INIT
 #define SERIAL_BAUD_RATE 115200
 
 #define DEBUG_LOG(str)
@@ -15,9 +14,9 @@
 #define ASSERT(cond, message) if(!(cond)) abort()
 #define ASSERT_F(cond, message, ...) if(!(cond)) abort()
 
-#ifdef AGE_DEBUG_MODE
-	void __debugInit();
+#define DEBUG_START
 
+#ifdef AGE_DEBUG_MODE
 	void __debugLog(const String& message);
 
 	void __debugLogF(const String& message, ...);
@@ -30,8 +29,6 @@
 
 	void __assertF(bool cond, const String& message, ...);
 
-	#define DEBUG_INIT __debugInit()
-
 	#define DEBUG_LOG(str) __debugLog(str)
 	#define DEBUG_LOG_F(str, ...) __debugLogF(str, __VA_ARGS__)
 
@@ -40,6 +37,8 @@
 
 	#define ASSERT(cond, message) __assert(cond, message)
 	#define ASSERT_F(cond, message, ...) __assertF(cond, message, __VA_ARGS__)
+
+	#define DEBUG_START Serial.begin(SERIAL_BAUD_RATE)
 
 #endif
 

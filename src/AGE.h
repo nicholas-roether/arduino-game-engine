@@ -40,24 +40,24 @@ namespace AGE {
 	};
 
 	class CharacterBuffer {
-		size_t width;
-		size_t height;
+		uint8_t width;
+		uint8_t height;
 		char* characters;
 
 	public:
 		CharacterBuffer() = delete;
-		CharacterBuffer(size_t width, size_t height);
+		CharacterBuffer(uint8_t width, uint8_t height);
 		CharacterBuffer(const CharacterBuffer& other);
 
 		~CharacterBuffer();
 
 		CharacterBuffer& operator=(const CharacterBuffer& other);
 
-		char get(unsigned int x, unsigned int y);
+		char get(uint8_t x, uint8_t y);
 
-		void put(char character, unsigned int x, unsigned int y);
+		void put(char character, uint8_t x, uint8_t y);
 
-		void write(const char* characters, unsigned int x, unsigned int y);
+		void write(const char* characters, uint8_t x, uint8_t y);
 
 		void clear();
 
@@ -111,6 +111,27 @@ namespace AGE {
 		uint8_t d2;
 		uint8_t d3;
 	};
+
+	class Trigger {
+		bool isActive;
+		bool didFire = true;
+
+	protected:
+		Trigger(bool initial);
+
+		virtual ~Trigger() = default;
+
+		void active();
+
+		virtual bool checkActive(unsigned int dt) = 0;
+
+	public:
+		bool state();
+
+		bool fired();
+
+		void update(unsigned int dt);
+	};
 	
 	struct ProcessConfig {
 		unsigned int width;
@@ -150,39 +171,16 @@ namespace AGE {
 
 		void registerTrigger(Trigger* trigger);
 	};
-	
-	class Trigger {
-		bool isActive;
-		bool didFire = true;
-
-	protected:
-		Trigger(bool initial);
-
-		virtual ~Trigger() = default;
-
-		void active();
-
-		virtual bool checkActive(unsigned int dt) = 0;
-
-	public:
-		bool state();
-
-		bool fired();
-
-		void update(unsigned int dt);
-	};
 
 	template<typename T>
 	class Prop {
-		T* ptr;
+		const T* ptr;
+	public:
 		bool isOwned;
 
-	public:
-		Prop(const T& val) : isOwned(true) {
-			ptr = new T(val);
-		}
+		Prop(const T& val) : isOwned(true), ptr(new T(val)) {}
 
-		Prop(T* ptr) : ptr(ptr), isOwned(false) {}
+		Prop(const T* ptr) : ptr(ptr), isOwned(false) {}
 
 		~Prop() {
 			if (isOwned) delete ptr;
@@ -200,19 +198,7 @@ namespace AGE {
 			else ptr = other.ptr;
 		}
 
-		T& operator*() {
-			return value();
-		}
-
 		const T& operator*() const {
-			return value();
-		}
-
-		T& value() {
-			return *ptr;
-		}
-
-		const T& value() const {
 			return *ptr;
 		}
 	};

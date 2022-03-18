@@ -16,9 +16,13 @@ namespace AGE {
 	public:
 		Text();
 
-		Text(Prop<Utils::LCDString> text);
+		Text(const Prop<Utils::LCDString>& text);
 
-		Text(Prop<Utils::LCDString> text, Prop<uint8_t> x, Prop<uint8_t> y);
+		Text(
+			const Prop<Utils::LCDString>& text,
+			const Prop<uint8_t>& x,
+			const Prop<uint8_t>& y
+		);
 
 		void draw(CharacterBuffer& buffer);
 	};
@@ -29,8 +33,12 @@ namespace AGE {
 		Prop<uint8_t> y;
 
 	public:
-		Texture(Prop<uint8_t> textureId);
-		Texture(Prop<uint8_t> textureId, Prop<uint8_t> x, Prop<uint8_t> y);
+		Texture(const Prop<uint8_t>& textureId);
+		Texture(
+			const Prop<uint8_t>& textureId,
+			const Prop<uint8_t>& x,
+			const Prop<uint8_t>& y
+		);
 
 		void draw(CharacterBuffer& buffer);
 	};
@@ -42,7 +50,7 @@ namespace AGE {
 
 	public:
 		Toggled(Component* child);
-		Toggled(Component* child, Prop<bool> visible);
+		Toggled(Component* child, const Prop<bool>& visible);
 
 		void setVisible(bool visible);
 

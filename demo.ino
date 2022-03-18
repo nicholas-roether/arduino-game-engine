@@ -56,15 +56,16 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 class Bullet : public AGE::SpawnableComponent {
 	static constexpr float X_VELOCITY = 18;
 
-	uint8_t xPos = 1;
+	uint8_t xPos = 2;
 	AGE::Prop<uint8_t> yPos;
 	AGE::Texture texture = { TEX_BULLET, &xPos, yPos };
-	uint8_t time = 0;
+	unsigned int time = 0;
 
 public:
-	Bullet() = default;
+	Bullet(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
 
-	Bullet(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
+	// Copy constructor is absolutely necessary to ensure the texture has the correct pointer to xPos
+	Bullet(const Bullet& other) : xPos(other.xPos), yPos(other.yPos), texture(TEX_BULLET, &xPos, yPos) {}
 
 	void build() {
 		addChild(&texture);
@@ -81,12 +82,12 @@ public:
 };
 
 class BulletSpawner : public AGE::Component {
-	const uint8_t* yPos;
+	AGE::Prop<uint8_t> yPos;
 
 	AGE::Spawner spawner;
 
 public:
-	BulletSpawner(const uint8_t* yPos) : yPos(yPos) {}
+	BulletSpawner(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
 
 	void build() {
 		addChild(&spawner);
@@ -144,6 +145,7 @@ public:
 Player player;
 
 void setup() {
+	DEBUG_START;
 	DEBUG_LOG("Setup");
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);

@@ -2,15 +2,19 @@
 #include "AGE_utils.h"
 #include "AGE_debug.h"
 
+#ifdef AGE_DEBUG_MODE
+const char* allocationErrMsg = "Dynamic allocation failed: Insufficient memory available";
+#endif
+
 void* operator new(size_t size) {
 	void* ptr = malloc(size);
-	ASSERT_F(ptr != NULL, "Failed to dynamically allocate %d bytes: insufficient memory available", size);
+	ASSERT(ptr != NULL, allocationErrMsg);
 	return ptr;
 }
 
 void* operator new[](size_t size) {
 	void* ptr = malloc(size);
-	ASSERT_F(ptr != NULL, "Failed to dynamically allocate %d bytes: insufficient memory available", size);
+	ASSERT(ptr != NULL, allocationErrMsg);
 	return ptr;
 }
 
