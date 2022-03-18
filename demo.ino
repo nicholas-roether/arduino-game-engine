@@ -84,7 +84,7 @@ public:
 class BulletSpawner : public AGE::Component {
 	AGE::Prop<uint8_t> yPos;
 
-	AGE::Spawner spawner;
+	AGE::Spawner spawner = { 3 };
 
 public:
 	BulletSpawner(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}

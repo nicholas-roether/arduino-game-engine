@@ -74,13 +74,18 @@ namespace AGE {
 	};
 
 	class Spawner : public Component {
+		uint8_t limit = 0;
 		Utils::List<SpawnableComponent*> spawnedComponents;
 
 	public:
+		Spawner() = default;
+		Spawner(uint8_t limit);
+
 		virtual ~Spawner();
 
 		template<typename C>
 		void spawn(const C& component) {
+			if (limit != 0 && spawnedComponents.size() == limit) return;
 			spawnedComponents.push(new C(component));
 			requestRebuild();
 		}

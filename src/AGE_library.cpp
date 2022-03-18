@@ -80,6 +80,8 @@ namespace AGE {
 	}
 
 	// Spawner
+	Spawner::Spawner(uint8_t limit) : limit(limit) {}
+
 	Spawner::~Spawner() {
 		for (SpawnableComponent* component : spawnedComponents)
 				delete component;
