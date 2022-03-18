@@ -53,8 +53,19 @@ AGE::TextureID TEX_BULLET = process.createTexture({
 	B00000
 });
 
+AGE::TextureID TEX_OBSTACLE = process.createTexture({
+	B00000,
+	B00100,
+	B01110,
+	B11111,
+	B11111,
+	B01110,
+	B00100,
+	B00000
+});
+
 class Bullet : public AGE::SpawnableComponent {
-	static constexpr uint8_t X_VELOCITY = 18;
+	static constexpr int8_t X_VELOCITY = 18;
 
 	uint8_t xPos = 2;
 	AGE::Velocity xVel = { &xPos, X_VELOCITY };
@@ -143,7 +154,66 @@ public:
 	}
 };
 
-Player player;
+class Obstacle : public AGE::SpawnableComponent {
+	static constexpr int8_t X_VELOCITY = -8;
+
+	uint8_t xPos = process.getWidth() - 1;
+	AGE::Velocity xVel = { &xPos, X_VELOCITY };
+	AGE::Prop<uint8_t> yPos;
+	AGE::Texture texture = { TEX_OBSTACLE, &xPos, yPos };
+
+public:
+	Obstacle(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
+
+	Obstacle(const Obstacle& other)
+		: xPos(other.xPos),
+		  xVel(&xPos, X_VELOCITY),
+		  yPos(other.yPos),
+		  texture(TEX_OBSTACLE, &xPos, yPos)
+	{}
+
+	void build() {
+		addChild(&texture);
+	}
+
+	void update(unsigned int dt) {
+		xVel.update(dt);
+		if (xPos == 0) die();
+	}
+};
+
+AGE::RandomTrigger obstacleSpawnTrigger = { 0.2 };
+
+class ObstacleSpawner : public AGE::Component {
+	AGE::Spawner spawner = { 4 };
+
+public:
+	void build() {
+		addChild(&spawner);
+	}
+
+	void update(unsigned int dt) {
+		if (obstacleSpawnTrigger.fired()) {
+			spawner.spawn(Obstacle(0su));
+			// spawner.spawn(Obstacle(1su));
+			spawner.spawn(Obstacle(2su));
+			spawner.spawn(Obstacle(3su));
+		}
+	}
+};
+
+class Scene : public AGE::Component {
+	Player player;
+	ObstacleSpawner obstacleSpawner;
+
+public:
+	void build() {
+		addChild(&player);
+		addChild(&obstacleSpawner);
+	}
+};
+
+Scene scene;
 
 void setup() {
 	DEBUG_START;
@@ -151,7 +221,8 @@ void setup() {
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);
 	process.registerTrigger(&downTrigger);
-	process.start(&player);
+	process.registerTrigger(&obstacleSpawnTrigger);
+	process.start(&scene);
 }
 
 void loop() {

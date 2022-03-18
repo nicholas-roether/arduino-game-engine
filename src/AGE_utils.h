@@ -161,6 +161,8 @@ namespace AGE::Utils {
 	typedef uint32_t UUID;
 
 	UUID uuid();
+
+	float randFloat();
 }
 
 #endif

@@ -34,4 +34,8 @@ namespace AGE::Utils {
 	UUID uuid() {
 		return random();
 	}
+
+	float randFloat() {
+		return ((float) random()) / RANDOM_MAX;
+	}
 }

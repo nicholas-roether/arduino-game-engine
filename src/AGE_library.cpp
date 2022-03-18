@@ -117,4 +117,12 @@ namespace AGE {
 		if (edge == BTN_DOWN) return digitalRead(pin);
 		if (edge == BTN_UP) return !digitalRead(pin);
 	}
+
+	// RandomTrigger
+
+	RandomTrigger::RandomTrigger(float freq) : Trigger(false), freq(freq) {}
+
+	bool RandomTrigger::checkActive(unsigned int dt) {
+		return Utils::randFloat() < freq * dt / 1000;
+	}
 }

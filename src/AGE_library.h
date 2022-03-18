@@ -115,6 +115,16 @@ namespace AGE {
 		ClickTrigger(unsigned int pin);
 		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
 	};
+
+	class RandomTrigger : public Trigger {
+		float freq;
+	
+	protected:
+		bool checkActive(unsigned int dt);
+
+	public:
+		RandomTrigger(float freq);
+	};
 }
 
 #endif

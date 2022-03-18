@@ -169,31 +169,36 @@ namespace AGE {
 
 	template<typename T>
 	class Prop {
-		const T* ptr;
-	public:
+		union {
+			const T* ptr;
+			T val;
+		};
+
 		bool isOwned;
 
-		Prop(const T& val) : isOwned(true), ptr(new T(val)) {}
+	public:
+		Prop(const T& val) : isOwned(true), val(val) {}
 
 		Prop(const T* ptr) : ptr(ptr), isOwned(false) {}
 
 		~Prop() {
-			if (isOwned) delete ptr;
+			// if (isOwned) delete ptr;
 		}
 
 		Prop(const Prop<T>& other) : isOwned(other.isOwned) {
-			if (isOwned) ptr = new T(*other.ptr);
+			if (isOwned) val = other.val;
 			else ptr = other.ptr;
 		}
 
 		Prop<T>& operator=(const Prop<T>& other) {
-			if (isOwned) delete ptr;
+			// if (isOwned) delete ptr;
 			isOwned = other.isOwned;
-			if (isOwned) ptr = new T(*other);
+			if (isOwned) val = other.val;
 			else ptr = other.ptr;
 		}
 
 		const T& operator*() const {
+			if (isOwned) return val;
 			return *ptr;
 		}
 	};
