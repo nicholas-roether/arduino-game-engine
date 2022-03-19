@@ -6,8 +6,8 @@ AGE::Process process({
 	/**
 	 * LCD configuration:
 	 * 
-	 * R/W 		-> 	Pin 12
-	 * Reset 	->	Pin 11
+	 * RS 		-> 	Pin 12
+	 * EN 		->	Pin 11
 	 * Data 0	-> 	Pin 5
 	 * Data 1	-> 	Pin 4
 	 * Data 2	->	Pin 3
