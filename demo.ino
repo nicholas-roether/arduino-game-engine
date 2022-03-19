@@ -228,8 +228,6 @@ public:
 
 AGE::RandomTrigger obstacleSpawnTrigger = { 0.4 };
 
-
-
 class ObstacleSpawner : public AGE::Component {
 	AGE::Spawner spawner = { 8 };
 	
@@ -368,7 +366,7 @@ Game game;
 
 void setup() {
 	DEBUG_START;
-
+	
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);
 	process.registerTrigger(&downTrigger);
