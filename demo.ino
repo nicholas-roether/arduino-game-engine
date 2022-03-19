@@ -21,7 +21,6 @@ AGE::ClickTrigger upTrigger 	= { 7 }; // Pin 7: move up button
 AGE::ClickTrigger downTrigger 	= { 8 }; // Pin 8: move down button
 
 // Collision stuff
-
 AGE::CollisionSystem collisionSystem;
 
 enum ColliderType {
