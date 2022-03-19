@@ -20,6 +20,8 @@ AGE::ClickTrigger shootTrigger 	= { 6 }; // Pin 6: shoot button
 AGE::ClickTrigger upTrigger 	= { 7 }; // Pin 7: move up button
 AGE::ClickTrigger downTrigger 	= { 8 }; // Pin 8: move down button
 
+// Collision stuff
+
 AGE::CollisionSystem collisionSystem;
 
 enum ColliderType {
@@ -28,6 +30,13 @@ enum ColliderType {
 	ENEMY,
 	BULLET
 };
+
+// Scene stuff
+AGE::SceneID menuScene;
+AGE::SceneID gameScene;
+AGE::SceneID gameOverScene;
+
+AGE::SceneSelection sceneSelection;
 
 AGE::TextureID TEX_PLAYER_SPACESHIP = process.createTexture({
 	B00000,
@@ -149,24 +158,14 @@ public:
 };
 
 class PlayerFire : public AGE::Component {
-	static constexpr unsigned int ANIM_STEP_DURATION = 100;
 	AGE::Prop<uint8_t> yPos;
-	unsigned int animationTime = 0;
-	bool shown;
+	AGE::Animation animation = 200;
 
 public:
 	PlayerFire(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		if (shown) charBuffer.put(TEX_PLAYER_FIRE, 0, *yPos);
-	}
-
-	void update(unsigned int dt) {
-		animationTime += dt;
-		if (animationTime >= ANIM_STEP_DURATION) {
-			shown = !shown;
-			animationTime = 0;
-		}
+		if (animation.progress() < 0.5) charBuffer.put(TEX_PLAYER_FIRE, 0, *yPos);
 	}
 };
 
@@ -191,6 +190,7 @@ public:
 	void update(unsigned int dt) {
 		if (upTrigger.fired() && yPos != 0) yPos--;
 		if (downTrigger.fired() && yPos != 3) yPos++;
+		if (collides(OBSTACLE) || collides(ENEMY)) sceneSelection.setScene(gameOverScene);
 	}
 
 	AGE::Position getPos() {
@@ -209,12 +209,14 @@ public:
 };
 
 class Enemy : public Projectile {
+	AGE::Animation animation = { 1000 };
+
 public:
 	Enemy(uint8_t yPos)
 		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.put(TEX_ENEMY_1, xPos, yPos);
+		charBuffer.put(animation.progress() < 0.5 ? TEX_ENEMY_1 : TEX_ENEMY_2, xPos, yPos);
 	}
 
 	void update(unsigned int dt) {
@@ -223,7 +225,9 @@ public:
 	}
 };
 
-AGE::RandomTrigger obstacleSpawnTrigger = { 0.2 };
+AGE::RandomTrigger obstacleSpawnTrigger = { 0.4 };
+
+
 
 class ObstacleSpawner : public AGE::Component {
 	AGE::Spawner spawner = { 8 };
@@ -235,16 +239,77 @@ public:
 
 	void update(unsigned int dt) {
 		if (obstacleSpawnTrigger.fired()) {
-			spawner.spawn(Obstacle(0su));
-			spawner.spawn(Enemy(3su));
-			// spawner.spawn(Obstacle(1su));
-			// spawner.spawn(Obstacle(2su));
-			// spawner.spawn(Obstacle(3su));
+			switch(random(12)) {
+				case 0:
+					spawner.spawn(Obstacle(0));
+					spawner.spawn(Obstacle(3));
+					break;
+				case 1:
+					spawner.spawn(Obstacle(0));
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					break;
+				case 2:
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					spawner.spawn(Obstacle(3));
+					break;
+				case 3:
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					break;
+				case 4:
+					spawner.spawn(Obstacle(0));
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					spawner.spawn(Enemy(3));
+					break;
+				case 5:
+					spawner.spawn(Enemy(0));
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					spawner.spawn(Obstacle(3));
+					break;
+				case 6:
+					spawner.spawn(Enemy(0));
+					spawner.spawn(Enemy(1));
+					spawner.spawn(Enemy(2));
+					spawner.spawn(Enemy(3));
+					break;
+				case 7:
+					spawner.spawn(Enemy(0));
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Enemy(2));
+					spawner.spawn(Enemy(3));
+					break;
+				case 8:
+					spawner.spawn(Enemy(0));
+					spawner.spawn(Enemy(1));
+					spawner.spawn(Obstacle(2));
+					spawner.spawn(Enemy(3));
+					break;
+				case 9:
+					spawner.spawn(Enemy(0));
+					spawner.spawn(Obstacle(1));
+					spawner.spawn(Obstacle(2));
+					spawner.spawn(Enemy(3));
+					break;
+				case 10:
+					spawner.spawn(Enemy(1));
+					spawner.spawn(Enemy(2));
+					break;
+				case 11:
+					spawner.spawn(Obstacle(0));
+					spawner.spawn(Enemy(1));
+					spawner.spawn(Enemy(2));
+					spawner.spawn(Obstacle(3));
+					break;
+			}
 		}
 	}
 };
 
-class Scene : public AGE::Component {
+class Game : public AGE::Component {
 	Player player;
 	ObstacleSpawner obstacleSpawner;
 
@@ -255,16 +320,48 @@ public:
 	}
 };
 
-Scene scene;
+class Menu : public AGE::Component {
+public:
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.write("SPACE DEMO", process.getWidth() / 2 - 5, 1);
+		charBuffer.write("shoot to start", process.getWidth() / 2 - 7, 2);
+	}
+
+	void update(unsigned int dt) {
+		if (shootTrigger.fired()) sceneSelection.setScene(gameScene);
+	}
+};
+
+class GameOver : public AGE::Component {
+public:
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 1);
+		charBuffer.write("shoot to retry", process.getWidth() / 2 - 7, 2);
+	}
+
+	void update(unsigned int dt) {
+		if (shootTrigger.fired()) sceneSelection.setScene(gameScene);
+	}
+};
+
+Menu menu;
+Game game;
+GameOver gameOver;
 
 void setup() {
 	DEBUG_START;
 	DEBUG_LOG("Setup");
+
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);
 	process.registerTrigger(&downTrigger);
 	process.registerTrigger(&obstacleSpawnTrigger);
-	process.start(&scene);
+
+	menuScene = sceneSelection.createScene(&menu);
+	gameScene = sceneSelection.createScene(&game);
+	gameOverScene = sceneSelection.createScene(&gameOver);
+	sceneSelection.setScene(menuScene);
+	process.start(&sceneSelection);
 }
 
 void loop() {

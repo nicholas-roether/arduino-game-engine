@@ -33,8 +33,22 @@ namespace AGE {
 		}
 	}
 
-	// ClickTrigger
+	// SceneSelection
+	void SceneSelection::build() {
+		if (scene < scenes.size()) addChild(scenes[scene]);
+	}
 
+	void SceneSelection::setScene(SceneID id) {
+		scene = id;
+		requestRebuild();
+	}
+
+	SceneID SceneSelection::createScene(Component* scene) {
+		scenes.push(scene);
+		return scenes.size() - 1;
+	}
+
+	// ClickTrigger
 	ClickTrigger::ClickTrigger(unsigned int pin)
 		: Trigger(false), pin(pin), edge(BTN_DOWN) {}
 
@@ -51,10 +65,16 @@ namespace AGE {
 	}
 
 	// RandomTrigger
-
 	RandomTrigger::RandomTrigger(float freq) : Trigger(false), freq(freq) {}
 
 	bool RandomTrigger::checkActive(unsigned int dt) {
 		return Utils::randFloat() < freq * dt / 1000;
+	}
+
+	// Animation
+	Animation::Animation(unsigned int duration) : duration(duration) {}
+
+	float Animation::progress() {
+		return fmod(millis(), duration) / duration;
 	}
 }
