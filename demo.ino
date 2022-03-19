@@ -25,18 +25,18 @@ AGE::ClickTrigger downTrigger 	= { 8 }; // Pin 8: move down button
 AGE::CollisionSystem collisionSystem;
 
 enum ColliderType {
-	PLAYER,
-	OBSTACLE,
-	ENEMY,
-	BULLET
+	PLAYER_COLLIDER,
+	OBSTACLE_COLLIDER,
+	ENEMY_COLLIDER,
+	BULLET_COLLIDER
 };
 
 // Scene stuff
-AGE::SceneID menuScene;
-AGE::SceneID gameScene;
-AGE::SceneID gameOverScene;
-
-AGE::SceneSelection sceneSelection;
+enum Scene {
+	MENU_SCENE,
+	GAME_SCENE,
+	GAME_OVER_SCENE
+};
 
 AGE::TextureID TEX_PLAYER_SPACESHIP = process.createTexture({
 	B00000,
@@ -111,6 +111,8 @@ protected:
 	AGE::Velocity xVel;
 
 public:
+	virtual ~Projectile() = default;
+
 	Projectile(uint8_t xPos, uint8_t yPos, float xVel, uint8_t colliderType)
 		: AGE::Collider(collisionSystem, colliderType), xPos(xPos), yPos(yPos), xVel(xVel) {}
 
@@ -127,7 +129,7 @@ public:
 class Bullet : public Projectile {
 public:
 	Bullet(uint8_t yPos)
-		: Projectile(2, yPos, 18, ColliderType::BULLET) {}
+		: Projectile(2, yPos, 18, BULLET_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.put(TEX_BULLET, xPos, yPos);
@@ -135,18 +137,17 @@ public:
 
 	void update(unsigned int dt) {
 		Projectile::update(dt);
-		if (collides(OBSTACLE)) die();
-		if (collides(ENEMY)) die();
+		if (collides(OBSTACLE_COLLIDER)) die();
+		if (collides(ENEMY_COLLIDER)) die();
 	}
 };
 
 class BulletSpawner : public AGE::Component {
-	AGE::Prop<uint8_t> yPos;
-
+	uint8_t* yPos;
 	AGE::Spawner spawner = { 3 };
 
 public:
-	BulletSpawner(const AGE::Prop<uint8_t>& yPos) : yPos(yPos) {}
+	BulletSpawner(uint8_t* yPos) : yPos(yPos) {}
 
 	void build() {
 		addChild(&spawner);
@@ -158,11 +159,11 @@ public:
 };
 
 class PlayerFire : public AGE::Component {
-	AGE::Prop<uint8_t> yPos;
+	uint8_t* yPos;
 	AGE::Animation animation = 200;
 
 public:
-	PlayerFire(AGE::Prop<uint8_t> yPos) : yPos(yPos) {}
+	PlayerFire(uint8_t* yPos) : yPos(yPos) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		if (animation.progress() < 0.5) charBuffer.put(TEX_PLAYER_FIRE, 0, *yPos);
@@ -176,7 +177,7 @@ class Player : public AGE::Component, public AGE::Collider {
 	BulletSpawner bulletSpawner = { &yPos };
 
 public:
-	Player() : AGE::Collider(collisionSystem, ColliderType::PLAYER) {}
+	Player() : AGE::Collider(collisionSystem, PLAYER_COLLIDER) {}
 
 	void build() {
 		addChild(&fire);
@@ -190,7 +191,8 @@ public:
 	void update(unsigned int dt) {
 		if (upTrigger.fired() && yPos != 0) yPos--;
 		if (downTrigger.fired() && yPos != 3) yPos++;
-		if (collides(OBSTACLE) || collides(ENEMY)) sceneSelection.setScene(gameOverScene);
+		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER))
+			process.setScene(GAME_OVER_SCENE);
 	}
 
 	AGE::Position getPos() {
@@ -201,7 +203,7 @@ public:
 class Obstacle : public Projectile {
 public:
 	Obstacle(uint8_t yPos)
-		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE) {}
+		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.put(TEX_OBSTACLE, xPos, yPos);
@@ -213,7 +215,7 @@ class Enemy : public Projectile {
 
 public:
 	Enemy(uint8_t yPos)
-		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE) {}
+		: Projectile(process.getWidth() - 1, yPos, -8, ENEMY_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.put(animation.progress() < 0.5 ? TEX_ENEMY_1 : TEX_ENEMY_2, xPos, yPos);
@@ -221,7 +223,7 @@ public:
 
 	void update(unsigned int dt) {
 		Projectile::update(dt);
-		if (collides(BULLET)) die();
+		if (collides(BULLET_COLLIDER)) die();
 	}
 };
 
@@ -231,7 +233,7 @@ AGE::RandomTrigger obstacleSpawnTrigger = { 0.4 };
 
 class ObstacleSpawner : public AGE::Component {
 	AGE::Spawner spawner = { 8 };
-
+	
 public:
 	void build() {
 		addChild(&spawner);
@@ -309,7 +311,7 @@ public:
 	}
 };
 
-class Game : public AGE::Component {
+class GameScene : public AGE::Component {
 	Player player;
 	ObstacleSpawner obstacleSpawner;
 
@@ -320,7 +322,7 @@ public:
 	}
 };
 
-class Menu : public AGE::Component {
+class MenuScene : public AGE::Component {
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.write("SPACE DEMO", process.getWidth() / 2 - 5, 1);
@@ -328,11 +330,11 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		if (shootTrigger.fired()) sceneSelection.setScene(gameScene);
+		if (shootTrigger.fired()) process.setScene(GAME_SCENE);
 	}
 };
 
-class GameOver : public AGE::Component {
+class GameOverScene : public AGE::Component {
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 1);
@@ -340,28 +342,42 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		if (shootTrigger.fired()) sceneSelection.setScene(gameScene);
+		if (shootTrigger.fired()) process.setScene(GAME_SCENE);
 	}
 };
 
-Menu menu;
+class Game : public AGE::Game {
+protected:
+	AGE::Component* buildScene(AGE::SceneID id) {
+		switch(id) {
+			case MENU_SCENE:
+				return new MenuScene();
+				break;
+			case GAME_SCENE:
+				return new GameScene();
+				break;
+			case GAME_OVER_SCENE:
+				return new GameOverScene();
+				break;
+			default:
+				return nullptr;
+		}
+	}
+};
+
 Game game;
-GameOver gameOver;
 
 void setup() {
 	DEBUG_START;
-	DEBUG_LOG("Setup");
 
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);
 	process.registerTrigger(&downTrigger);
 	process.registerTrigger(&obstacleSpawnTrigger);
 
-	menuScene = sceneSelection.createScene(&menu);
-	gameScene = sceneSelection.createScene(&game);
-	gameOverScene = sceneSelection.createScene(&gameOver);
-	sceneSelection.setScene(menuScene);
-	process.start(&sceneSelection);
+	
+	process.start(&game);
+	process.setScene(MENU_SCENE);
 }
 
 void loop() {

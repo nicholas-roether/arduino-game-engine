@@ -43,7 +43,7 @@ namespace AGE {
 		  characters((char*) calloc(sizeof(char), width * height))
 	{
 		if (width > 0 && height > 0)
-			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
+			ASSERT(characters != NULL, "");
 		clear();
 	}
 
@@ -53,7 +53,7 @@ namespace AGE {
 		  characters((char*) calloc(sizeof(char), width * height))
 	{
 		if (width > 0 && height > 0)
-			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
+			ASSERT(characters != NULL, "");
 		memcpy(characters, other.characters, width * height * sizeof(char));
 	}
 
@@ -67,13 +67,13 @@ namespace AGE {
 			width = other.width;
 			height = other.height;
 			characters = (char*) malloc(width * height * sizeof(char));
-			ASSERT_F(characters != NULL, "Failed to allocate character buffer of size %d by %d: insufficient memory", width, height);
+			ASSERT(characters != NULL, "");
 		}
 		memcpy(characters, other.characters, width * height * sizeof(char));
 	}
 
 	char CharacterBuffer::get(uint8_t x, uint8_t y) {
-		ASSERT_F(x < width && y < height, "Out of bounds: can't access position (%d, %d) in buffer with dimensions (%d, %d).", x, y, width, height);
+		ASSERT_F(x < width && y < height, "Out of bounds; can't get (%d, %d) from character buffer", x, y);
 		return characters[x + y * width];
 	}
 
@@ -140,7 +140,6 @@ namespace AGE {
 	void Renderer::render(LiquidCrystal& lcd, unsigned int dt) {
 		frontBuffer->clear();
 		update(root, dt);
-		build(root);
 		render(root);
 		for (unsigned int y = 0; y < frontBuffer->getHeight(); y++) {
 			for (unsigned int x = 0; x < frontBuffer->getWidth(); x++) {
@@ -192,6 +191,30 @@ namespace AGE {
 		isActive = nextState;
 	}
 
+	// Game
+	Game::Game() : scene(nullptr) {}
+
+	Game::~Game() {
+		delete scene;
+	}
+
+	void Game::build() {
+		if(scene) addChild(scene);
+	}
+
+	void Game::update(unsigned int dt) {
+		if (sceneShowing != sceneId) {
+			if (scene) delete scene;
+			scene = buildScene(sceneId);
+			sceneShowing = sceneId;
+			requestRebuild();
+		}
+	}
+
+	void Game::setScene(SceneID id) {
+		sceneId = id;
+	}
+
 	// Process
 
 	Process::Process(const ProcessConfig& cfg)
@@ -210,10 +233,11 @@ namespace AGE {
 		  textureRegistry(lcd)
 	{}
 
-	void Process::start(Component* root) {
+	void Process::start(Game* game) {
 		if (running) return;
+		this->game = game;
 		lcd.begin(width, height);
-		renderer.setRoot(root);
+		renderer.setRoot(game);
 		running = true;
 	}
 
@@ -233,6 +257,10 @@ namespace AGE {
 
 	unsigned int Process::getHeight() {
 		return height;
+	}
+
+	void Process::setScene(SceneID id) {
+		if (game) game->setScene(id);
 	}
 
 	TextureID Process::createTexture(Utils::Array<byte, 8> textureData) {

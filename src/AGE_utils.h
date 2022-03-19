@@ -76,13 +76,13 @@ namespace AGE::Utils {
 		List(size_t capacity)
 			: capacity(capacity), numElems(0), elements((T*) malloc(capacity * sizeof(T)))
 		{
-			ASSERT_F(elements != NULL, "Failed to allocate list of size %d: insufficient memory", capacity);
+			ASSERT(elements != NULL, "");
 		}
 
 		List(const List<T>& other)
 			: capacity(other.capacity), numElems(other.numElems), elements((T*) malloc(other.capacity * sizeof(T)))
 		{
-			ASSERT_F(elements != NULL, "Failed to allocate list of size %d: insufficient memory", capacity);
+			ASSERT(elements != NULL, "");
 			memcpy(elements, other.elements, numElems * sizeof(T));
 		}
 
@@ -126,7 +126,7 @@ namespace AGE::Utils {
 
 		void resizeTo(size_t newCapacity) {
 			T* newElems = (T*) realloc(elements, newCapacity * sizeof(T));
-			ASSERT_F(newElems != NULL, "Resizing list to %d failed: insufficient memory", newCapacity);
+			ASSERT(newElems != NULL, "");
 			elements = newElems;
 			capacity = newCapacity;	
 		}

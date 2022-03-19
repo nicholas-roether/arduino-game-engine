@@ -132,6 +132,30 @@ namespace AGE {
 
 		void update(unsigned int dt);
 	};
+
+	typedef uint8_t SceneID;
+
+	class Game : public Component {
+		SceneID sceneId = 0;
+		SceneID sceneShowing = -1;
+		Component* scene;
+
+	protected:
+		virtual Component* buildScene(SceneID sceneId) = 0;
+		
+	public:
+		Game();
+
+		Game(const Game& other) = delete;
+		
+		virtual ~Game();
+
+		void build();
+
+		void update(unsigned int dt);
+
+		void setScene(SceneID id);
+	};
 	
 	struct ProcessConfig {
 		unsigned int width;
@@ -150,11 +174,12 @@ namespace AGE {
 		Renderer renderer;
 		TextureRegistry textureRegistry;
 		Utils::List<Trigger*> triggers;
+		Game* game;
 
 	public:
 		Process(const ProcessConfig& cfg);
 
-		void start(Component* root);
+		void start(Game* game);
 
 		void loop();
 
@@ -162,45 +187,11 @@ namespace AGE {
 	
 		unsigned int getHeight();
 
+		void setScene(SceneID id);
+
 		TextureID createTexture(Utils::Array<byte, 8> textureData);
 
 		void registerTrigger(Trigger* trigger);
-	};
-
-	template<typename T>
-	class Prop {
-		union {
-			const T* ptr;
-			T val;
-		};
-
-		bool isOwned;
-
-	public:
-		Prop(const T& val) : isOwned(true), val(val) {}
-
-		Prop(const T* ptr) : ptr(ptr), isOwned(false) {}
-
-		~Prop() {
-			// if (isOwned) delete ptr;
-		}
-
-		Prop(const Prop<T>& other) : isOwned(other.isOwned) {
-			if (isOwned) val = other.val;
-			else ptr = other.ptr;
-		}
-
-		Prop<T>& operator=(const Prop<T>& other) {
-			// if (isOwned) delete ptr;
-			isOwned = other.isOwned;
-			if (isOwned) val = other.val;
-			else ptr = other.ptr;
-		}
-
-		const T& operator*() const {
-			if (isOwned) return val;
-			return *ptr;
-		}
 	};
 }
 

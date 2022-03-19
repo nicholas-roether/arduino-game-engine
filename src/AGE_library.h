@@ -12,6 +12,8 @@ namespace AGE {
 		bool deathFlag = false;
 
 	public:
+		virtual ~SpawnableComponent() = default;
+
 		void die();
 
 		bool shouldDie();
@@ -33,24 +35,10 @@ namespace AGE {
 			spawnedComponents.push(new C(component));
 			requestRebuild();
 		}
-
+	
 		void build();
 
 		void update(unsigned int dt);
-	};
-
-	typedef uint8_t SceneID;
-
-	class SceneSelection : public Component {
-		Utils::List<Component*> scenes;
-		uint8_t scene = 0;
-		
-	public:
-		void build();
-
-		void setScene(SceneID id);
-
-		SceneID createScene(Component* scene);
 	};
 
 	// Triggers

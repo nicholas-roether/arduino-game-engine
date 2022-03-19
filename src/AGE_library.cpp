@@ -16,7 +16,7 @@ namespace AGE {
 
 	Spawner::~Spawner() {
 		for (SpawnableComponent* component : spawnedComponents)
-				delete component;
+			delete component;
 	}
 
 	void Spawner::build() {
@@ -31,21 +31,6 @@ namespace AGE {
 			spawnedComponents.remove(i);
 			requestRebuild();
 		}
-	}
-
-	// SceneSelection
-	void SceneSelection::build() {
-		if (scene < scenes.size()) addChild(scenes[scene]);
-	}
-
-	void SceneSelection::setScene(SceneID id) {
-		scene = id;
-		requestRebuild();
-	}
-
-	SceneID SceneSelection::createScene(Component* scene) {
-		scenes.push(scene);
-		return scenes.size() - 1;
 	}
 
 	// ClickTrigger
