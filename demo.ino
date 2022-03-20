@@ -3,6 +3,7 @@
 AGE::Process process({
 	20, 4, 					// 20 x 4 LCD display
 	20, 					// 20 ticks per second
+	9,						// Audio output is on pin 9
 	/**
 	 * LCD configuration:
 	 * 
@@ -104,6 +105,39 @@ AGE::TextureID TEX_ENEMY_2 = process.createTexture({
 	B00000
 });
 
+// Sound effects
+AGE::SoundEffect startupSound = {
+	3,
+	AGE::Tone{ 440, 200 },
+	AGE::Tone{ 555, 70 },
+	AGE::Tone{ 880, 100 }
+};
+
+AGE::SoundEffect shootingSound = {
+	3,
+	AGE::Tone{ 700, 10 },
+	AGE::Tone{ 650, 10 },
+	AGE::Tone{ 625, 10 }
+};
+
+AGE::SoundEffect obstacleHitSound {
+	1,
+	AGE::Tone{ 300, 100 }
+};
+
+AGE::SoundEffect enemyHitSound {
+	2,
+	AGE::Tone{ 440, 70 },
+	AGE::Tone{ 659, 100 }
+};
+
+AGE::SoundEffect deathSound {
+	3,
+	AGE::Tone{ 440, 100 },
+	AGE::Tone{ 330, 100 },
+	AGE::Tone{ 220, 200 }
+};
+
 unsigned int score = 0; // The player's current score
 
 AGE::SaveData<unsigned int> highScore; // The player's high score, saved between games
@@ -171,7 +205,10 @@ public:
 	}
 
 	void update(unsigned int dt) {
-		if (shootTrigger.fired()) spawner.spawn(Bullet{ *yPos });
+		if (shootTrigger.fired()) {
+			spawner.spawn(Bullet{ *yPos });
+			process.playSound(shootingSound);
+		}
 	}
 };
 
@@ -221,6 +258,7 @@ public:
 		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER)) {
 			if (score > highScore.get()) highScore.set(score); // Update high score
 			process.setScene(GAME_OVER_SCENE);
+			process.playSound(deathSound);
 		}
 	}
 
@@ -240,6 +278,12 @@ public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		// xPos is a float since it is used for physics stuff, so it has to be rounded.
 		charBuffer.put(TEX_OBSTACLE, round(xPos), yPos);
+	}
+
+	void update(unsigned int dt) {
+		Projectile::update(dt);
+		if (collides(BULLET_COLLIDER))
+			process.playSound(obstacleHitSound);
 	}
 };
 
@@ -267,6 +311,7 @@ public:
 		// Enemies die when hit by a bullet from the player.
 		if (collides(BULLET_COLLIDER)) {
 			score += 100; // 100 score points!
+			process.playSound(enemyHitSound);
 			die();
 		}
 	}
@@ -404,7 +449,10 @@ public:
 
 	void update(unsigned int dt) {
 		// Start gameplay when shoot button is pressed
-		if (shootTrigger.fired()) process.setScene(GAME_SCENE);
+		if (shootTrigger.fired()) {
+			process.setScene(GAME_SCENE);
+			process.playSound(startupSound); // play startup sound
+		}
 	}
 };
 
@@ -462,7 +510,10 @@ public:
 
 	void update(unsigned int dt) {
 		// Retry when pressing shoot
-		if (shootTrigger.fired()) process.setScene(GAME_SCENE);
+		if (shootTrigger.fired()) {
+			process.setScene(GAME_SCENE);
+			process.playSound(startupSound);
+		}
 	}
 };
 

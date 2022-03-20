@@ -156,17 +156,36 @@ namespace AGE {
 
 		void setScene(SceneID id);
 	};
+
+	struct Tone {
+		unsigned int frequency;
+		unsigned int duration;
+	};
+
+	class SoundEffect {
+		Utils::List<Tone> tones;
+
+	public:
+		SoundEffect(unsigned int numTones, ...);
+
+		const Utils::List<Tone>& getTones() const;
+	};
 	
 	struct ProcessConfig {
 		unsigned int width;
 		unsigned int height;
 		unsigned int loopsPerSecond;
+		uint8_t audioPin;
 		LCDConfig lcdConfig;
 	};
 
 	class Process {
 		unsigned int width;
 		unsigned int height;
+		uint8_t audioPin;
+		const SoundEffect* currentSound = nullptr;
+		int toneIndex = -1;
+		unsigned int soundTime = 0;
 		unsigned int loopDelay;
 		unsigned long lastLoop;
 		bool running = false;
@@ -188,6 +207,8 @@ namespace AGE {
 		unsigned int getHeight();
 
 		void setScene(SceneID id);
+
+		void playSound(const SoundEffect& sound);
 
 		TextureID createTexture(Utils::Array<byte, 8> textureData);
 

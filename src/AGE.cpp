@@ -215,12 +215,26 @@ namespace AGE {
 		sceneId = id;
 	}
 
+	// SoundEffect
+	SoundEffect::SoundEffect(unsigned int numTones, ...) {
+		va_list args;
+		va_start(args, numTones);
+		for (int i = 0; i < numTones; i++)
+			tones.push(va_arg(args, Tone));
+		va_end(args);
+	}
+
+	const Utils::List<Tone>& SoundEffect::getTones() const {
+		return tones;
+	}
+
 	// Process
 
 	Process::Process(const ProcessConfig& cfg)
 		: width(cfg.width),
 		  height(cfg.height),
 		  loopDelay(1000 / cfg.loopsPerSecond),
+		  audioPin(cfg.audioPin),
 		  lcd(
 			  cfg.lcdConfig.rs,
 			  cfg.lcdConfig.enable,
@@ -236,6 +250,7 @@ namespace AGE {
 	void Process::start(Game* game) {
 		if (running) return;
 		this->game = game;
+		pinMode(audioPin, OUTPUT);
 		lcd.begin(width, height);
 		renderer.setRoot(game);
 		running = true;
@@ -243,10 +258,29 @@ namespace AGE {
 
 	void Process::loop() {
 		if (!running) return;
+
 		unsigned long now = millis();
 		unsigned int dt = now - lastLoop;
+
+		if (currentSound != nullptr) {
+			soundTime += dt;
+			if (
+				toneIndex == -1 || 
+				soundTime > currentSound->getTones()[toneIndex].duration
+			) {
+				toneIndex++;
+				if (toneIndex == currentSound->getTones().size()) currentSound = nullptr;
+				else {
+					soundTime = 0;
+					Tone currentTone = currentSound->getTones()[toneIndex];
+					if (currentTone.frequency) tone(audioPin, currentTone.frequency, currentTone.duration);
+				}
+			}
+		}
+
 		for (Trigger* trigger : triggers) trigger->update(dt);
 		renderer.render(lcd, dt);
+
 		delay(loopDelay);
 		lastLoop = now;
 	}
@@ -261,6 +295,12 @@ namespace AGE {
 
 	void Process::setScene(SceneID id) {
 		if (game) game->setScene(id);
+	}
+
+	void Process::playSound(const SoundEffect& sound) {
+		toneIndex = -1;
+		currentSound = &sound;
+		soundTime = 0;
 	}
 
 	TextureID Process::createTexture(Utils::Array<byte, 8> textureData) {
