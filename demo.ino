@@ -105,6 +105,8 @@ AGE::TextureID TEX_ENEMY_2 = process.createTexture({
 
 unsigned int score = 0;
 
+AGE::SaveData<unsigned int> highScore;
+
 class Projectile : public AGE::SpawnableComponent, public AGE::Collider {
 protected:
 	float xPos;
@@ -192,8 +194,10 @@ public:
 	void update(unsigned int dt) {
 		if (upTrigger.fired() && yPos != 0) yPos--;
 		if (downTrigger.fired() && yPos != 3) yPos++;
-		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER))
+		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER)) {
+			if (score > highScore.get()) highScore.set(score);
 			process.setScene(GAME_OVER_SCENE);
+		}
 	}
 
 	AGE::Position getPos() {
@@ -361,16 +365,29 @@ public:
 	}
 };
 
+class HighScore : public AGE::Component {
+public:
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		String scoreStr;
+		if (score == highScore.get()) scoreStr = "new highscore!";
+		else scoreStr = "HI: " + String(highScore.get());
+		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2 - scoreStr.length() / 2, 2);
+	}
+};
+
 class GameOverScene : public AGE::Component {
 	LastScore lastScore;
+	HighScore highScore;
+
 public:
 	void build() {
 		addChild(&lastScore);
+		addChild(&highScore);
 	}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 0);
-		charBuffer.write("shoot to retry", process.getWidth() / 2 - 7, 2);
+		charBuffer.write("shoot to retry", process.getWidth() / 2 - 7, 3);
 	}
 
 	void update(unsigned int dt) {
@@ -401,6 +418,8 @@ Game game;
 
 void setup() {
 	DEBUG_START;
+
+	highScore.set(0);
 	
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);

@@ -163,6 +163,26 @@ namespace AGE::Utils {
 		}
 	};
 
+	class HardStorage {
+		static size_t totalSize;
+		unsigned int address;
+		size_t size;
+		byte* valueBuffer;
+
+	public:
+		HardStorage(size_t size);
+
+		HardStorage(const HardStorage& other) = delete;
+
+		HardStorage& operator=(const HardStorage& other) = delete;
+
+		size_t getSize() const;
+
+		byte* read() const;
+
+		void write(const byte* value);
+	};
+
 	typedef uint32_t UUID;
 
 	UUID uuid();

@@ -193,6 +193,31 @@ namespace AGE {
 
 		void registerTrigger(Trigger* trigger);
 	};
+
+	template<typename T>
+	class SaveData {
+		T* bufferedValue = nullptr;
+		Utils::HardStorage storage;
+
+		void readToBuffered() {
+			const T* ptr = (const T*) storage.read();
+			bufferedValue = new T(*ptr);
+		}
+
+	public:
+		SaveData() : storage(sizeof(T)) {
+			readToBuffered();
+		}
+
+		const T& get() {
+			return *bufferedValue;
+		}
+
+		void set(const T& val) {
+			*bufferedValue = val;
+			storage.write((const byte*) &val);
+		}
+	};
 }
 
 #include "AGE_library.h"
