@@ -410,7 +410,7 @@ class ScoreDisplay : public AGE::Component {
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		String scoreStr = String(score);
-		charBuffer.write(scoreStr.c_str(), process.getWidth() - scoreStr.length(), 0);
+		charBuffer.write(scoreStr.c_str(), process.getWidth(), 0, AGE::RIGHT);
 	}
 };
 
@@ -441,9 +441,8 @@ public:
 class MenuScene : public AGE::Component {
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		// TODO proper text alignment api
-		charBuffer.write("SPACE DEMO", process.getWidth() / 2 - 5, 1);
-		charBuffer.write("shoot to start", process.getWidth() / 2 - 7, 2);
+		charBuffer.write("SPACE DEMO", process.getWidth() / 2, 1, AGE::CENTER);
+		charBuffer.write("shoot to start", process.getWidth() / 2, 2, AGE::CENTER);
 	}
 
 	void update(unsigned int dt) {
@@ -466,8 +465,7 @@ public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		if (blinking.progress() > 0.5) return; // Don't display anything 50% of the time
 		String scoreStr = String(score);
-		// TODO proper text alignment api
-		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2 - scoreStr.length() / 2, 1);
+		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2, 1, AGE::CENTER);
 	}
 };
 
@@ -481,8 +479,7 @@ public:
 		// when the current score equals the saved highscore, a new highscore was achieved.
 		if (score == highScore.get()) scoreStr = "new highscore!";
 		else scoreStr = "HI: " + String(highScore.get());
-		// TODO proper text alignment api
-		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2 - scoreStr.length() / 2, 2);
+		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2, 2, AGE::CENTER);
 	}
 };
 
@@ -503,8 +500,8 @@ public:
 	}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 0);
-		charBuffer.write("shoot to retry", process.getWidth() / 2 - 7, 3);
+		charBuffer.write("GAME  OVER", process.getWidth() / 2, 0, AGE::CENTER);
+		charBuffer.write("shoot to retry", process.getWidth() / 2, 3, AGE::CENTER);
 	}
 
 	void update(unsigned int dt) {

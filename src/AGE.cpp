@@ -89,6 +89,16 @@ namespace AGE {
 			put(c, x + i, y);
 		}
 	}
+
+	void CharacterBuffer::write(const char* characters, uint8_t x, uint8_t y, TextAlignment alignment) {
+		switch (alignment) {
+			case TextAlignment::LEFT: return write(characters, x, y);
+			case TextAlignment::CENTER:
+				return write(characters, x - strlen(characters) / 2, y);
+			case TextAlignment::RIGHT:
+				return write(characters, x - strlen(characters), y);
+		}
+	}
 	
 	void CharacterBuffer::clear() {
 		memset(characters, ' ', width * height * sizeof(char));
