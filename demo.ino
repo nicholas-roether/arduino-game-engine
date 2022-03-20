@@ -116,7 +116,7 @@ AGE::SaveData<unsigned int> highScore; // The player's high score, saved between
  */
 class Projectile : public AGE::SpawnableComponent, public AGE::Collider {
 protected:
-	float xPos;
+	float xPos; // xPos is a float, since it is involved in physics calculations.
 	uint8_t yPos;
 	AGE::Velocity xVel;
 
@@ -145,7 +145,8 @@ public:
 		: Projectile(2, yPos, 18, BULLET_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.put(TEX_BULLET, xPos, yPos);
+		// xPos is a float since it is used for physics stuff, so it has to be rounded.
+		charBuffer.put(TEX_BULLET, round(xPos), yPos);
 	}
 
 	void update(unsigned int dt) {
@@ -237,7 +238,8 @@ public:
 		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE_COLLIDER) {} // Speed of -8 characters/second
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.put(TEX_OBSTACLE, xPos, yPos);
+		// xPos is a float since it is used for physics stuff, so it has to be rounded.
+		charBuffer.put(TEX_OBSTACLE, round(xPos), yPos);
 	}
 };
 
@@ -256,7 +258,8 @@ public:
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		// Use different textures depending on the animation progress
-		charBuffer.put(animation.progress() < 0.5 ? TEX_ENEMY_1 : TEX_ENEMY_2, xPos, yPos);
+		// xPos is a float since it is used for physics stuff, so it has to be rounded.
+		charBuffer.put(animation.progress() < 0.5 ? TEX_ENEMY_1 : TEX_ENEMY_2, round(xPos), yPos);
 	}
 
 	void update(unsigned int dt) {
