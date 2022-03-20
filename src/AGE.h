@@ -61,9 +61,9 @@ namespace AGE {
 
 		void clear();
 
-		size_t getWidth();
+		uint8_t getWidth();
 
-		size_t getHeight();
+		uint8_t getHeight();
 	};
 
 	class Renderer {
@@ -83,7 +83,7 @@ namespace AGE {
 
 	public:
 		Renderer() = delete;
-		Renderer(size_t width, size_t height);
+		Renderer(uint8_t width, uint8_t height);
 
 		void setRoot(Component* root);
 
@@ -94,7 +94,7 @@ namespace AGE {
 
 	class TextureRegistry {
 		static constexpr unsigned int maxTextures = 16;
-		static unsigned int numTextures;
+		static uint8_t numTextures;
 		LiquidCrystal& lcd;
 
 	public:
@@ -172,16 +172,16 @@ namespace AGE {
 	};
 	
 	struct ProcessConfig {
-		unsigned int width;
-		unsigned int height;
-		unsigned int loopsPerSecond;
+		uint8_t width;
+		uint8_t height;
+		uint8_t loopsPerSecond;
 		uint8_t audioPin;
 		LCDConfig lcdConfig;
 	};
 
 	class Process {
-		unsigned int width;
-		unsigned int height;
+		uint8_t width;
+		uint8_t height;
 		uint8_t audioPin;
 		const SoundEffect* currentSound = nullptr;
 		int toneIndex = -1;
@@ -202,9 +202,9 @@ namespace AGE {
 
 		void loop();
 
-		unsigned int getWidth();
+		uint8_t getWidth();
 	
-		unsigned int getHeight();
+		uint8_t getHeight();
 
 		void setScene(SceneID id);
 

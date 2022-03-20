@@ -94,17 +94,17 @@ namespace AGE {
 		memset(characters, ' ', width * height * sizeof(char));
 	}
 
-	size_t CharacterBuffer::getWidth() {
+	uint8_t CharacterBuffer::getWidth() {
 		return width;
 	}
 
-	size_t CharacterBuffer::getHeight() {
+	uint8_t CharacterBuffer::getHeight() {
 		return height;
 	}
 
 	// Renderer
 
-	Renderer::Renderer(size_t width, size_t height)
+	Renderer::Renderer(uint8_t width, uint8_t height)
 		: buffer1(width, height), buffer2(width, height) {}
 
 	void Renderer::swapCharBuffers() {
@@ -141,8 +141,8 @@ namespace AGE {
 		frontBuffer->clear();
 		update(root, dt);
 		render(root);
-		for (unsigned int y = 0; y < frontBuffer->getHeight(); y++) {
-			for (unsigned int x = 0; x < frontBuffer->getWidth(); x++) {
+		for (uint8_t y = 0; y < frontBuffer->getHeight(); y++) {
+			for (uint8_t x = 0; x < frontBuffer->getWidth(); x++) {
 				char c = frontBuffer->get(x, y);
 				if (c != backBuffer->get(x, y)) {
 					lcd.setCursor(x, y);
@@ -155,7 +155,7 @@ namespace AGE {
 
 	// TextureRegistry
 
-	unsigned int TextureRegistry::numTextures;
+	uint8_t TextureRegistry::numTextures = 0;
 
 	TextureRegistry::TextureRegistry(LiquidCrystal& lcd)
 		: lcd(lcd) {}
@@ -285,11 +285,11 @@ namespace AGE {
 		lastLoop = now;
 	}
 
-	unsigned int Process::getWidth() {
+	uint8_t Process::getWidth() {
 		return width;
 	}
 
-	unsigned int Process::getHeight() {
+	uint8_t Process::getHeight() {
 		return height;
 	}
 
