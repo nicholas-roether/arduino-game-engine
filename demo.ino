@@ -418,8 +418,6 @@ Game game;
 
 void setup() {
 	DEBUG_START;
-
-	highScore.set(0);
 	
 	process.registerTrigger(&shootTrigger);
 	process.registerTrigger(&upTrigger);
