@@ -103,6 +103,8 @@ AGE::TextureID TEX_ENEMY_2 = process.createTexture({
 	B00000
 });
 
+unsigned int score = 0;
+
 class Projectile : public AGE::SpawnableComponent, public AGE::Collider {
 protected:
 	float xPos;
@@ -222,7 +224,10 @@ public:
 
 	void update(unsigned int dt) {
 		Projectile::update(dt);
-		if (collides(BULLET_COLLIDER)) die();
+		if (collides(BULLET_COLLIDER)) {
+			score += 100;
+			die();
+		}
 	}
 };
 
@@ -308,14 +313,24 @@ public:
 	}
 };
 
+class ScoreDisplay : public AGE::Component {
+public:
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		String scoreStr = String(score);
+		charBuffer.write(scoreStr.c_str(), process.getWidth() - scoreStr.length(), 0);
+	}
+};
+
 class GameScene : public AGE::Component {
 	Player player;
 	ObstacleSpawner obstacleSpawner;
+	ScoreDisplay scoreDisplay;
 
 public:
 	void build() {
 		addChild(&obstacleSpawner);
 		addChild(&player);
+		addChild(&scoreDisplay);
 	}
 };
 
@@ -331,10 +346,26 @@ public:
 	}
 };
 
-class GameOverScene : public AGE::Component {
+class LastScore : public AGE::Component {
+	AGE::Animation blinking = { 1000 };
+
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
-		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 1);
+		if (blinking.progress() > 0.5) return;
+		String scoreStr = String(score);
+		charBuffer.write(scoreStr.c_str(), process.getWidth() / 2 - scoreStr.length() / 2, 1);
+	}
+};
+
+class GameOverScene : public AGE::Component {
+	LastScore lastScore;
+public:
+	void build() {
+		addChild(&lastScore);
+	}
+
+	void draw(AGE::CharacterBuffer& charBuffer) {
+		charBuffer.write("GAME  OVER", process.getWidth() / 2 - 5, 0);
 		charBuffer.write("shoot to retry", process.getWidth() / 2 - 7, 2);
 	}
 
@@ -360,6 +391,9 @@ protected:
 				return nullptr;
 		}
 	}
+
+public:
+	Game() { score = 0; }
 };
 
 Game game;
