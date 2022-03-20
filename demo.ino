@@ -327,6 +327,10 @@ class GameScene : public AGE::Component {
 	ScoreDisplay scoreDisplay;
 
 public:
+	GameScene() {
+		score = 0;
+	}
+
 	void build() {
 		addChild(&obstacleSpawner);
 		addChild(&player);
@@ -391,9 +395,6 @@ protected:
 				return nullptr;
 		}
 	}
-
-public:
-	Game() { score = 0; }
 };
 
 Game game;
