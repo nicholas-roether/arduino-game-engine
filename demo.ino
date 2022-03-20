@@ -206,8 +206,7 @@ public:
 
 	void update(unsigned int dt) {
 		if (shootTrigger.fired()) {
-			spawner.spawn(Bullet{ *yPos });
-			process.playSound(shootingSound);
+			if (spawner.spawn(Bullet{ *yPos })) process.playSound(shootingSound);
 		}
 	}
 };

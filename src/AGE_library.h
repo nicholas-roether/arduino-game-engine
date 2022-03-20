@@ -30,10 +30,11 @@ namespace AGE {
 		virtual ~Spawner();
 
 		template<typename C>
-		void spawn(const C& component) {
-			if (limit != 0 && spawnedComponents.size() == limit) return;
+		bool spawn(const C& component) {
+			if (limit != 0 && spawnedComponents.size() == limit) return false;
 			spawnedComponents.push(new C(component));
 			requestRebuild();
+			return true;
 		}
 	
 		void build();
