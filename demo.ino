@@ -518,6 +518,11 @@ public:
 class Game : public AGE::Game {
 protected:
 	AGE::Component* buildScene(AGE::SceneID id) {
+		/**
+		 * Important note: This function doesn't return a component object itself, but a 
+		 * pointer to a heap-allocated component object. This means the constructors have
+		 * to be called with the new keyword like seen here. Memory deallocation is handled automatically.
+		 */
 		switch(id) {
 			case MENU_SCENE:
 				return new MenuScene();
