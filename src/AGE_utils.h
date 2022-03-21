@@ -174,6 +174,8 @@ namespace AGE::Utils {
 
 		HardStorage(const HardStorage& other) = delete;
 
+		~HardStorage();
+
 		HardStorage& operator=(const HardStorage& other) = delete;
 
 		size_t getSize() const;
