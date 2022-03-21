@@ -234,11 +234,10 @@ namespace AGE {
 		}
 
 	public:
-		SaveData() : storage(sizeof(T)) {
-			readToBuffered();
-		}
+		SaveData() : storage(sizeof(T)) {}
 
 		const T& get() {
+			if (!bufferedValue) readToBuffered();
 			return *bufferedValue;
 		}
 
