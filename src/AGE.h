@@ -63,9 +63,9 @@ namespace AGE {
 
 		void put(char character, uint8_t x, uint8_t y);
 
-		void write(const char* characters, uint8_t x, uint8_t y);
+		void write(Utils::LCDString string, uint8_t x, uint8_t y);
 
-		void write(const char* characters, uint8_t x, uint8_t y, TextAlignment alignment);
+		void write(Utils::LCDString string, uint8_t x, uint8_t y, TextAlignment alignment);
 
 		void clear();
 

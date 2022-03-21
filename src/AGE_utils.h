@@ -182,12 +182,6 @@ namespace AGE::Utils {
 
 		void write(const byte* value);
 	};
-
-	typedef uint32_t UUID;
-
-	UUID uuid();
-
-	float randFloat();
 }
 
 #endif

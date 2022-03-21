@@ -82,15 +82,14 @@ namespace AGE {
 		characters[x + y * width] = character;
 	}
 
-	void CharacterBuffer::write(const char* characters, uint8_t x, uint8_t y) {
-		for (int i = 0; ; i++) {
+	void CharacterBuffer::write(Utils::LCDString string, uint8_t x, uint8_t y) {
+		for (int i = 0; i < string.length(); i++) {
 			char c = characters[i];
-			if (c == '\0') break;
 			put(c, x + i, y);
 		}
 	}
 
-	void CharacterBuffer::write(const char* characters, uint8_t x, uint8_t y, TextAlignment alignment) {
+	void CharacterBuffer::write(Utils::LCDString string, uint8_t x, uint8_t y, TextAlignment alignment) {
 		switch (alignment) {
 			case TextAlignment::LEFT: return write(characters, x, y);
 			case TextAlignment::CENTER:

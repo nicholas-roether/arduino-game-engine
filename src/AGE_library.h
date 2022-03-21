@@ -85,6 +85,16 @@ namespace AGE {
 
 		float progress() const;
 	};
+
+	class Delay {
+		unsigned int duration;
+		unsigned long start;
+
+	public:
+		Delay(unsigned int duration);
+
+		bool finished() const;
+	};
 }
 
 #endif

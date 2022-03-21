@@ -43,19 +43,11 @@ namespace AGE::Utils {
 	}
 
 	byte* HardStorage::read() const {
-		for (int i = 0; i < size; i++) valueBuffer[i] = EEPROM.read(i);
+		for (int i = 0; i < size; i++) valueBuffer[i] = EEPROM.read(address + i);
 		return valueBuffer;
 	}
 
 	void HardStorage::write(const byte* value) {
-		for (int i = 0; i < size; i++) EEPROM.write(i, value[i]);
-	}
-
-	UUID uuid() {
-		return random();
-	}
-
-	float randFloat() {
-		return ((float) random()) / RANDOM_MAX;
+		for (int i = 0; i < size; i++) EEPROM.write(address + i, value[i]);
 	}
 }

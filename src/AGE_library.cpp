@@ -67,4 +67,10 @@ namespace AGE {
 	float Animation::progress() const {
 		return fmod(millis(), duration) / duration;
 	}
+
+	Delay::Delay(unsigned int duration) : duration(duration), start(millis()) {}
+
+	bool Delay::finished() const {
+		return millis() - start > duration;
+	}
 }

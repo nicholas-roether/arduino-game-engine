@@ -459,7 +459,7 @@ public:
  * 		(Used in GameOverScene).
  */
 class LastScore : public AGE::Component {
-	AGE::Animation blinking = { 1000 }; // blinking animation period: 1000ms
+	static inline const AGE::Animation blinking = { 1000 }; // blinking animation period: 1000ms
 
 public:
 	void draw(AGE::CharacterBuffer& charBuffer) {
@@ -490,6 +490,7 @@ public:
  * 		It also allows the player to retry by pressing the shoot button.
  */
 class GameOverScene : public AGE::Component {
+	AGE::Delay retryDelay = 1500;
 	LastScore lastScore;
 	HighScore highScore;
 
@@ -501,12 +502,12 @@ public:
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		charBuffer.write("GAME  OVER", process.getWidth() / 2, 0, AGE::CENTER);
-		charBuffer.write("shoot to retry", process.getWidth() / 2, 3, AGE::CENTER);
+		if (retryDelay.finished()) charBuffer.write("shoot to retry", process.getWidth() / 2, 3, AGE::CENTER);
 	}
 
 	void update(unsigned int dt) {
 		// Retry when pressing shoot
-		if (shootTrigger.fired()) {
+		if (retryDelay.finished() && shootTrigger.fired()) {
 			process.setScene(GAME_SCENE);
 			process.playSound(startupSound);
 		}
