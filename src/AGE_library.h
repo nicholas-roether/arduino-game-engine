@@ -83,7 +83,7 @@ namespace AGE {
 	public:
 		Animation(unsigned int duration);
 
-		float progress();
+		float progress() const;
 	};
 }
 

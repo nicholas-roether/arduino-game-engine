@@ -216,7 +216,7 @@ public:
  */
 class PlayerFire : public AGE::Component {
 	uint8_t* yPos;
-	AGE::Animation animation = 200;
+	static inline const AGE::Animation animation = 200;
 
 public:
 	PlayerFire(uint8_t* yPos) : yPos(yPos) {}
@@ -293,7 +293,7 @@ public:
  *		when they are killed.
  */
 class Enemy : public Projectile {
-	AGE::Animation animation = { 1000 }; // Animation period of 1000ms
+	static inline const AGE::Animation animation = { 1000 }; // Animation period of 1000ms
 
 public:
 	Enemy(uint8_t yPos)

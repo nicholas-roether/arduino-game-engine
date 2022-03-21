@@ -64,7 +64,7 @@ namespace AGE {
 	// Animation
 	Animation::Animation(unsigned int duration) : duration(duration) {}
 
-	float Animation::progress() {
+	float Animation::progress() const {
 		return fmod(millis(), duration) / duration;
 	}
 }
