@@ -64,13 +64,16 @@ namespace AGE {
 	};
 
 	class RandomTrigger : public Trigger {
-		float freq;
+		unsigned int minTime;
+		unsigned int maxTime;
+		unsigned int nextTime;
+		unsigned int time;
 	
 	protected:
 		bool checkActive(unsigned int dt);
 
 	public:
-		RandomTrigger(float freq);
+		RandomTrigger(unsigned int minTime, unsigned int maxTime);
 	};
 
 	// Utilities

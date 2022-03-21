@@ -50,10 +50,15 @@ namespace AGE {
 	}
 
 	// RandomTrigger
-	RandomTrigger::RandomTrigger(float freq) : Trigger(false), freq(freq) {}
+	RandomTrigger::RandomTrigger(unsigned int minTime, unsigned int maxTime)
+		: Trigger(false), minTime(minTime), maxTime(maxTime), time(0), nextTime(random(minTime, maxTime)) {}
 
 	bool RandomTrigger::checkActive(unsigned int dt) {
-		return Utils::randFloat() < freq * dt / 1000;
+		time += dt;
+		if (time > nextTime) {
+			time = 0;
+			nextTime = random(minTime, maxTime);
+		}
 	}
 
 	// Animation
