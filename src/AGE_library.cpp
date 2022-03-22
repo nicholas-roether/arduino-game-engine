@@ -24,7 +24,7 @@ namespace AGE {
 			addChild(spc);
 	}
 
-	void Spawner::update(unsigned int dt)  {
+	void Spawner::update(uint8_t dt)  {
 		for (unsigned int i = 0; i < spawnedComponents.size(); i++) {
 			if (!spawnedComponents[i]->shouldDie()) continue;
 			delete spawnedComponents[i];
@@ -40,7 +40,7 @@ namespace AGE {
 	ClickTrigger::ClickTrigger(unsigned int pin, ClickTriggerEdge edge)
 		: Trigger(edge == BTN_UP), pin(pin), edge(edge) {}
 
-	bool ClickTrigger::checkActive(unsigned int dt) {
+	bool ClickTrigger::checkActive(uint8_t dt) {
 		if (sinceLastUp < DEBOUNCE_DELAY) {
 			sinceLastUp += dt;
 			return state();
@@ -53,7 +53,7 @@ namespace AGE {
 	RandomTrigger::RandomTrigger(unsigned int minTime, unsigned int maxTime)
 		: Trigger(false), minTime(minTime), maxTime(maxTime), time(0), nextTime(random(minTime, maxTime)) {}
 
-	bool RandomTrigger::checkActive(unsigned int dt) {
+	bool RandomTrigger::checkActive(uint8_t dt) {
 		time += dt;
 		if (time > nextTime) {
 			time = 0;

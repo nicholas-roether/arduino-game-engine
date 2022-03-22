@@ -21,7 +21,7 @@ namespace AGE {
 		build();
 	}
 
-	void Component::update(unsigned int dt) {}
+	void Component::update(uint8_t dt) {}
 
 	void Component::draw(CharacterBuffer& buffer) {}
 
@@ -129,7 +129,7 @@ namespace AGE {
 		}
 	}
 
-	void Renderer::update(Component* component, unsigned int dt) {
+	void Renderer::update(Component* component, uint8_t dt) {
 		component->update(dt);
 		build(component);
 		for (Component* child : component->getChildren())
@@ -146,7 +146,7 @@ namespace AGE {
 		this->root = root;
 	}
 
-	void Renderer::render(LiquidCrystal& lcd, unsigned int dt) {
+	void Renderer::render(LiquidCrystal& lcd, uint8_t dt) {
 		frontBuffer->clear();
 		update(root, dt);
 		render(root);
@@ -192,7 +192,7 @@ namespace AGE {
 		return isActive && !didFire;
 	}
 
-	void Trigger::update(unsigned int dt) {
+	void Trigger::update(uint8_t dt) {
 		bool nextState = checkActive(dt);
 		if (!nextState || !isActive) {
 			didFire = false;
@@ -211,7 +211,7 @@ namespace AGE {
 		if(scene) addChild(scene);
 	}
 
-	void Game::update(unsigned int dt) {
+	void Game::update(uint8_t dt) {
 		if (sceneShowing != sceneId) {
 			if (scene) delete scene;
 			scene = buildScene(sceneId);
@@ -269,7 +269,7 @@ namespace AGE {
 		if (!running) return;
 
 		unsigned long now = millis();
-		unsigned int dt = now - lastLoop;
+		uint8_t dt = now - lastLoop;
 
 		if (currentSound != nullptr) {
 			soundTime += dt;

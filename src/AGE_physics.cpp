@@ -7,7 +7,7 @@ namespace AGE {
 	Velocity::Velocity(float velocity)
 		: velocity(velocity) {}
 
-	void Velocity::update(unsigned int dt, float& pos) {
+	void Velocity::update(uint8_t dt, float& pos) {
 		pos += dt * velocity / 1000;
 	}
 

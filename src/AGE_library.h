@@ -39,7 +39,7 @@ namespace AGE {
 	
 		void build();
 
-		void update(unsigned int dt);
+		void update(uint8_t dt);
 	};
 
 	// Triggers
@@ -56,7 +56,7 @@ namespace AGE {
 		unsigned int sinceLastUp = 0;
 
 	protected:
-		bool checkActive(unsigned int dt);
+		bool checkActive(uint8_t dt);
 
 	public:
 		ClickTrigger(unsigned int pin);
@@ -70,7 +70,7 @@ namespace AGE {
 		unsigned int time;
 	
 	protected:
-		bool checkActive(unsigned int dt);
+		bool checkActive(uint8_t dt);
 
 	public:
 		RandomTrigger(unsigned int minTime, unsigned int maxTime);

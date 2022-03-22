@@ -160,7 +160,7 @@ public:
 	Projectile(uint8_t xPos, uint8_t yPos, float xVel, uint8_t colliderType)
 		: AGE::Collider(collisionSystem, colliderType), xPos(xPos), yPos(yPos), xVel(xVel) {}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		xVel.update(dt, xPos);
 		if (xPos < 0 || xPos >= process.getWidth()) die(); // die when the projectile leaves the screen
 	}
@@ -183,7 +183,7 @@ public:
 		charBuffer.put(TEX_BULLET, round(xPos), yPos);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		Projectile::update(dt); // base class needs to be updated explicitly
 		// Bullets disappear when hitting anything
 		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER)) die();
@@ -204,7 +204,7 @@ public:
 		addChild(&spawner);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		if (shootTrigger.fired()) {
 			if (spawner.spawn(Bullet{ *yPos })) process.playSound(shootingSound);
 		}
@@ -250,7 +250,7 @@ public:
 		charBuffer.put(TEX_PLAYER_SPACESHIP, 1, yPos);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		if (upTrigger.fired() && yPos != 0) yPos--; // Move up
 		if (downTrigger.fired() && yPos != 3) yPos++; // Move down
 		// Game over when colliding with an obstacle or enemy
@@ -279,7 +279,7 @@ public:
 		charBuffer.put(TEX_OBSTACLE, round(xPos), yPos);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		Projectile::update(dt);
 		if (collides(BULLET_COLLIDER))
 			process.playSound(obstacleHitSound);
@@ -305,7 +305,7 @@ public:
 		charBuffer.put(animation.progress() < 0.5 ? TEX_ENEMY_1 : TEX_ENEMY_2, round(xPos), yPos);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		Projectile::update(dt);
 		// Enemies die when hit by a bullet from the player.
 		if (collides(BULLET_COLLIDER)) {
@@ -330,7 +330,7 @@ public:
 		addChild(&spawner);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		if (obstacleSpawnTrigger.fired()) {
 			// Different spawn patterns
 			switch(random(12)) {
@@ -445,7 +445,7 @@ public:
 		charBuffer.write("shoot to start", process.getWidth() / 2, 2, AGE::CENTER);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		// Start gameplay when shoot button is pressed
 		if (shootTrigger.fired()) {
 			process.setScene(GAME_SCENE);
@@ -505,7 +505,7 @@ public:
 		if (retryDelay.finished()) charBuffer.write("shoot to retry", process.getWidth() / 2, 3, AGE::CENTER);
 	}
 
-	void update(unsigned int dt) {
+	void update(uint8_t dt) {
 		// Retry when pressing shoot
 		if (retryDelay.finished() && shootTrigger.fired()) {
 			process.setScene(GAME_SCENE);

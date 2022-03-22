@@ -28,7 +28,7 @@ namespace AGE {
 
 		void rebuild();
 
-		virtual void update(unsigned int dt);
+		virtual void update(uint8_t dt);
 
 		virtual void draw(CharacterBuffer& buffer);
 
@@ -85,7 +85,7 @@ namespace AGE {
 
 		void build(Component* component);
 
-		void update(Component* component, unsigned int dt);
+		void update(Component* component, uint8_t dt);
 
 		void render(Component* component);
 
@@ -95,7 +95,7 @@ namespace AGE {
 
 		void setRoot(Component* root);
 
-		void render(LiquidCrystal& lcd, unsigned int dt);
+		void render(LiquidCrystal& lcd, uint8_t dt);
 	};
 
 	typedef uint8_t TextureID;
@@ -131,14 +131,14 @@ namespace AGE {
 
 		void active();
 
-		virtual bool checkActive(unsigned int dt) = 0;
+		virtual bool checkActive(uint8_t dt) = 0;
 
 	public:
 		bool state();
 
 		bool fired();
 
-		void update(unsigned int dt);
+		void update(uint8_t dt);
 	};
 
 	typedef uint8_t SceneID;
@@ -160,7 +160,7 @@ namespace AGE {
 
 		void build();
 
-		void update(unsigned int dt);
+		void update(uint8_t dt);
 
 		void setScene(SceneID id);
 	};
