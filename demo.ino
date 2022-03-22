@@ -2,7 +2,7 @@
 
 AGE::Process process({
 	20, 4, 					// 20 x 4 LCD display
-	20, 					// 20 ticks per second
+	120, 					// 120 ticks per second
 	9,						// Audio output is on pin 9
 	/**
 	 * LCD configuration:
@@ -115,9 +115,9 @@ AGE::SoundEffect startupSound = {
 
 AGE::SoundEffect shootingSound = {
 	3,
-	AGE::Tone{ 700, 10 },
-	AGE::Tone{ 650, 10 },
-	AGE::Tone{ 625, 10 }
+	AGE::Tone{ 700, 20 },
+	AGE::Tone{ 650, 20 },
+	AGE::Tone{ 625, 20 }
 };
 
 AGE::SoundEffect obstacleHitSound {
