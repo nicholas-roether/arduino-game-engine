@@ -8,10 +8,6 @@
 
 #include "AGE_debug.h"
 
-inline constexpr uint8_t operator ""su(unsigned long long arg) noexcept {
-	return static_cast<uint8_t>(arg);
-}
-
 namespace AGE::Utils {
 	template<typename T>
 	class Iterable {
