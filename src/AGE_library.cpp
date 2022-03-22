@@ -34,10 +34,10 @@ namespace AGE {
 	}
 
 	// ClickTrigger
-	ClickTrigger::ClickTrigger(unsigned int pin)
+	ClickTrigger::ClickTrigger(uint8_t pin)
 		: Trigger(false), pin(pin), edge(BTN_DOWN) {}
 
-	ClickTrigger::ClickTrigger(unsigned int pin, ClickTriggerEdge edge)
+	ClickTrigger::ClickTrigger(uint8_t pin, ClickTriggerEdge edge)
 		: Trigger(edge == BTN_UP), pin(pin), edge(edge) {}
 
 	bool ClickTrigger::checkActive(uint8_t dt) {

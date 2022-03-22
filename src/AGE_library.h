@@ -59,8 +59,8 @@ namespace AGE {
 		bool checkActive(uint8_t dt);
 
 	public:
-		ClickTrigger(unsigned int pin);
-		ClickTrigger(unsigned int pin, ClickTriggerEdge edge);
+		ClickTrigger(uint8_t pin);
+		ClickTrigger(uint8_t pin, ClickTriggerEdge edge);
 	};
 
 	class RandomTrigger : public Trigger {
