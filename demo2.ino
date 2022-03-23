@@ -131,6 +131,9 @@ protected:
 Game game;
 
 void setup() {
+    snake_process.registerTrigger(&leftTrigger);
+    snake_process.registerTrigger(&rightTrigger);
+
     snake_process.start(&game);
     snake_process.setScene(GAME_SCENE);
 }
