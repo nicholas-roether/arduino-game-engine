@@ -1,3 +1,5 @@
+#ifdef AGE_SNAKE_DEMO
+
 #include "src/AGE.h"
 
 AGE::Process snake_process({
@@ -42,3 +44,5 @@ void setup() {
 void loop() {
     snake_process.loop();
 }
+
+#endif
