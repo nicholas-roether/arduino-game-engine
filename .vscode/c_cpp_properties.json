@@ -31,6 +31,8 @@
 				"-Wno-error=narrowing"
 			],
 			"defines": [
+				"AGE_SPACE_DEMO",
+				"AGE_SNAKE_DEMO",
                 "F_CPU=16000000L",
                 "ARDUINO=10819",
                 "ARDUINO_AVR_UNO",

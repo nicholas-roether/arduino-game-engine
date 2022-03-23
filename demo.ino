@@ -1,3 +1,5 @@
+#ifdef AGE_SPACE_DEMO
+
 #include "src/AGE.h"
 
 AGE::Process process({
@@ -564,3 +566,5 @@ void setup() {
 void loop() {
 	process.loop();
 }
+
+#endif
