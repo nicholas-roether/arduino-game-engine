@@ -40,6 +40,8 @@ namespace AGE {
 		void build();
 
 		void update(uint8_t dt);
+
+		const Utils::List<SpawnableComponent*>& getSpawnedComponents();
 	};
 
 	// Triggers

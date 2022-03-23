@@ -33,6 +33,10 @@ namespace AGE {
 		}
 	}
 
+	const Utils::List<SpawnableComponent*>& Spawner::getSpawnedComponents() {
+		return spawnedComponents;
+	}
+
 	// ClickTrigger
 	ClickTrigger::ClickTrigger(uint8_t pin)
 		: Trigger(false), pin(pin), edge(BTN_DOWN) {}
