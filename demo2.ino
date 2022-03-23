@@ -11,6 +11,8 @@ enum Scene {
     GAME_SCENE,
 };
 
+unsigned int score = 0;
+
 class GameScene : public AGE::Component {
 public:
     void draw(AGE::CharacterBuffer& charBuffer) {
