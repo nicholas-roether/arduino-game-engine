@@ -152,16 +152,14 @@ class Projectile : public AGE::SpawnableComponent, public AGE::Collider {
 protected:
 	float xPos; // xPos is a float, since it is involved in physics calculations.
 	uint8_t yPos;
-	AGE::Velocity xVel;
 
 public:
 	virtual ~Projectile() = default;
 
-	Projectile(uint8_t xPos, uint8_t yPos, float xVel, uint8_t colliderType)
-		: AGE::Collider(collisionSystem, colliderType), xPos(xPos), yPos(yPos), xVel(xVel) {}
+	Projectile(uint8_t xPos, uint8_t yPos, uint8_t colliderType)
+		: AGE::Collider(collisionSystem, colliderType), xPos(xPos), yPos(yPos) {}
 
 	void update(uint8_t dt) {
-		xVel.update(dt, xPos);
 		if (xPos < 0 || xPos >= process.getWidth()) die(); // die when the projectile leaves the screen
 	}
 
@@ -174,9 +172,11 @@ public:
  * @brief The bullets the player shoots
  */
 class Bullet : public Projectile {
+	static inline const AGE::Velocity xVel = 18;
+
 public:
 	Bullet(uint8_t yPos)
-		: Projectile(2, yPos, 18, BULLET_COLLIDER) {}
+		: Projectile(2, yPos, BULLET_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		// xPos is a float since it is used for physics stuff, so it has to be rounded.
@@ -184,6 +184,7 @@ public:
 	}
 
 	void update(uint8_t dt) {
+		xVel.update(dt, xPos);
 		Projectile::update(dt); // base class needs to be updated explicitly
 		// Bullets disappear when hitting anything
 		if (collides(OBSTACLE_COLLIDER) || collides(ENEMY_COLLIDER)) die();
@@ -270,9 +271,11 @@ public:
  * @brief The indestructable obstacles flying towards the player
  */
 class Obstacle : public Projectile {
+	static inline const AGE::Velocity xVel = -8;
+
 public:
 	Obstacle(uint8_t yPos)
-		: Projectile(process.getWidth() - 1, yPos, -8, OBSTACLE_COLLIDER) {} // Speed of -8 characters/second
+		: Projectile(process.getWidth() - 1, yPos, OBSTACLE_COLLIDER) {} // Speed of -8 characters/second
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		// xPos is a float since it is used for physics stuff, so it has to be rounded.
@@ -280,6 +283,7 @@ public:
 	}
 
 	void update(uint8_t dt) {
+		xVel.update(dt, xPos);
 		Projectile::update(dt);
 		if (collides(BULLET_COLLIDER))
 			process.playSound(obstacleHitSound);
@@ -293,11 +297,12 @@ public:
  *		when they are killed.
  */
 class Enemy : public Projectile {
+	static inline const AGE::Velocity xVel = -8;
 	static inline const AGE::Animation animation = { 1000 }; // Animation period of 1000ms
 
 public:
 	Enemy(uint8_t yPos)
-		: Projectile(process.getWidth() - 1, yPos, -8, ENEMY_COLLIDER) {}
+		: Projectile(process.getWidth() - 1, yPos, ENEMY_COLLIDER) {}
 
 	void draw(AGE::CharacterBuffer& charBuffer) {
 		// Use different textures depending on the animation progress
@@ -306,6 +311,7 @@ public:
 	}
 
 	void update(uint8_t dt) {
+		xVel.update(dt, xPos);
 		Projectile::update(dt);
 		// Enemies die when hit by a bullet from the player.
 		if (collides(BULLET_COLLIDER)) {
