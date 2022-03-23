@@ -11,6 +11,10 @@ namespace AGE {
 		pos += dt * velocity / 1000;
 	}
 
+	void Velocity::update(uint8_t dt, uint8_t& pos) const {
+		pos += dt * velocity / 1000;
+	}
+
 	// Position
 	bool Position::operator==(const Position& other) {
 		return x == other.x && y == other.y;
