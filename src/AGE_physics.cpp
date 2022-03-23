@@ -15,14 +15,6 @@ namespace AGE {
 		return update(dt, pos, false);
 	}
 
-	void Velocity::update(uint8_t dt, uint8_t& pos, bool reverse) const {
-		pos += dt * velocity / 1000 * (reverse ? -1 : 1);
-	}
-
-	void Velocity::update(uint8_t dt, uint8_t& pos) const {
-		return update(dt, pos, false);
-	}
-
 	// Position
 	bool Position::operator==(const Position& other) {
 		return x == other.x && y == other.y;
