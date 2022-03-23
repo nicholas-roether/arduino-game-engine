@@ -323,7 +323,7 @@ public:
 };
 
 // Fires on average 0.4 times per second.
-AGE::RandomTrigger obstacleSpawnTrigger = { 500, 3000 };
+AGE::RandomTrigger obstacleSpawnTrigger = { 800, 3000 };
 
 /**
  * @brief The component responsible for spawning obstacles and enemies.
