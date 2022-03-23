@@ -106,11 +106,11 @@ enum Scene {
 unsigned int score = 0;
 
 class GameScene : public AGE::Component {
-    SnakeBody snakeBody = { 1, 1 };
+    Snake snake;
 
 public:
     void build() {
-        addChild(&snakeBody);
+        addChild(&snake);
     }
 };
 
