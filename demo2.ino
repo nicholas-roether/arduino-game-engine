@@ -35,6 +35,68 @@ public:
     }
 };
 
+enum class Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+};
+
+class Snake : public AGE::Component {
+    uint8_t length = 2;
+    Direction direction = Direction::RIGHT;
+    uint8_t xPosHead = 1;
+    uint8_t yPosHead = 1;
+    AGE::Velocity velocity = 2;
+    AGE::Spawner spawner = { 12 };
+
+public:
+    void build() {
+        addChild(&spawner);
+    }
+
+    void update(uint8_t dt) {
+        uint8_t prevPosX = xPosHead;
+        uint8_t prevPosY = yPosHead;
+
+        switch (direction) {
+            case Direction::UP:
+                if (leftTrigger.fired()) 
+                    direction = Direction::LEFT;
+                if (rightTrigger.fired()) 
+                    direction = Direction::RIGHT;
+                velocity.update(dt, yPosHead, true);
+                break;
+            case Direction::DOWN:
+                if (leftTrigger.fired())
+                    direction = Direction::RIGHT;
+                if (rightTrigger.fired())
+                    direction = Direction::LEFT;
+                velocity.update(dt, yPosHead, false);
+                break;
+            case Direction::LEFT:
+                if (leftTrigger.fired())
+                    direction = Direction::DOWN;
+                if (rightTrigger.fired())
+                    direction = Direction::UP;
+                velocity.update(dt, xPosHead, true);
+                break;
+            case Direction::RIGHT:
+                if (leftTrigger.fired())
+                    direction = Direction::UP;
+                if (rightTrigger.fired())
+                    direction = Direction::DOWN;
+                velocity.update(dt, xPosHead, false);
+                break;
+        }
+        if (xPosHead != prevPosX || yPosHead != prevPosY) {
+            spawner.spawn(SnakeBody(xPosHead, yPosHead));
+        }
+    }
+};
+
+
+
 
 
 enum Scene {
@@ -44,8 +106,8 @@ enum Scene {
 unsigned int score = 0;
 
 class GameScene : public AGE::Component {
-private:
     SnakeBody snakeBody = { 1, 1 };
+
 public:
     void build() {
         addChild(&snakeBody);
