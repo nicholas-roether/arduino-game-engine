@@ -11,7 +11,7 @@
             "name": "Arduino",
             "includePath": [
                 "${workspaceFolder}/src/**",
-				"${env:arduinoAvrPath}/cores/arduino/**",
+				"${env:arduinoAvrPath}/cores/arduino",
 				"${env:arduinoAvrPath}/libraries/EEPROM/**",
 				"${env:arduinoAvrPath}/variants/standard",
 				"${env:arduinoAvrToolsPath}/avr/include",
