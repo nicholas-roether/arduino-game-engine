@@ -7,12 +7,20 @@ namespace AGE {
 	Velocity::Velocity(float velocity)
 		: velocity(velocity) {}
 
+	void Velocity::update(uint8_t dt, float& pos, bool reverse) const {
+		pos += dt * velocity / 1000 * (reverse ? -1 : 1);;
+	}
+
 	void Velocity::update(uint8_t dt, float& pos) const {
-		pos += dt * velocity / 1000;
+		return update(dt, pos, false);
+	}
+
+	void Velocity::update(uint8_t dt, uint8_t& pos, bool reverse) const {
+		pos += dt * velocity / 1000 * (reverse ? -1 : 1);
 	}
 
 	void Velocity::update(uint8_t dt, uint8_t& pos) const {
-		pos += dt * velocity / 1000;
+		return update(dt, pos, false);
 	}
 
 	// Position
