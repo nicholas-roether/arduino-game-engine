@@ -50,7 +50,7 @@ namespace AGE {
 	};
 
 	class ClickTrigger : public Trigger {
-		static constexpr unsigned int DEBOUNCE_DELAY = 80;
+		static constexpr unsigned int DEBOUNCE_DELAY = 100;
 		uint8_t pin;
 		ClickTriggerEdge edge;
 		unsigned int sinceLastUp = 0;
