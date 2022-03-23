@@ -7,7 +7,7 @@
     "buildPreferences": [
         [
             "compiler.cpp.flags",
-            "-c -g -Os {compiler.warning_flags} -std=gnu++11 -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -D AGE_SNAKE_DEMO"
+            "-c -g -Os {compiler.warning_flags} -std=gnu++11 -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -D AGE_SNAKE_DEMO -D AGE_DEBUG_MODE"
         ]
     ],
     "output": "build"

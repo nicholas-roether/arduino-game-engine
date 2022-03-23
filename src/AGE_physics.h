@@ -10,10 +10,6 @@ namespace AGE {
 		void update(uint8_t dt, float& pos, bool reverse) const;
 
 		void update(uint8_t dt, float& pos) const;
-
-		void update(uint8_t dt, uint8_t& pos, bool reverse) const;
-
-		void update(uint8_t dt, uint8_t& pos) const;
 	};
 
 	struct Position {
