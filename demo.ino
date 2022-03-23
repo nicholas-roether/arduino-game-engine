@@ -196,7 +196,7 @@ public:
  */
 class BulletSpawner : public AGE::Component {
 	uint8_t* yPos; // Points to the yPos member of the Player component
-	AGE::Spawner spawner = { 3 }; // Max. 3 Bullets at a time
+	AGE::Spawner spawner = { 2 }; // Max. 3 Bullets at a time
 
 public:
 	BulletSpawner(uint8_t* yPos) : yPos(yPos) {}
