@@ -45,8 +45,8 @@ enum class Direction {
 class Snake : public AGE::Component {
     uint8_t length = 2;
     Direction direction = Direction::RIGHT;
-    uint8_t xPosHead = 1;
-    uint8_t yPosHead = 1;
+    float xPosHead = 1;
+    float yPosHead = 1;
     AGE::Velocity velocity = 2;
     AGE::Spawner spawner = { 12 };
 
@@ -56,8 +56,8 @@ public:
     }
 
     void update(uint8_t dt) {
-        uint8_t prevPosX = xPosHead;
-        uint8_t prevPosY = yPosHead;
+        uint8_t prevPosX = round(xPosHead);
+        uint8_t prevPosY = round(yPosHead);
 
         switch (direction) {
             case Direction::UP:
@@ -89,7 +89,7 @@ public:
                 velocity.update(dt, xPosHead, false);
                 break;
         }
-        if (xPosHead != prevPosX || yPosHead != prevPosY) {
+        if (round(xPosHead) != prevPosX || round(yPosHead) != prevPosY) {
             spawner.spawn(SnakeBody(xPosHead, yPosHead));
         }
     }
