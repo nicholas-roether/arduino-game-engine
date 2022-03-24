@@ -7,7 +7,9 @@ namespace AGE {
 	public:
 		Velocity(float velocity);
 
-		void update(uint8_t dt, float& pos);
+		void update(uint8_t dt, float& pos, bool reverse) const;
+
+		void update(uint8_t dt, float& pos) const;
 	};
 
 	struct Position {

@@ -19,34 +19,21 @@ namespace AGE::Utils {
 	public:
 		virtual size_t size() const = 0;
 
-		T* begin() {
+		T* begin() const {
 			return getPointer();
 		}
 
-		const T* begin() const {
-			return getPointer();
-		}
 
-		T* end() {
+		T* end() const {
 			return begin() + size();
 		}
-
-		const T* end() const {
-			return begin() + size();
-		}
-
 		bool includes(const T& element) const {
 			for (const T& elem : *this)
 				if (elem == element) return true;
 			return false;
 		}
 
-		T& operator[](unsigned int i) {
-			ASSERT_F(i < size(), "Out of bounds: can't access index %d in iterable of size %d", i, size());
-			return *(getPointer() + i);
-		}
-
-		const T& operator[](unsigned int i) const {
+		T& operator[](unsigned int i) const {
 			ASSERT_F(i < size(), "Out of bounds: can't access index %d in iterable of size %d", i, size());
 			return *(getPointer() + i);
 		}
